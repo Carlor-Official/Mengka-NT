@@ -1,0 +1,13 @@
+{
+  "name": "moe-plugin-test",
+  "version": "1.0.0",
+  "description": "萌卡NT 插件测试客户端",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
