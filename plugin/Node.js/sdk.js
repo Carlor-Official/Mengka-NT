@@ -40,6 +40,24 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 获取好友空间首包最新动态。
+  // feeds: [{ app_id, user_id, nickname, create_time, feed_id, feeds_key,
+  //           url, text, orig_uin?, orig_tid?, forward? }]
+  get_qzone_friend_feeds: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  // 点赞一条 get_qzone_friend_feeds 返回的动态。直接传入完整 feed；
+  // 后端根据 feed.forward 是否存在自动处理转发动态。该动作没有回调，不要 await。
+  like_qzone_feed: {
+    wait: false,
+    build: (self_id, feed) => ({ self_id, feed }),
+  },
+  // 取消对一条 get_qzone_friend_feeds 返回动态的点赞。该动作没有回调，不要 await。
+  unlike_qzone_feed: {
+    wait: false,
+    build: (self_id, feed) => ({ self_id, feed }),
+  },
   // 获取群列表: 返回 { groups, total_count, self_uin }
   get_group_list: {
     wait: true,
@@ -179,6 +197,14 @@ const apiDefs = {
   get_group_forward_msg: {
     wait: true,
     build: (self_id, sender_uin, res_id) => ({ self_id, sender_uin, res_id }),
+  },
+  // 上传文本合并转发消息。
+  // messages: [{ user_id, nickname, time, message: [{ type: 'text', data: { text } }] }]
+  // time 为 Unix 秒；非 text 段会由服务端丢弃。
+  // 返回值的 message 字段可直接传给 send_group_msg 发送合并转发卡片。
+  send_group_forward_msg: {
+    wait: true,
+    build: (self_id, group_id, messages) => ({ self_id, group_id, messages }),
   },
   // 删除好友: target_uin=要删除的好友QQ号
   delete_friend: {
