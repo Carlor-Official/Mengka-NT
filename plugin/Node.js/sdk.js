@@ -69,6 +69,30 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id) => ({ self_id, group_id }),
   },
+  // 获取群聊通知列表: 返回 { notifications, total_count }，包含所有通知类型。
+  get_group_system_notifications: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  // 同意入群申请。request_* 来自 group_notice/apply 事件或群聊通知列表。
+  approve_group_apply: {
+    wait: true,
+    build: (self_id, group_id, request_id, request_type, request_extra) => {
+      const p = { self_id, group_id, request_id, request_type }
+      if (request_extra !== undefined) p.request_extra = request_extra
+      return p
+    },
+  },
+  // 拒绝入群申请。reason 为可选拒绝理由。
+  reject_group_apply: {
+    wait: true,
+    build: (self_id, group_id, request_id, request_type, reason, request_extra) => {
+      const p = { self_id, group_id, request_id, request_type }
+      if (reason !== undefined) p.reason = reason
+      if (request_extra !== undefined) p.request_extra = request_extra
+      return p
+    },
+  },
   // 获取指定域名的 PsKey
   get_pskey: {
     wait: true,

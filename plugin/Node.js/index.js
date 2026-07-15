@@ -23,8 +23,34 @@ api.on('friend_message', (event) => {
   })
 })
 
+const groupNoticeNames = {
+  apply: '入群申请',
+  mute: '群禁言',
+  recall: '消息撤回',
+}
+
 api.on('group_notice', (event) => {
-  console.log(`[群聊事件] 群=${event.group_id} sub_type=${event.sub_type} operator=${event.operator?.nickname} target=${event.target?.nickname}`)
+  const type = event.sub_type || 'unknown'
+  const name = groupNoticeNames[type] || `未知群事件(${type})`
+  const group = `${event.group_name || ''}(${event.group_id})`
+
+  switch (type) {
+    case 'apply':
+      console.log(`[${name}] 群=${group} 申请者=${event.nickname}(${event.user_id}) 附言=${event.comment || ''} request_id=${event.request_id} request_type=${event.request_type}`)
+      if (event.request_type === 22) {
+        console.log(`  邀请者=${event.invitor_nickname}(${event.invitor_id})`)
+      }
+      break
+    case 'mute':
+      console.log(`[${name}] 群=${group} 操作者=${event.operator?.nickname} 目标=${event.target?.nickname} 时长=${event.body?.duration ?? 0}`)
+      break
+    case 'recall':
+      console.log(`[${name}] 群=${group} 操作者=${event.operator?.nickname} 消息序号=${event.body?.msg_seq}`)
+      break
+    default:
+      console.log(`[${name}] 群=${group}`, event)
+      break
+  }
 })
 
 api.on('friend_notice', (event) => {
