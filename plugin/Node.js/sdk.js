@@ -93,6 +93,11 @@ const apiDefs = {
       return p
     },
   },
+  // 同意好友发来的群邀请。group_id 来自 friend_notice/group_invite 事件。
+  approve_group_invite: {
+    wait: true,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
   // 获取指定域名的 PsKey
   get_pskey: {
     wait: true,
