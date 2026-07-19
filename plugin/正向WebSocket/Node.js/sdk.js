@@ -207,6 +207,11 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id, target_uin, set_admin) => ({ self_id, group_id, target_uin, set_admin }),
   },
+  // 群打卡，返回打卡文案、累计天数、群排名、详情地址及结构化响应字段
+  group_sign: {
+    wait: true,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
   // 群禁言: duration_sec 禁言秒数，0 取消禁言
   set_group_mute: {
     wait: true,
