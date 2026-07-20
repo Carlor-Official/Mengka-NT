@@ -23,14 +23,14 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/face。
+  // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/voice/video/face。
   // face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
-  // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 2 分钟)
+  // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 5 分钟)
   send_group_msg: {
     wait: true,
     build: (self_id, group_id, message) => ({ self_id, group_id, message }),
   },
-  // 发送好友消息: 同 send_group_msg 但不支持 at
+  // 发送好友消息: 目前支持 text；群聊的 at/image/voice/face PB 不会复用到好友消息。
   send_friend_msg: {
     wait: true,
     build: (self_id, user_id, message) => ({ self_id, user_id, message }),
@@ -113,6 +113,18 @@ const apiDefs = {
       return p
     },
   },
+  // 上传群语音，返回可直接放入 send_group_msg.message 的 voice 段。文件必须是 Silk，时长由后端计算。
+  upload_group_voice: {
+    wait: true,
+    build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
+  },
+  // 上传群视频，返回可直接放入 send_group_msg.message 的 video 段。
+  // 后端接收本地路径/file:///http(s)://，并通过 FFmpeg 容器提取时长和封面。
+  upload_group_video: {
+    wait: true,
+    timeout: 5 * 60 * 1000,
+    build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
+  },
   // 查询QQ名片，不传 target_uin 则查自己
   get_summary_card: {
     wait: true,
@@ -142,65 +154,65 @@ const apiDefs = {
     wait: true,
     build: () => ({}),
   },
-  // 添加账号到当前插件所属节点，account 为 5-10 位无符号 QQ 整数
+  // 添加账号到当前插件所属节点，self_id 为 5-10 位无符号 QQ 整数
   add_account: {
     wait: true,
     resultMessage: '账号添加成功',
     resultData: false,
-    build: (account, password, protocol_id, device_profile_id) => ({ account, password, protocol_id, device_profile_id }),
+    build: (self_id, password, protocol_id, device_profile_id) => ({ self_id, password, protocol_id, device_profile_id }),
   },
   // 编辑当前插件所属节点内的账号
   update_account: {
     wait: true,
     resultMessage: '账号编辑成功',
     resultData: false,
-    build: (account, password, protocol_id, device_profile_id) => ({ account, password, protocol_id, device_profile_id }),
+    build: (self_id, password, protocol_id, device_profile_id) => ({ self_id, password, protocol_id, device_profile_id }),
   },
   // 取消登录中账号或使已登录账号离线，仅限当前插件所属节点
   offline_account: {
     wait: true,
     resultMessage: '账号已离线',
     resultData: false,
-    build: account => ({ account }),
+    build: self_id => ({ self_id }),
   },
   // 删除当前插件所属节点内已离线的账号
   delete_account: {
     wait: true,
     resultMessage: '账号删除成功',
     resultData: false,
-    build: account => ({ account }),
+    build: self_id => ({ self_id }),
   },
   // 登录当前插件所属节点内的离线账号。返回 { code, message }；
   // 滑块、身份验证附带 slider_url、identity_url；安全验证会返回 security_verify
   // （QQ 原始验证原因和可用方法），仅在响应带 URL 时才附带 security_url。
   login_account: {
     wait: true,
-    build: account => ({ account }),
+    build: self_id => ({ self_id }),
   },
   // 查询账号缓存的 token 是否完整有效。
   check_cache: {
     wait: true,
-    build: account => ({ account }),
+    build: self_id => ({ self_id }),
   },
   // 使用缓存连接 MSF，交换 Login ECDH 后执行 InfoSync 登录。
   cache_login: {
     wait: true,
-    build: account => ({ account }),
+    build: self_id => ({ self_id }),
   },
   // 提交 Type 0 滑块验证结果。Bot 会使用内部保存的 cookie 与 SID。
   submit_slider: {
     wait: true,
-    build: (account, ticket, randstr) => ({ account, ticket, randstr }),
+    build: (self_id, ticket, randstr) => ({ self_id, ticket, randstr }),
   },
   // 安全验证方式 4：传入 methods 中的 sign 下发短信，返回的新 sign 需要传给 check_sms。
   get_sms: {
     wait: true,
-    build: (account, sign) => ({ account, sign }),
+    build: (self_id, sign) => ({ self_id, sign }),
   },
   // 安全验证方式 4：提交短信验证码和下发时获得的 sign，SDK 会自动完成 NTLogin Type 2。
   check_sms: {
     wait: true,
-    build: (account, sign, code) => ({ account, sign, code }),
+    build: (self_id, sign, code) => ({ self_id, sign, code }),
   },
   // 设置/取消群管理员: set_admin=true 设为管理, false 取消
   set_group_admin: {
@@ -407,7 +419,7 @@ export function createReverseAPI(config = {}) {
     })
   }
 
-  function call(action, params, resultMessage = '', resultData = true) {
+  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000) {
     if (!ready || !ws || ws.readyState !== WebSocket.OPEN) {
       return Promise.reject(new Error('萌卡NT 后台尚未建立反向 WebSocket 连接'))
     }
@@ -418,7 +430,7 @@ export function createReverseAPI(config = {}) {
         const error = `action ${action} 超时 (30s)`
         if (resultMessage) resolve({ code: 1, msg: error })
         else reject(new Error(error))
-      }, 30000)
+      }, timeoutMs)
       pending.set(id, { resolve, reject, timer, resultMessage, resultData })
       _send({ type: 'action', id, action, params })
     })
@@ -453,7 +465,7 @@ export function createReverseAPI(config = {}) {
   for (const [apiName, def] of Object.entries(apiDefs)) {
     api[apiName] = (...args) => {
       const params = def.build(...args)
-      if (def.wait) return call(apiName, params, def.resultMessage, def.resultData !== false)
+      if (def.wait) return call(apiName, params, def.resultMessage, def.resultData !== false, def.timeout)
       _send({ type: 'action', action: apiName, params })
     }
   }
