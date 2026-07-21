@@ -113,9 +113,10 @@ const apiDefs = {
       return p
     },
   },
-  // 上传群语音，返回可直接放入 send_group_msg.message 的 voice 段。文件必须是 Silk，时长由后端计算。
+  // 上传群语音，接受 MP3，后端负责转码和生成波形，返回的 voice 段可直接发送。
   upload_group_voice: {
     wait: true,
+    timeout: 5 * 60 * 1000,
     build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
   },
   // 上传群视频，返回可直接放入 send_group_msg.message 的 video 段。

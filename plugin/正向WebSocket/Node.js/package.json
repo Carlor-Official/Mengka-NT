@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "send-voice": "node send-voice.js"
   },
   "dependencies": {
     "ws": "^8.18.0"
