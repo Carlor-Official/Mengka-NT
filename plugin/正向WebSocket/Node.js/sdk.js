@@ -205,15 +205,34 @@ const apiDefs = {
     wait: true,
     build: (self_id, ticket, randstr) => ({ self_id, ticket, randstr }),
   },
-  // 安全验证方式 4：传入 methods 中的 sign 下发短信，返回的新 sign 需要传给 check_sms。
+  // 重新查询安全验证原因和可用方式，返回结构与 login_account.security_verify 一致。
+  get_security_verify_methods: {
+    wait: true,
+    build: self_id => ({ self_id }),
+  },
+  // 请求短信验证。verify_type 必填：4 为接收短信（服务端下发验证码），3 为发送短信
+  // （用密保手机把指定内容发到指定号码）。返回服务端原始响应：两种类型都会给出新的
+  // sign，3 还会给出 sms（短信内容）和 send_to（接收号码）。
   get_sms: {
     wait: true,
-    build: (self_id, sign) => ({ self_id, sign }),
+    build: (self_id, verify_type, sign) => ({ self_id, verify_type, sign }),
   },
-  // 安全验证方式 4：提交短信验证码和下发时获得的 sign，SDK 会自动完成 NTLogin Type 2。
+  // 提交短信验证，verify_type 需与 get_sms 一致，sign 用 get_sms 新返回的那个。
+  // 4 必须传 code；3 不用传 code，改为回查服务端是否收到用户发出的短信。
+  // 校验通过会自动完成 NTLogin Type 2 并返回登录结果，未通过则返回服务端原始响应。
   check_sms: {
     wait: true,
-    build: (self_id, sign, code) => ({ self_id, sign, code }),
+    build: (self_id, verify_type, sign, code) => ({ self_id, verify_type, sign, code }),
+  },
+  // 创建扫码安全验证二维码，返回 qr_url、guarantee_token 和 expires_in。
+  create_login_qr: {
+    wait: true,
+    build: self_id => ({ self_id }),
+  },
+  // 查询扫码状态。confirmed 时后端会继续登录，最终返回结构与 login_account 一致。
+  query_login_qr_status: {
+    wait: true,
+    build: (self_id, guarantee_token) => ({ self_id, guarantee_token }),
   },
   // 设置/取消群管理员: set_admin=true 设为管理, false 取消
   set_group_admin: {
