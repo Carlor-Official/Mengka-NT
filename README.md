@@ -8,4 +8,6 @@
 
 - [Node.js SDK](./sdk/nodejs/README.md)
 
+SDK 1.0.2 修复 `get_friend_list()` 返回空好友列表的问题；`-debug` 启动模式会输出 MSF 非零错误码对应的命令、错误码和错误信息。
+
 SDK 1.0.1 新增全局接口 `get_framework_info()`，可读取当前运行框架的名称、版本、构建信息和运行平台，无需传入 `self_id`。
