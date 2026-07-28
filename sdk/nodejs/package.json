@@ -1,6 +1,6 @@
 {
   "name": "mengka-nt-plugin-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "萌卡 NT Node.js 插件 SDK",
   "main": "sdk.js",
   "exports": "./sdk.js",
