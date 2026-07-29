@@ -47,6 +47,36 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 发布空间文字动态。visibility: 1=公开、4=好友、64=仅自己；0 使用公开默认值。
+  publish_qzone_feed: {
+    wait: true,
+    build: (self_id, content, visibility = 0, self_delete_after_one_day = false, declare_ai_generated = false) => ({
+      self_id, content, visibility, self_delete_after_one_day, declare_ai_generated,
+    }),
+  },
+  // 发布空间说说，可选私密及 24 小时后自动删除。
+  publish_qzone_mood: {
+    wait: true,
+    build: (self_id, content, private_mood = false, auto_delete_24h = false) => ({
+      self_id, content, private: private_mood, auto_delete_24h,
+    }),
+  },
+  publish_qzone_ai_paint: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  publish_qzone_blind_box: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  like_qzone_mood: {
+    wait: true,
+    build: (self_id, svip = false) => ({ self_id, svip }),
+  },
+  report_qzone_feed_views: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
   // 点赞一条 get_qzone_friend_feeds 返回的动态。直接传入完整 feed；
   // 后端根据 feed.forward 是否存在自动处理转发动态。该动作没有回调，不要 await。
   like_qzone_feed: {
@@ -57,6 +87,32 @@ const apiDefs = {
   unlike_qzone_feed: {
     wait: false,
     build: (self_id, feed) => ({ self_id, feed }),
+  },
+  qq_daily_sign_in: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  qq_music_accelerate: {
+    wait: true,
+    build: (self_id, listen_30_minutes = false, exchange_level_acceleration = false) => ({
+      self_id, listen_30_minutes, exchange_level_acceleration,
+    }),
+  },
+  get_qqread_book_base_info: {
+    wait: true,
+    build: (self_id, book_id) => {
+      const p = { self_id }
+      if (book_id !== undefined) p.book_id = book_id
+      return p
+    },
+  },
+  qq_farm_daily_login: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  miniapp_user_grow_guard_judge_timing: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
   },
   // 获取群列表: 返回 { groups, total_count, self_uin }
   get_group_list: {
@@ -93,6 +149,10 @@ const apiDefs = {
       return p
     },
   },
+  approve_group_invite: {
+    wait: true,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
   // 获取指定域名的 PsKey
   get_pskey: {
     wait: true,
@@ -107,6 +167,18 @@ const apiDefs = {
       if (image_type !== undefined) p.image_type = image_type
       return p
     },
+  },
+  upload_group_voice: {
+    wait: true,
+    build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
+  },
+  upload_group_video: {
+    wait: true,
+    build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
+  },
+  send_oidb_0x9379_0: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
   },
   // 查询QQ名片，不传 target_uin 则查自己
   get_summary_card: {
@@ -207,6 +279,10 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id, target_uin, set_admin) => ({ self_id, group_id, target_uin, set_admin }),
   },
+  group_sign: {
+    wait: true,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
   // 群禁言: duration_sec 禁言秒数，0 取消禁言
   set_group_mute: {
     wait: true,
@@ -239,6 +315,15 @@ const apiDefs = {
   delete_friend: {
     wait: true,
     build: (self_id, target_uin) => ({ self_id, target_uin }),
+  },
+  get_level_tasks: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
+  // 当前服务端负责校验并接收任务名，返回 accepted_tasks；不代表任务已实际完成。
+  execute_level_tasks: {
+    wait: true,
+    build: (self_id, tasks) => ({ self_id, tasks }),
   },
 }
 
