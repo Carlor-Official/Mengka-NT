@@ -277,6 +277,11 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin) => ({ self_id, target_uin }),
   },
+  // 获取QQ等级加速面板: 返回今日加速天数、付费倍率、任务列表等
+  get_level_tasks: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
 }
 
 // ========== 事件分发 ==========
