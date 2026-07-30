@@ -254,6 +254,16 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id, mute) => ({ self_id, group_id, mute }),
   },
+  // 设置群成员专属头衔，title 传空字符串时清除头衔
+  set_group_special_title: {
+    wait: true,
+    build: (self_id, group_id, user_id, title) => ({ self_id, group_id, user_id, title }),
+  },
+  // 踢出群成员: reject_add_request=true 时同时拒绝该成员后续的加群申请
+  kick_group_member: {
+    wait: true,
+    build: (self_id, group_id, user_id, reject_add_request) => ({ self_id, group_id, user_id, reject_add_request }),
+  },
   // 撤回群消息: msg_seq=消息序列号, msg_random=消息随机数
   recall_group_msg: {
     wait: true,
