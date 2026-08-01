@@ -18,6 +18,11 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 获取 Bot 当前协议与设备指纹对应的 User-Agent
+  get_user_agent: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
   // 获取 clientkey (hex 编码)
   get_clientkey: {
     wait: true,
@@ -54,29 +59,6 @@ const apiDefs = {
       self_id, content, visibility, self_delete_after_one_day, declare_ai_generated,
     }),
   },
-  // 发布空间说说，可选私密及 24 小时后自动删除。
-  publish_qzone_mood: {
-    wait: true,
-    build: (self_id, content, private_mood = false, auto_delete_24h = false) => ({
-      self_id, content, private: private_mood, auto_delete_24h,
-    }),
-  },
-  publish_qzone_ai_paint: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
-  },
-  publish_qzone_blind_box: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
-  },
-  like_qzone_mood: {
-    wait: true,
-    build: (self_id, svip = false) => ({ self_id, svip }),
-  },
-  report_qzone_feed_views: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
-  },
   // 点赞一条 get_qzone_friend_feeds 返回的动态。直接传入完整 feed；
   // 后端根据 feed.forward 是否存在自动处理转发动态。该动作没有回调，不要 await。
   like_qzone_feed: {
@@ -87,32 +69,6 @@ const apiDefs = {
   unlike_qzone_feed: {
     wait: false,
     build: (self_id, feed) => ({ self_id, feed }),
-  },
-  qq_daily_sign_in: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
-  },
-  qq_music_accelerate: {
-    wait: true,
-    build: (self_id, listen_30_minutes = false, exchange_level_acceleration = false) => ({
-      self_id, listen_30_minutes, exchange_level_acceleration,
-    }),
-  },
-  get_qqread_book_base_info: {
-    wait: true,
-    build: (self_id, book_id) => {
-      const p = { self_id }
-      if (book_id !== undefined) p.book_id = book_id
-      return p
-    },
-  },
-  qq_farm_daily_login: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
-  },
-  miniapp_user_grow_guard_judge_timing: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
   },
   // 获取群列表: 返回 { groups, total_count, self_uin }
   get_group_list: {
@@ -176,10 +132,6 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
   },
-  send_oidb_0x9379_0: {
-    wait: true,
-    build: (self_id) => ({ self_id }),
-  },
   // 查询QQ名片，不传 target_uin 则查自己
   get_summary_card: {
     wait: true,
@@ -194,15 +146,15 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 获取萌卡 NT 框架名称、版本、构建信息和运行平台（无需 self_id）
-  get_framework_info: {
-    wait: true,
-    build: () => ({}),
-  },
   // 获取节点下所有 Bot 列表（无需 self_id）
   get_bot_list: {
     wait: true,
     build: () => ({}),
+  },
+  // 获取节点下指定 Bot 的运行信息
+  get_bot_info: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
   },
   // 获取本地 protocol.json 的完整数组，不额外注入 ID（无需 self_id）
   get_protocol_list: {
@@ -219,60 +171,79 @@ const apiDefs = {
     wait: true,
     resultMessage: '账号添加成功',
     resultData: false,
-    build: (account, password, protocol_id, device_profile_id) => ({ account, password, protocol_id, device_profile_id }),
+    build: (account, password, protocol_id, device_profile_id) => ({ self_id: account, password, protocol_id, device_profile_id }),
   },
   // 编辑当前插件所属节点内的账号
   update_account: {
     wait: true,
     resultMessage: '账号编辑成功',
     resultData: false,
-    build: (account, password, protocol_id, device_profile_id) => ({ account, password, protocol_id, device_profile_id }),
+    build: (account, password, protocol_id, device_profile_id) => ({ self_id: account, password, protocol_id, device_profile_id }),
   },
   // 取消登录中账号或使已登录账号离线，仅限当前插件所属节点
   offline_account: {
     wait: true,
     resultMessage: '账号已离线',
     resultData: false,
-    build: account => ({ account }),
+    build: account => ({ self_id: account }),
   },
   // 删除当前插件所属节点内已离线的账号
   delete_account: {
     wait: true,
     resultMessage: '账号删除成功',
     resultData: false,
-    build: account => ({ account }),
+    build: account => ({ self_id: account }),
   },
   // 登录当前插件所属节点内的离线账号。返回 { code, message }；
   // 滑块、身份验证附带 slider_url、identity_url；安全验证会返回 security_verify
   // （QQ 原始验证原因和可用方法），仅在响应带 URL 时才附带 security_url。
   login_account: {
     wait: true,
-    build: account => ({ account }),
+    build: account => ({ self_id: account }),
   },
   // 查询账号缓存的 token 是否完整有效。
   check_cache: {
     wait: true,
-    build: account => ({ account }),
+    build: account => ({ self_id: account }),
   },
   // 使用缓存连接 MSF，交换 Login ECDH 后执行 InfoSync 登录。
   cache_login: {
     wait: true,
-    build: account => ({ account }),
+    build: account => ({ self_id: account }),
   },
   // 提交 Type 0 滑块验证结果。Bot 会使用内部保存的 cookie 与 SID。
   submit_slider: {
     wait: true,
-    build: (account, ticket, randstr) => ({ account, ticket, randstr }),
+    build: (account, ticket, randstr) => ({ self_id: account, ticket, randstr }),
   },
-  // 安全验证方式 4：传入 methods 中的 sign 下发短信，返回的新 sign 需要传给 check_sms。
+  // 重新查询当前登录会话支持的安全验证方式。
+  get_security_verify_methods: {
+    wait: true,
+    build: account => ({ self_id: account }),
+  },
+  // 创建登录确认二维码，返回 qr_url、guarantee_token 和 expires_in。
+  create_login_qr: {
+    wait: true,
+    build: account => ({ self_id: account }),
+  },
+  // 查询二维码状态；确认后服务端会继续完成 NTLogin。
+  query_login_qr_status: {
+    wait: true,
+    build: (account, guarantee_token) => ({ self_id: account, guarantee_token }),
+  },
+  // verify_type: 4=接收短信，3=从绑定手机发送短信。
   get_sms: {
     wait: true,
-    build: (account, sign) => ({ account, sign }),
+    build: (account, verify_type, sign) => ({ self_id: account, verify_type, sign }),
   },
-  // 安全验证方式 4：提交短信验证码和下发时获得的 sign，SDK 会自动完成 NTLogin Type 2。
+  // verify_type=4 时 code 必填；verify_type=3 时无需 code。
   check_sms: {
     wait: true,
-    build: (account, sign, code) => ({ account, sign, code }),
+    build: (account, verify_type, sign, code) => {
+      const p = { self_id: account, verify_type, sign }
+      if (code !== undefined) p.code = code
+      return p
+    },
   },
   // 设置/取消群管理员: set_admin=true 设为管理, false 取消
   set_group_admin: {
@@ -292,6 +263,18 @@ const apiDefs = {
   set_group_mute_all: {
     wait: true,
     build: (self_id, group_id, mute) => ({ self_id, group_id, mute }),
+  },
+  // 设置或清除群成员专属头衔，title 为空字符串时清除
+  set_group_special_title: {
+    wait: true,
+    build: (self_id, group_id, user_id, title) => ({ self_id, group_id, user_id, title }),
+  },
+  // 踢出群成员，可选拒绝该成员后续加群申请
+  kick_group_member: {
+    wait: true,
+    build: (self_id, group_id, user_id, reject_add_request = false) => ({
+      self_id, group_id, user_id, reject_add_request,
+    }),
   },
   // 撤回群消息: msg_seq=消息序列号, msg_random=消息随机数
   recall_group_msg: {
@@ -320,7 +303,7 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 当前服务端负责校验并接收任务名，返回 accepted_tasks；不代表任务已实际完成。
+  // 执行指定等级任务；成功时服务端不返回额外数据。
   execute_level_tasks: {
     wait: true,
     build: (self_id, tasks) => ({ self_id, tasks }),

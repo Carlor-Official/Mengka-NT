@@ -12,7 +12,7 @@ const result = await api.login_account(123456789)
 
 ## 权限范围
 
-插件只能操作**自身绑定节点**下的 Bot。`get_bot_list()` 仅返回该节点的账号；`add_account` 会将新账号添加到该节点；`update_account`、`offline_account`、`delete_account`、`login_account`、验证提交和缓存登录都只接受该节点的账号。账号不属于当前插件绑定节点时，请求会失败，插件不能通过任何参数指定或操作其他节点。
+插件只能操作**自身绑定节点**下的 Bot。`get_bot_list()` 仅返回该节点的账号，`get_bot_info(account)` 只查询该节点下的指定账号；`add_account` 会将新账号添加到该节点；`update_account`、`offline_account`、`delete_account`、`login_account`、验证提交和缓存登录都只接受该节点的账号。账号不属于当前插件绑定节点时，请求会失败，插件不能通过任何参数指定或操作其他节点。
 
 ## 账号准备
 
@@ -50,10 +50,9 @@ await api.delete_account(account)  // 仅可删除离线账号
 `login_account` 和 `cache_login` 只接受状态为 `0` 的离线账号。发起任一登录前，先从 `get_bot_list()` 找到账号并检查 `status`；如果状态不为 `0`，必须先调用离线接口，等待其完成后再登录：
 
 ```js
-const bots = await api.get_bot_list()
-const bot = bots.find(item => item.self_id === account)
+const bot = await api.get_bot_info(account)
 
-if (bot && bot.status !== 0) {
+if (bot.status !== 0) {
   await api.offline_account(account)
 }
 
@@ -118,15 +117,18 @@ const result = await api.login_account(account)
 }
 ```
 
-`security_verify.methods` 保留 QQ 的完整原始数据。插件从其中选择验证方式，并使用该方式对应的 `sign`。不要假定 `140022010` 一定带 URL。
+`security_verify.methods` 保留 QQ 的完整原始数据。插件从其中选择验证方式，并使用该方式对应的 `sign`。不要假定 `140022010` 一定带 URL。需要刷新当前可用方式时调用：
+
+```js
+const security = await api.get_security_verify_methods(account)
+```
 
 ### 身份验证所需参数
 
 `140022007` 的身份验证由插件自行接入开源 API。先从账号所在节点的 Bot 列表中找到当前账号，再按其 ID 取得完整协议与设备指纹数据：
 
 ```js
-const bots = await api.get_bot_list()
-const bot = bots.find(item => item.self_id === account)
+const bot = await api.get_bot_info(account)
 
 const protocols = await api.get_protocol_list()
 const protocol = protocols[bot.protocol_id]
@@ -157,42 +159,54 @@ const result = await api.submit_slider(account, ticket, randstr)
 
 服务端会保留 Type 0 返回的 cookie 和滑块 SID，插件不需要也不能传递它们。接口内部执行 NTLogin Type 1，返回格式与 `login_account` 相同；如果仍返回其他验证 `code`，按该 `code` 继续处理。
 
+## 二维码安全验证
+
+账号正在等待安全验证时，可以创建登录确认二维码：
+
+```js
+const qr = await api.create_login_qr(account)
+// { code: 0, qr_url, guarantee_token, expires_in: 180, ... }
+```
+
+展示 `qr_url` 后，携带同一个 `guarantee_token` 轮询：
+
+```js
+const status = await api.query_login_qr_status(account, qr.guarantee_token)
+```
+
+`status.status` 可能为 `waiting`、`scanned`、`confirmed` 或 `expired`。确认成功后服务端会自动继续 NTLogin；插件无需再提交其他登录请求。
+
 ## 短信安全验证
 
-当 `login_account` 或 `submit_slider` 返回 `140022010`，并且 `security_verify.methods` 中存在短信验证方式（通常为方式 `4`）时，流程如下：
+短信接口必须显式传入 `verify_type`：`4` 表示接收 QQ 下发的验证码，`3` 表示用户从绑定手机主动发送短信。
+
+### 方式 4：接收验证码
 
 ```text
 QueryVerifyList 返回的 method sign
-  -> get_sms(account, methodSign)
-  -> GetSMS 返回的 smsSign
-  -> check_sms(account, smsSign, smsCode)
-  -> CheckSMS 返回的 verify_sign
+  -> get_sms(account, 4, methodSign)
+  -> GetSMS 返回新的 sign
+  -> check_sms(account, 4, newSign, smsCode)
+  -> CheckSMS 返回 verify_sign
   -> 服务端 NTLogin Type 2
 ```
 
-### 1. 下发短信
-
 ```js
-const sms = await api.get_sms(account, methodSign)
+const sms = await api.get_sms(account, 4, methodSign)
+const result = await api.check_sms(account, 4, sms.sign, smsCode)
 ```
 
-成功：
+必须把 GetSMS 新返回的 `sign` 传给 `check_sms`，不能继续使用验证方式列表里的旧 `methodSign`。
+
+### 方式 3：主动发送短信
 
 ```js
-{ code: 0, message: '短信已下发', sign: 'smsSign' }
+const sms = await api.get_sms(account, 3, methodSign)
+// 按 sms/send_to 指示从绑定手机发送短信后轮询：
+const result = await api.check_sms(account, 3, sms.sign)
 ```
 
-这里的 `sign` 是 GetSMS 新返回的值，不能继续使用 `methods` 里的 `methodSign` 去提交验证码。
-
-### 2. 提交验证码
-
-```js
-const result = await api.check_sms(account, sms.sign, smsCode)
-```
-
-`check_sms` 会先执行 CheckSMS，取其返回的 `verify_sign`，再自动执行 NTLogin Type 2。插件只传 GetSMS 返回的 `sign` 和用户输入的短信验证码；无需、也不能自行传 `verify_sign`。
-
-最终结果格式与 `login_account` 相同。`code === 0` 时服务端会启动在线任务。
+方式 `3` 不传验证码。若服务端尚未收到短信，会返回可重试状态；验证通过后同样自动执行 NTLogin Type 2。最终登录结果格式与 `login_account` 相同，`code === 0` 时服务端会启动在线任务。
 
 ## 缓存登录
 
