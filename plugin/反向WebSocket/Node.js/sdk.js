@@ -18,6 +18,11 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 获取当前 Bot 协议和设备指纹对应的 User-Agent
+  get_user_agent: {
+    wait: true,
+    build: (self_id) => ({ self_id }),
+  },
   // 获取 clientkey (hex 编码)
   get_clientkey: {
     wait: true,
