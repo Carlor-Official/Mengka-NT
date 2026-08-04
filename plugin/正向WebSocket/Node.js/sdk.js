@@ -52,6 +52,17 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 发布文本空间动态。visibility: 1=所有人，2=好友，5=仅自己。
+  publish_qzone_feed: {
+    wait: true,
+    build: (self_id, content, visibility = 1, self_delete_after_one_day = false, declare_ai_generated = false) => ({
+      self_id,
+      content,
+      visibility,
+      self_delete_after_one_day,
+      declare_ai_generated,
+    }),
+  },
   // 点赞一条 get_qzone_friend_feeds 返回的动态。直接传入完整 feed；
   // 后端根据 feed.forward 是否存在自动处理转发动态。该动作没有回调，不要 await。
   like_qzone_feed: {
@@ -108,9 +119,38 @@ const apiDefs = {
     wait: true,
     build: (self_id, domain) => ({ self_id, domain }),
   },
+  // 查询收到的 red_packet 消息段所对应的 QQ 红包详情。
+  get_red_packet_info: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, group_id, sender_uin, red_packet) => ({
+      ...red_packet,
+      self_id,
+      group_id,
+      sender_uin,
+    }),
+  },
+  // 领取收到的 red_packet 消息段所对应的 QQ 群红包。
+  grab_red_packet: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, group_id, sender_uin, red_packet) => ({
+      ...red_packet,
+      self_id,
+      group_id,
+      sender_uin,
+    }),
+  },
+  // 设置当前 QQ 账号头像（支持本地路径/file:///http(s)://）。
+  set_qq_avatar: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, file_path) => ({ self_id, file_path }),
+  },
   // 上传群图片（支持本地路径/file:///http(s)://），返回 {type:"image",data:{file_id}} 可直接塞 message 数组
   upload_group_image: {
     wait: true,
+    timeout: 60 * 1000,
     build: (self_id, group_id, file_path, name, image_type) => {
       const p = { self_id, group_id, file_path }
       if (name !== undefined) p.name = name
@@ -118,7 +158,7 @@ const apiDefs = {
       return p
     },
   },
-  // 上传群语音，接受 MP3，后端负责转码和生成波形，返回的 voice 段可直接发送。
+  // 上传群语音，接受 FFmpeg 可解码的常见格式，后端负责转码和生成波形。
   upload_group_voice: {
     wait: true,
     timeout: 5 * 60 * 1000,
@@ -149,6 +189,11 @@ const apiDefs = {
   get_bot_list: {
     wait: true,
     build: () => ({}),
+  },
+  // 获取当前节点下指定 Bot 的运行信息。
+  get_bot_info: {
+    wait: true,
+    build: self_id => ({ self_id }),
   },
   // 获取本地 protocol.json 的完整数组，不额外注入 ID（无需 self_id）
   get_protocol_list: {
@@ -296,6 +341,12 @@ const apiDefs = {
   get_level_tasks: {
     wait: true,
     build: (self_id) => ({ self_id }),
+  },
+  // 按数组顺序执行指定的QQ等级加速任务。
+  execute_level_tasks: {
+    wait: true,
+    timeout: 5 * 60 * 1000,
+    build: (self_id, tasks) => ({ self_id, tasks }),
   },
 }
 

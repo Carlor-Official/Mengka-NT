@@ -1,12 +1,11 @@
 {
-  "name": "moe-plugin-test",
+  "name": "mengka-red-packet-grabber",
   "version": "1.0.0",
-  "description": "萌卡NT 插件测试客户端",
+  "description": "萌卡NT 正向 WebSocket 红包领取插件",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "send-voice": "node send-voice.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "ws": "^8.18.0"
