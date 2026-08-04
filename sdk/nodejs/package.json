@@ -1,0 +1,13 @@
+{
+  "name": "mengka-nt-plugin-sdk",
+  "description": "萌卡 NT Node.js 插件 SDK",
+  "main": "sdk.js",
+  "exports": "./sdk.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --test sdk.test.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
