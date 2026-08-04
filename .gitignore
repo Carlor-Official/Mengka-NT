@@ -6,3 +6,7 @@ version/
 *.zip
 *.tar.gz
 *.exe
+
+# 本地发布说明，不提交到公开仓库
+build.md
+更新日志.md
