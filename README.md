@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="mengka-nt-cover.svg" width="100%" alt="萌卡 NT 跨平台 QQ 机器人框架" />
+  <img src="mengka-nt-logo.png" width="256" alt="萌卡 NT" />
 
   <p>
     <a href="https://github.com/CarlorOfficial/Mengka-NT/releases/latest"><img src="https://img.shields.io/badge/下载-GitHub%20Releases-7C5CFC?style=flat-square" alt="GitHub Releases" /></a>
