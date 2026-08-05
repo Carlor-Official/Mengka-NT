@@ -2,7 +2,7 @@
   <img src="mengka-nt-logo.png" width="256" alt="萌卡 NT" />
 
   <p>
-    <a href="https://github.com/CarlorOfficial/Mengka-NT/releases/latest"><img src="https://img.shields.io/badge/下载-GitHub%20Releases-7C5CFC?style=flat-square" alt="GitHub Releases" /></a>
+    <a href="https://github.com/Carlor-Official/Mengka-NT/releases/latest"><img src="https://img.shields.io/badge/下载-GitHub%20Releases-7C5CFC?style=flat-square" alt="GitHub Releases" /></a>
     <img src="https://img.shields.io/badge/平台-Windows%20%7C%20Linux-2684FF?style=flat-square" alt="Windows 与 Linux" />
     <img src="https://img.shields.io/badge/架构-AMD64%20%7C%20ARM64-00A884?style=flat-square" alt="AMD64 与 ARM64" />
     <img src="https://img.shields.io/badge/管理-WebUI-F59E0B?style=flat-square" alt="WebUI 管理" />
@@ -15,10 +15,10 @@
   <p>多账号与多节点 · 可视化 WebUI · 插件 WebSocket · Windows / Linux</p>
 
   <p>
-    <a href="https://github.com/CarlorOfficial/Mengka-NT/releases/latest">下载最新版</a>
-    · <a href="https://github.com/CarlorOfficial/Mengka-NT/releases">版本记录</a>
-    · <a href="https://github.com/CarlorOfficial/Mengka-NT/issues">问题反馈</a>
-    · <a href="sdk/nodejs/README.md">插件 SDK</a>
+    <a href="https://github.com/Carlor-Official/Mengka-NT/releases/latest">下载最新版</a>
+    · <a href="https://github.com/Carlor-Official/Mengka-NT/releases">版本记录</a>
+    · <a href="https://github.com/Carlor-Official/Mengka-NT/issues">问题反馈</a>
+    · <a href="plugin/正向WebSocket/Node.js">插件 SDK</a>
   </p>
 </div>
 
@@ -55,13 +55,13 @@
 | Linux | `mengka-nt-v*-linux-amd64.tar.gz` | `mengka-nt` | AMD64 / x86_64 |
 | Linux | `mengka-nt-v*-linux-arm64.tar.gz` | `mengka-nt` | ARM64 / AArch64 |
 
-不同平台和架构的程序不能混用。请只从本仓库 [Releases](https://github.com/CarlorOfficial/Mengka-NT/releases) 下载正式外发包。
+不同平台和架构的程序不能混用。请只从本仓库 [Releases](https://github.com/Carlor-Official/Mengka-NT/releases) 下载正式外发包。
 
 ## 快速开始
 
 ### 1. 下载与解压
 
-进入 [GitHub Releases](https://github.com/CarlorOfficial/Mengka-NT/releases/latest)，根据服务器系统和 CPU 架构下载对应压缩包，并完整解压到独立目录。
+进入 [GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest)，根据服务器系统和 CPU 架构下载对应压缩包，并完整解压到独立目录。
 
 升级已有安装前，请先停止框架并备份程序目录中的 `data` 目录。不要用新包中的空目录覆盖已有运行数据。
 
@@ -144,7 +144,7 @@ chmod +x ./mengka-nt
 
 ### 安装
 
-将 [`sdk/nodejs`](sdk/nodejs) 中的 `sdk.js`、`package.json` 和 `package-lock.json` 放入插件目录，然后执行：
+根据连接模式使用仓库中的 [正向 WebSocket Node.js SDK](plugin/正向WebSocket/Node.js) 或 [反向 WebSocket Node.js SDK](plugin/反向WebSocket/Node.js)，进入对应目录后执行：
 
 ```bash
 npm install
@@ -165,12 +165,9 @@ const api = createAPI({
 })
 
 await api.connect()
-
-const framework = await api.get_framework_info()
-console.log(framework.name, framework.version)
 ```
 
-不要将插件令牌直接写入源码或提交到公开仓库。完整接入说明见 [Node.js SDK 文档](sdk/nodejs/README.md)，账号登录与安全验证流程见 [登录 API 文档](sdk/nodejs/login.md)。
+不要将插件令牌直接写入源码或提交到公开仓库。完整接口和登录流程见 [萌卡 NT 开发文档](https://github.com/shiina0118/mengka-nt-docs)。
 
 ## 安全与数据
 
@@ -213,9 +210,9 @@ console.log(framework.name, framework.version)
 
 ## 版本与反馈
 
-- 最新版本：[GitHub Releases](https://github.com/CarlorOfficial/Mengka-NT/releases/latest)
-- 历史版本：[版本记录](https://github.com/CarlorOfficial/Mengka-NT/releases)
-- Bug 与建议：[提交 Issue](https://github.com/CarlorOfficial/Mengka-NT/issues)
-- 插件开发：[Node.js SDK](sdk/nodejs/README.md)
+- 最新版本：[GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest)
+- 历史版本：[版本记录](https://github.com/Carlor-Official/Mengka-NT/releases)
+- Bug 与建议：[提交 Issue](https://github.com/Carlor-Official/Mengka-NT/issues)
+- 插件开发：[Node.js SDK](plugin/正向WebSocket/Node.js) · [开发文档](https://github.com/shiina0118/mengka-nt-docs)
 
 本仓库当前不提供框架核心业务源码或开源许可。请仅从本仓库 Release 获取正式外发包。
