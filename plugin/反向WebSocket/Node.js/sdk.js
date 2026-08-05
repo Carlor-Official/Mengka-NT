@@ -119,7 +119,7 @@ const apiDefs = {
     wait: true,
     build: (self_id, domain) => ({ self_id, domain }),
   },
-  // 查询收到的 red_packet 消息段所对应的 QQ 红包详情。
+  // 查询红包详情，返回值顶层包含正式领取所需的 pre_grap_token。
   get_red_packet_info: {
     wait: true,
     timeout: 60 * 1000,
@@ -130,15 +130,16 @@ const apiDefs = {
       sender_uin,
     }),
   },
-  // 领取收到的 red_packet 消息段所对应的 QQ 群红包。
+  // pre_grap_token 必须传入 get_red_packet_info 返回的同名顶层字段。
   grab_red_packet: {
     wait: true,
     timeout: 60 * 1000,
-    build: (self_id, group_id, sender_uin, red_packet) => ({
+    build: (self_id, group_id, sender_uin, red_packet, pre_grap_token) => ({
       ...red_packet,
       self_id,
       group_id,
       sender_uin,
+      pre_grap_token,
     }),
   },
   // 设置当前 QQ 账号头像（支持本地路径/file:///http(s)://）。

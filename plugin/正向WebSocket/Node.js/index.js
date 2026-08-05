@@ -1,58 +1,32 @@
 import { createAPI } from './sdk.js'
 
 const api = createAPI({
-  host: '110.42.57.220',
+  host: '127.0.0.1',
   port: 3001,
-  token: 'qbti3ic8bledriaf',
-  name: 'red-packet-grabber',
+  token: '在管理后台填写服务令牌',
+  name: 'test',
   version: '1.0.0',
   author: 'test',
 })
 
-function elapsedMilliseconds(startedAt) {
-  return Number(process.hrtime.bigint() - startedAt) / 1e6
-}
-
-function currentTimestamp() {
-  const now = new Date()
-  const pad = (value, length = 2) => String(value).padStart(length, '0')
-
-  return [
-    `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
-    `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.${pad(now.getMilliseconds(), 3)}`,
-  ].join(' ')
-}
-
-async function grabRedPacket(event, redPacket) {
-  const startedAt = process.hrtime.bigint()
-  const context = `账号=${event.self_id} 群=${event.group_id}`
-
-  try {
-    const result = api.grab_red_packet(
-      event.self_id,
-      event.group_id,
-      event.sender.user_id,
-      redPacket.data,
-    )
-    console.log(`[${currentTimestamp()}] [红包] 已发起领取 ${context}`)
-
-    await result
-    console.log(
-      `[${currentTimestamp()}] [红包] 领取成功 ${context}，用时 ${elapsedMilliseconds(startedAt).toFixed(2)} ms`,
-    )
-  } catch (error) {
-    console.error(
-      `[${currentTimestamp()}] [红包] 领取失败 ${context}，用时 ${elapsedMilliseconds(startedAt).toFixed(2)} ms：${error.message}`,
-    )
-  }
-}
-
 api.on('group_message', event => {
-  for (const segment of event.message ?? []) {
-    if (segment.type === 'red_packet') {
-      void grabRedPacket(event, segment)
-    }
-  }
+  console.log(`[群聊消息] 群=${event.group_id} 用户=${event.sender?.user_id} ${event.alt_message || ''}`)
+})
+
+api.on('friend_message', event => {
+  console.log(`[好友消息] 用户=${event.sender?.user_id} ${event.alt_message || ''}`)
+})
+
+api.on('group_notice', event => {
+  console.log(`[群事件] 类型=${event.sub_type || 'unknown'} 群=${event.group_id}`, event)
+})
+
+api.on('friend_notice', event => {
+  console.log(`[好友事件] 类型=${event.sub_type || 'unknown'}`, event)
+})
+
+api.on('bot_offline', event => {
+  console.log(`[Bot离线] 账号=${event.self_id} 原因=${event.err_msg || ''}`)
 })
 
 await api.connect()
