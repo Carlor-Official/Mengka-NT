@@ -35,7 +35,7 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id, message) => ({ self_id, group_id, message }),
   },
-  // 发送好友消息: 目前支持 text；群聊的 at/image/voice/face PB 不会复用到好友消息。
+  // 发送好友消息: 支持 text/image；image 使用 upload_friend_image 返回的图片段。
   send_friend_msg: {
     wait: true,
     build: (self_id, user_id, message) => ({ self_id, user_id, message }),
@@ -152,12 +152,13 @@ const apiDefs = {
   upload_group_image: {
     wait: true,
     timeout: 60 * 1000,
-    build: (self_id, group_id, file_path, name, image_type) => {
-      const p = { self_id, group_id, file_path }
-      if (name !== undefined) p.name = name
-      if (image_type !== undefined) p.image_type = image_type
-      return p
-    },
+    build: (self_id, group_id, file_path) => ({ self_id, group_id, file_path }),
+  },
+  // 上传好友图片（支持本地路径/file:///http(s)://），返回可直接发送的图片段
+  upload_friend_image: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, user_id, file_path) => ({ self_id, user_id, file_path }),
   },
   // 上传群语音，接受 FFmpeg 可解码的常见格式，后端负责转码和生成波形。
   upload_group_voice: {
