@@ -350,6 +350,20 @@ const apiDefs = {
     timeout: 5 * 60 * 1000,
     build: (self_id, tasks) => ({ self_id, tasks }),
   },
+  // 注册滑块验证反代：抓取并改写 TCaptcha.js，返回 { uin, script }。
+  // script 为改写后的脚本内容，capDomain 已指向 proxy_base（为空时用默认反代前缀）。
+  register_captcha_proxy: {
+    wait: true,
+    timeout: 30 * 1000,
+    build: (self_id, url, proxy_base = '') => ({ self_id, url, proxy_base }),
+  },
+  // 反代转发滑块页请求到 t.captcha.qq.com（走节点代理）。
+  // 返回 { status, headers, result }，result 为响应体 base64 编码。
+  captcha_proxy: {
+    wait: true,
+    timeout: 30 * 1000,
+    build: (self_id, url, method = 'GET', headers = {}, body = '') => ({ self_id, url, method, headers, body }),
+  },
 }
 
 // ========== 事件分发 ==========
