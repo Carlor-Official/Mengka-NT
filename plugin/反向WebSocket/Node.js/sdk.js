@@ -28,6 +28,17 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 使用当前 Bot 登录态发送已开放的宠物业务 OIDB 请求。
+  // body_hex 只填写业务 protobuf，不要重复封装 OIDB 外层；写操作不会自动重试。
+  send_oidb_packet: {
+    wait: true,
+    build: (self_id, command, sub_command, body_hex = '') => ({
+      self_id,
+      command,
+      sub_command,
+      body_hex,
+    }),
+  },
   // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/voice/video/face。
   // face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
   // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 5 分钟)
