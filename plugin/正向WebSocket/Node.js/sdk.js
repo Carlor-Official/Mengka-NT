@@ -129,10 +129,10 @@ const apiDefs = {
       return p
     },
   },
-  // 同意好友发来的群邀请。group_id 来自 friend_notice/group_invite 事件。
+  // 同意好友 Ark 卡片发来的群邀请。
   approve_group_invite: {
     wait: true,
-    build: (self_id, group_id) => ({ self_id, group_id }),
+    build: (self_id, group_id, msgseq) => ({ self_id, group_id, msgseq }),
   },
   // 获取指定域名的 PsKey
   get_pskey: {
@@ -161,6 +161,17 @@ const apiDefs = {
       sender_uin,
       pre_grap_token,
     }),
+  },
+  // 查询指定群中仍可领取的红包，返回数组。
+  get_group_red_packets: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
+  get_up_for_grabs: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, group_id) => ({ self_id, group_id }),
   },
   // 设置当前 QQ 账号头像（支持本地路径/file:///http(s)://）。
   set_qq_avatar: {
