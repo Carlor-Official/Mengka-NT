@@ -28,17 +28,26 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 使用当前 Bot 登录态发送已开放的宠物业务 OIDB 请求。
-  // body_hex 只填写业务 protobuf，不要重复封装 OIDB 外层；写操作不会自动重试。
-  send_oidb_packet: {
-    wait: true,
-    build: (self_id, command, sub_command, body_hex = '') => ({
-      self_id,
-      command,
-      sub_command,
-      body_hex,
-    }),
-  },
+  // 宠物 API 仅接收业务参数；宠物 ID、活动阶段、事件类型和故事 ID 由框架自动获取。
+  get_pet_profile: { wait: true, build: (self_id) => ({ self_id }) },
+  get_pet_vitals: { wait: true, build: (self_id) => ({ self_id }) },
+  get_pet_food_catalog: { wait: true, build: (self_id) => ({ self_id }) },
+  feed_pet: { wait: true, build: (self_id, food_name = '') => ({ self_id, food_name }) },
+  buy_pet_food: { wait: true, build: (self_id, count = 1) => ({ self_id, count }) },
+  get_pet_bath_catalog: { wait: true, build: (self_id) => ({ self_id }) },
+  get_pet_bath_inventory: { wait: true, build: (self_id) => ({ self_id }) },
+  bathe_pet: { wait: true, build: (self_id, item_name) => ({ self_id, item_name }) },
+  buy_pet_bath_item: { wait: true, build: (self_id, item_name, count = 1) => ({ self_id, item_name, count }) },
+  // activity 支持 school/work/adventure 或 学习/打工/冒险。
+  get_pet_activity_overview: { wait: true, build: (self_id, activity) => ({ self_id, activity }) },
+  get_pet_activity_options: { wait: true, build: (self_id, activity) => ({ self_id, activity }) },
+  start_pet_activity: { wait: true, build: (self_id, activity, option_name) => ({ self_id, activity, option_name }) },
+  get_pet_activity_status: { wait: true, build: (self_id) => ({ self_id }) },
+  settle_pet_activity: { wait: true, build: (self_id) => ({ self_id }) },
+  encourage_pet_activity: { wait: true, build: (self_id) => ({ self_id }) },
+  get_pet_pk_friends: { wait: true, build: (self_id, cursor = '') => ({ self_id, cursor }) },
+  get_pet_pk_power: { wait: true, build: (self_id) => ({ self_id }) },
+  poke_friend_pet: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
   // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/voice/video/face。
   // face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
   // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 5 分钟)
