@@ -40,14 +40,21 @@ const apiDefs = {
   buy_pet_bath_item: { wait: true, build: (self_id, pet_id, item, count = 1) => ({ self_id, pet_id, item, count }) },
   // activity 支持 school/work/adventure 或 学习/打工/冒险。
   get_pet_activity_overview: { wait: true, build: (self_id, activity) => ({ self_id, activity }) },
-  get_pet_activity_options: { wait: true, build: (self_id, activity) => ({ self_id, activity }) },
-  start_pet_activity: { wait: true, build: (self_id, activity, option_name) => ({ self_id, activity, option_name }) },
+  get_pet_activity_options: { wait: true, build: (self_id, activity, friend_id = 0) => ({ self_id, activity, friend_id }) },
+  start_pet_activity: { wait: true, build: (self_id, activity, option_name, friend_id = 0) => ({ self_id, activity, option_name, friend_id }) },
   get_pet_activity_status: { wait: true, build: (self_id) => ({ self_id }) },
   settle_pet_activity: { wait: true, build: (self_id) => ({ self_id }) },
   encourage_pet_activity: { wait: true, build: (self_id) => ({ self_id }) },
   get_pet_pk_friends: { wait: true, build: (self_id, cursor = '') => ({ self_id, cursor }) },
   get_pet_pk_power: { wait: true, build: (self_id) => ({ self_id }) },
   poke_friend_pet: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
+  get_friend_pet_profile: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
+  feed_friend_pet: { wait: true, build: (self_id, friend_id, food) => ({ self_id, friend_id, food }) },
+  bathe_friend_pet: { wait: true, build: (self_id, friend_id, item, count = 1) => ({ self_id, friend_id, item, count }) },
+  visit_friend_pet: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
+  start_pet_pk: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
+  get_pet_pk_status: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
+  settle_pet_pk: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
   // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/voice/video/face。
   // face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
   // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 5 分钟)
