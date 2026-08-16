@@ -18,7 +18,7 @@
     <a href="https://github.com/Carlor-Official/Mengka-NT/releases/latest">下载最新版</a>
     · <a href="https://github.com/Carlor-Official/Mengka-NT/releases">版本记录</a>
     · <a href="https://github.com/Carlor-Official/Mengka-NT/issues">问题反馈</a>
-    · <a href="plugin/正向WebSocket/Node.js">插件 SDK</a>
+    · <a href="sdk/nodejs">插件 SDK</a>
   </p>
 </div>
 
@@ -140,11 +140,11 @@ chmod +x ./mengka-nt
 
 ## 插件 SDK
 
-仓库提供 Node.js 插件 SDK，支持连接插件 WebSocket、接收机器人事件并调用框架 action。
+仓库在 [`sdk/nodejs`](sdk/nodejs) 提供不带版本子目录的 Node.js 插件 SDK，支持连接插件 WebSocket、接收机器人事件并调用框架 action。
 
 ### 安装
 
-根据连接模式使用仓库中的 [正向 WebSocket Node.js SDK](plugin/正向WebSocket/Node.js) 或 [反向 WebSocket Node.js SDK](plugin/反向WebSocket/Node.js)，进入对应目录后执行：
+直接使用 [`sdk/nodejs/sdk.js`](sdk/nodejs/sdk.js)（正向 WebSocket）或 [`sdk/nodejs/reverse-sdk.js`](sdk/nodejs/reverse-sdk.js)（反向 WebSocket）。可运行示例仍位于 [正向 WebSocket 示例](plugin/正向WebSocket/Node.js) 和 [反向 WebSocket 示例](plugin/反向WebSocket/Node.js)。进入所选目录后执行：
 
 ```bash
 npm install
@@ -213,6 +213,6 @@ await api.connect()
 - 最新版本：[GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest)
 - 历史版本：[版本记录](https://github.com/Carlor-Official/Mengka-NT/releases)
 - Bug 与建议：[提交 Issue](https://github.com/Carlor-Official/Mengka-NT/issues)
-- 插件开发：[Node.js SDK](plugin/正向WebSocket/Node.js) · [开发文档](https://github.com/shiina0118/mengka-nt-docs)
+- 插件开发：[Node.js SDK](sdk/nodejs) · [开发文档](https://mknt.net/api/)
 
 本仓库当前不提供框架核心业务源码或开源许可。请仅从本仓库 Release 获取正式外发包。
