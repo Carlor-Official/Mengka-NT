@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/平台-Windows%20%7C%20Linux-2684FF?style=flat-square" alt="Windows 与 Linux" />
     <img src="https://img.shields.io/badge/架构-AMD64%20%7C%20ARM64-00A884?style=flat-square" alt="AMD64 与 ARM64" />
     <img src="https://img.shields.io/badge/管理-WebUI-F59E0B?style=flat-square" alt="WebUI 管理" />
-    <img src="https://img.shields.io/badge/插件-Node.js%20SDK-00ADD8?style=flat-square" alt="Node.js 插件 SDK" />
+    <img src="https://img.shields.io/badge/插件-Node.js%20%7C%20WebUI%20SDK-00ADD8?style=flat-square" alt="Node.js 与 WebUI 插件 SDK" />
   </p>
 
   <p><strong>萌卡 NT</strong></p>
@@ -18,7 +18,8 @@
     <a href="https://github.com/Carlor-Official/Mengka-NT/releases/latest">下载最新版</a>
     · <a href="https://github.com/Carlor-Official/Mengka-NT/releases">版本记录</a>
     · <a href="https://github.com/Carlor-Official/Mengka-NT/issues">问题反馈</a>
-    · <a href="sdk/nodejs">插件 SDK</a>
+    · <a href="sdk/nodejs">Node.js SDK</a>
+    · <a href="sdk/plugin-web">WebUI SDK</a>
   </p>
 </div>
 
@@ -42,7 +43,7 @@
 | 消息能力 | 群聊与私聊消息收发，支持图片、语音、视频、转发消息及消息撤回等常用操作 |
 | 联系人与群 | 好友、群和群成员列表查询，入群申请与邀请处理，管理员、禁言和群签到等管理能力 |
 | QQ 空间与任务 | 提供空间动态发布、点赞、浏览上报以及部分 QQ 服务任务的插件接口 |
-| 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK 与统一 action 结果 |
+| 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
 具体插件 API 以当前版本附带的 SDK 和服务端返回结果为准。
@@ -140,7 +141,7 @@ chmod +x ./mengka-nt
 
 ## 插件 SDK
 
-仓库在 [`sdk/nodejs`](sdk/nodejs) 提供不带版本子目录的 Node.js 插件 SDK，支持连接插件 WebSocket、接收机器人事件并调用框架 action。
+仓库在 [`sdk/nodejs`](sdk/nodejs) 提供不带版本子目录的 Node.js 插件 SDK，支持连接插件 WebSocket、接收机器人事件并调用框架 action；[`sdk/plugin-web`](sdk/plugin-web) 提供插件网页后台接入 SDK，用于将插件自带的管理页面安全嵌入框架 WebUI。
 
 ### 安装
 
@@ -168,6 +169,8 @@ await api.connect()
 ```
 
 不要将插件令牌直接写入源码或提交到公开仓库。完整接口和登录流程见 [萌卡 NT 开发文档](https://github.com/shiina0118/mengka-nt-docs)。
+
+插件提供网页后台时，请参考 [WebUI SDK 接入说明](sdk/plugin-web/README.md) 和示例清单，使用框架分配的本地端口、挂载路径与令牌文件，不要把管理令牌写入前端代码或 URL。
 
 ## 安全与数据
 
@@ -213,6 +216,6 @@ await api.connect()
 - 最新版本：[GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest)
 - 历史版本：[版本记录](https://github.com/Carlor-Official/Mengka-NT/releases)
 - Bug 与建议：[提交 Issue](https://github.com/Carlor-Official/Mengka-NT/issues)
-- 插件开发：[Node.js SDK](sdk/nodejs) · [开发文档](https://mknt.net/api/)
+- 插件开发：[Node.js SDK](sdk/nodejs) · [WebUI SDK](sdk/plugin-web) · [开发文档](https://mknt.net/api/)
 
 本仓库当前不提供框架核心业务源码或开源许可。请仅从本仓库 Release 获取正式外发包。

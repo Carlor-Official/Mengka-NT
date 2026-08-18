@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "entrypoint": "bin/my-plugin",
+  "arguments": [
+    "--connection",
+    "{{connection_file}}",
+    "--admin-host",
+    "{{admin_host}}",
+    "--admin-port",
+    "{{admin_port}}"
+  ],
+  "working_directory": ".",
+  "web_admin": {
+    "enabled": true,
+    "title": "我的插件后台",
+    "health_path": "/api/status",
+    "auth_type": "header",
+    "auth_header": "X-Mengka-Admin-Token"
+  }
+}
