@@ -90,6 +90,12 @@ const apiDefs = {
       declare_ai_generated,
     }),
   },
+  // 评论 get_qzone_friend_feeds 返回的动态。content 与 images 至少填写一项；
+  // images 支持公网 URL 字符串或 { url, width, height } 对象，最多 9 张。
+  comment_qzone_feed: {
+    wait: true,
+    build: (self_id, feed, content = '', images = []) => ({ self_id, feed, content, images }),
+  },
   // 点赞一条 get_qzone_friend_feeds 返回的动态。直接传入完整 feed；
   // 后端根据 feed.forward 是否存在自动处理转发动态。该动作没有回调，不要 await。
   like_qzone_feed: {
