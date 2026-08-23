@@ -56,7 +56,7 @@ const apiDefs = {
   get_pet_pk_status: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
   settle_pet_pk: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
   // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/voice/video/face。
-  // face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
+  // text 原生支持 Unicode emoji，并支持 QQ 表情简写 [bq190]；face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
   // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 5 分钟)
   send_group_msg: {
     wait: true,
@@ -64,6 +64,7 @@ const apiDefs = {
   },
   // 发送好友消息: 支持 text/image；image 使用 upload_friend_image 返回的图片段。
   send_friend_msg: {
+    // 好友消息支持 text/image/qq_face；text 同样支持 Unicode emoji 和 [bq190]。
     wait: true,
     build: (self_id, user_id, message) => ({ self_id, user_id, message }),
   },
