@@ -4,7 +4,7 @@
 
 ## 后端接入
 
-在发布包根目录放置 `mengka-plugin.json`，参考 `mengka-plugin.example.json`。插件进程从以下环境变量或同名清单占位符读取后台参数：
+插件安装包不要求包含 `mengka-plugin.json`，API 与事件权限以开发者在官网勾选并审核通过的快照为准。只有需要让框架自动托管插件 WebUI 时，才在发布包中放置可选运行描述文件，参考 `mengka-plugin.example.json`。插件进程从以下环境变量或同名占位符读取后台参数：
 
 - `MENGKA_PLUGIN_ADMIN_HOST` / `{{admin_host}}`
 - `MENGKA_PLUGIN_ADMIN_PORT` / `{{admin_port}}`
@@ -13,6 +13,8 @@
 - `MENGKA_PLUGIN_ADMIN_EMBEDDED=1`
 
 若 `auth_type` 为 `header`，插件 API 校验 `auth_header` 指定的请求头，令牌从 `MENGKA_PLUGIN_ADMIN_TOKEN_FILE` 读取。不要把令牌写入 HTML、JavaScript、日志或查询参数。
+
+可选运行描述文件只用于入口、参数和 WebUI 元数据，不得作为 API 或事件授权来源。
 
 ## 前端接入
 

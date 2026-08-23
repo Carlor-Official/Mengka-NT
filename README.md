@@ -46,7 +46,7 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-具体插件 API 以当前版本附带的 SDK 和服务端返回结果为准。
+当前公开 SDK 与萌卡 NT v1.5.6 的 85 个 action 同步。完整参数、返回值与 5 类事件说明见[萌卡 NT 开发文档](https://docs.mknt.net/api/)；插件市场服务以官网审核通过的 API 与事件选择作为唯一权限来源。
 
 ## 平台支持
 
@@ -168,9 +168,9 @@ const api = createAPI({
 await api.connect()
 ```
 
-不要将插件令牌直接写入源码或提交到公开仓库。完整接口和登录流程见 [萌卡 NT 开发文档](https://github.com/shiina0118/mengka-nt-docs)。
+不要将插件令牌直接写入源码或提交到公开仓库。完整接口和登录流程见 [萌卡 NT 开发文档](https://docs.mknt.net/)。
 
-插件提供网页后台时，请参考 [WebUI SDK 接入说明](sdk/plugin-web/README.md) 和示例清单，使用框架分配的本地端口、挂载路径与令牌文件，不要把管理令牌写入前端代码或 URL。
+插件提供网页后台时，请参考 [WebUI SDK 接入说明](sdk/plugin-web/README.md) 和可选运行描述示例，使用框架分配的本地端口、挂载路径与令牌文件，不要把管理令牌写入前端代码或 URL。安装包不需要权限清单；API 与事件权限只以官网审核快照为准。
 
 ## 安全与数据
 
