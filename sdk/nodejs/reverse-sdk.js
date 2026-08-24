@@ -13,6 +13,12 @@ const EVENTS = ['group_message', 'friend_message', 'group_notice', 'friend_notic
 
 // ========== API 定义 ==========
 const apiDefs = {
+  // OneBot/NapCat 兼容的系统基础接口。
+  get_login_info: { wait: true, build: (self_id) => ({ self_id }) },
+  get_status: { wait: true, build: (self_id) => ({ self_id }) },
+  get_version_info: { wait: true, build: (self_id) => ({ self_id }) },
+  can_send_image: { wait: true, build: (self_id) => ({ self_id }) },
+  can_send_record: { wait: true, build: (self_id) => ({ self_id }) },
   // 获取 skey
   get_skey: {
     wait: true,
@@ -67,6 +73,21 @@ const apiDefs = {
     // 好友消息支持 text/image/qq_face；text 同样支持 Unicode emoji 和 [bq190]。
     wait: true,
     build: (self_id, user_id, message) => ({ self_id, user_id, message }),
+  },
+  // OneBot/NapCat 兼容接口：message 可传字符串、单个消息段或消息段数组。
+  send_private_msg: {
+    wait: true,
+    build: (self_id, user_id, message) => ({ self_id, user_id, message }),
+  },
+  // target_id 会按 message_type 写入 user_id 或 group_id。
+  send_msg: {
+    wait: true,
+    build: (self_id, message_type, target_id, message) => ({
+      self_id,
+      message_type,
+      ...(message_type === 'group' ? { group_id: target_id } : { user_id: target_id }),
+      message,
+    }),
   },
   // 获取好友列表: 返回 { friends, total_count, self_uin }，后端自动翻页拿完
   get_friend_list: {

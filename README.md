@@ -46,7 +46,7 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前公开 SDK 与萌卡 NT v1.5.11 的 85 个 action 同步。完整参数、返回值与 5 类事件说明见[萌卡 NT 开发文档](https://docs.mknt.net/api/)；插件市场服务以官网审核通过的 API 与事件选择作为唯一权限来源。
+当前开发版公开 SDK 已同步 92 个 action，包含首批 OneBot/NapCat 系统基础接口以及 `send_private_msg`、`send_msg` 消息兼容接口；完整参数、返回值与 5 类事件说明见[萌卡 NT 开发文档](https://docs.mknt.net/api/)；插件市场服务以官网审核通过的 API 与事件选择作为唯一权限来源。
 
 ## 平台支持
 
