@@ -9,6 +9,25 @@
 
 本轮补充了媒体 RKey、用户在线状态、小程序与 Ark 分享、AI 语音、语音转文字、消息表情回应、输入状态、可疑好友申请、空间动态、群文件移动与重命名以及原生协议包调用方法。正向和反向 SDK 的参数顺序保持一致。
 
+红包接口会保留规范的 `red_packet` 嵌套对象，并兼容尚未更新的框架版本。第 4 个参数既可以传消息段的 `data`，也可以传完整的 `red_packet` 消息段：
+
+```js
+const redPacket = event.message.find(segment => segment.type === 'red_packet')
+const info = await api.get_red_packet_info(
+  event.self_id,
+  event.group_id,
+  event.sender.user_id,
+  redPacket,
+)
+const result = await api.grab_red_packet(
+  event.self_id,
+  event.group_id,
+  event.sender.user_id,
+  redPacket,
+  info.pre_grap_token,
+)
+```
+
 安装依赖：
 
 ```bash

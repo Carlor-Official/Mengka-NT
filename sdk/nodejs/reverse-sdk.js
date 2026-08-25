@@ -11,6 +11,25 @@ const log = {
 // ========== 事件名常量 ==========
 const EVENTS = ['group_message', 'friend_message', 'request', 'group_notice', 'friend_notice', 'bot_offline']
 
+function normalizeRedPacket(redPacket) {
+  if (!redPacket || typeof redPacket !== 'object' || Array.isArray(redPacket)) return {}
+  if (redPacket.type === 'red_packet' && redPacket.data && typeof redPacket.data === 'object') {
+    return redPacket.data
+  }
+  return redPacket
+}
+
+function buildRedPacketParams(self_id, group_id, sender_uin, redPacket) {
+  const red_packet = normalizeRedPacket(redPacket)
+  return {
+    ...red_packet,
+    self_id,
+    group_id,
+    sender_uin,
+    red_packet,
+  }
+}
+
 // ========== API 定义 ==========
 const apiDefs = {
   // 获取 skey
@@ -298,22 +317,15 @@ const apiDefs = {
   get_red_packet_info: {
     wait: true,
     timeout: 60 * 1000,
-    build: (self_id, group_id, sender_uin, red_packet) => ({
-      ...red_packet,
-      self_id,
-      group_id,
-      sender_uin,
-    }),
+    build: (self_id, group_id, sender_uin, red_packet) =>
+      buildRedPacketParams(self_id, group_id, sender_uin, red_packet),
   },
   // pre_grap_token 必须传入 get_red_packet_info 返回的同名顶层字段。
   grab_red_packet: {
     wait: true,
     timeout: 60 * 1000,
     build: (self_id, group_id, sender_uin, red_packet, pre_grap_token) => ({
-      ...red_packet,
-      self_id,
-      group_id,
-      sender_uin,
+      ...buildRedPacketParams(self_id, group_id, sender_uin, red_packet),
       pre_grap_token,
     }),
   },
