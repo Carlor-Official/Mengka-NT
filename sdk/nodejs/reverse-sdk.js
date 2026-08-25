@@ -9,7 +9,7 @@ const log = {
 }
 
 // ========== 事件名常量 ==========
-const EVENTS = ['group_message', 'friend_message', 'group_notice', 'friend_notice', 'bot_offline']
+const EVENTS = ['group_message', 'friend_message', 'request', 'group_notice', 'friend_notice', 'bot_offline']
 
 // ========== API 定义 ==========
 const apiDefs = {
@@ -22,6 +22,147 @@ const apiDefs = {
   get_user_agent: {
     wait: true,
     build: (self_id) => ({ self_id }),
+  },
+  // 获取媒体访问 RKey。get_rkey 与 nc_get_rkey 返回同一标准列表。
+  get_rkey: { wait: true, build: (self_id) => ({ self_id }) },
+  nc_get_rkey: { wait: true, build: (self_id) => ({ self_id }) },
+  get_rkey_server: { wait: true, build: (self_id) => ({ self_id }) },
+  // 查询指定 QQ 的在线状态。
+  nc_get_user_status: { wait: true, build: (self_id, user_id) => ({ self_id, user_id }) },
+  // 生成小程序 Ark 数据；options 对应文档中的模板或完整小程序参数。
+  get_mini_app_ark: {
+    wait: true,
+    build: (self_id, options = {}) => ({ ...options, self_id }),
+  },
+  // 生成好友或群聊分享 Ark。兼容调用名与原调用名返回相同数据。
+  ArkSharePeer: {
+    wait: true,
+    build: (self_id, user_id, phone_number = '') => ({ self_id, user_id, phone_number }),
+  },
+  send_ark_share: {
+    wait: true,
+    build: (self_id, user_id, phone_number = '') => ({ self_id, user_id, phone_number }),
+  },
+  ArkShareGroup: {
+    wait: true,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
+  send_group_ark_share: {
+    wait: true,
+    build: (self_id, group_id) => ({ self_id, group_id }),
+  },
+  // AI 声音角色、合成链接和群聊直接发送。
+  get_ai_characters: {
+    wait: true,
+    build: (self_id, group_id, chat_type = 1) => ({ self_id, group_id, chat_type }),
+  },
+  get_ai_record: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (self_id, group_id, character, text, chat_type = 1) => ({
+      self_id, group_id, character, text, chat_type,
+    }),
+  },
+  send_group_ai_record: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (self_id, group_id, character, text, chat_type = 1) => ({
+      self_id, group_id, character, text, chat_type,
+    }),
+  },
+  // 识别框架消息缓存中的群语音。
+  fetch_ptt_text: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, message_id, format = 0) => ({ self_id, message_id, format }),
+  },
+  // 群消息表情回应。
+  set_msg_emoji_like: {
+    wait: true,
+    build: (self_id, message_id, emoji_id, set = true) => ({ self_id, message_id, emoji_id, set }),
+  },
+  fetch_emoji_like: {
+    wait: true,
+    build: (self_id, message_id, emoji_id, count = 100, cookie = '', emoji_type = 0) => ({
+      self_id, message_id, emoji_id, count, cookie, emoji_type,
+    }),
+  },
+  get_emoji_likes: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, message_id, emoji_id, emoji_type = 0) => ({
+      self_id, message_id, emoji_id, emoji_type,
+    }),
+  },
+  // 向好友同步正在输入或结束输入状态。
+  set_input_status: {
+    wait: true,
+    build: (self_id, user_id, event_type = 1) => ({ self_id, user_id, event_type }),
+  },
+  // 读取和处理可疑好友申请。
+  get_doubt_friends_add_request: {
+    wait: true,
+    build: (self_id, count = 50) => ({ self_id, count }),
+  },
+  set_doubt_friends_add_request: {
+    wait: true,
+    build: (self_id, flag, approve = true) => ({ self_id, flag, approve }),
+  },
+  // 发布带图片的空间动态或按 tid 删除动态。
+  send_qzone_msg: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (self_id, content, images = [], ugc_right = 1, target_uins = []) => ({
+      self_id, content, images, ugc_right, target_uins,
+    }),
+  },
+  delete_qzone_msg: {
+    wait: true,
+    build: (self_id, tid) => ({ self_id, tid }),
+  },
+  // 重命名或移动群文件。
+  rename_group_file: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (self_id, group_id, file_id, new_name, options = {}) => ({
+      ...options, self_id, group_id, file_id, new_name,
+    }),
+  },
+  move_group_file: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (self_id, group_id, file_id, target_parent_directory, options = {}) => ({
+      ...options, self_id, group_id, file_id, target_parent_directory,
+    }),
+  },
+  // 发送已组装的原生协议包。data/reserve 使用十六进制字符串。
+  send_packet: {
+    wait: true,
+    timeout: 45 * 1000,
+    build: (self_id, cmd, data, rsp = true, reserve = '') => ({
+      self_id, cmd, data, rsp, ...(reserve ? { reserve } : {}),
+    }),
+  },
+
+  // 设置 QQ Android 在线状态；普通状态的 ext_status/battery_status 填 0。
+  set_online_status: {
+    wait: true,
+    build: (self_id, status, ext_status = 0, battery_status = 0) => ({
+      self_id,
+      status,
+      ext_status,
+      battery_status,
+    }),
+  },
+  // 设置自定义在线状态。face_type 默认 1，wording 默认一个空格。
+  set_diy_online_status: {
+    wait: true,
+    build: (self_id, face_id, face_type = 1, wording = ' ') => ({
+      self_id,
+      face_id,
+      face_type,
+      wording,
+    }),
   },
   // 获取 clientkey (hex 编码)
   get_clientkey: {
@@ -227,6 +368,29 @@ const apiDefs = {
       return p
     },
   },
+  // 设置当前 QQ 的昵称、个性签名和性别；personal_note/sex 省略时不修改。
+  set_qq_profile: {
+    wait: true,
+    timeout: 45 * 1000,
+    build: (self_id, nickname, personal_note, sex) => {
+      const p = { self_id, nickname }
+      if (personal_note !== undefined) p.personal_note = personal_note
+      if (sex !== undefined) p.sex = sex
+      return p
+    },
+  },
+  // 设置或清空当前 QQ 个性签名。
+  set_self_longnick: {
+    wait: true,
+    timeout: 45 * 1000,
+    build: (self_id, longNick) => ({ self_id, longNick }),
+  },
+  // 设置群头像；file 支持本地路径、URL、file://、base64:// 和 data URL。
+  set_group_portrait: {
+    wait: true,
+    timeout: 45 * 1000,
+    build: (self_id, group_id, file) => ({ self_id, group_id, file }),
+  },
   // 点赞 QQ 名片，like_count 默认 1。返回 SSO 错误码、错误信息和原始回包 hex。
   like_summary_card: {
     wait: true,
@@ -384,6 +548,11 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin) => ({ self_id, target_uin }),
   },
+  // 处理好友申请: flag 必须原样使用 request 事件提供的值
+  set_friend_add_request: {
+    wait: true,
+    build: (self_id, flag, approve = true, remark = '') => ({ self_id, flag, approve, remark }),
+  },
   // 获取QQ等级加速面板: 返回今日加速天数、付费倍率、任务列表等
   get_level_tasks: {
     wait: true,
@@ -417,6 +586,7 @@ function dispatchEvent(listeners, event) {
   let key = null
   if (post_type === 'group_message')   key = 'group_message'
   if (post_type === 'friend_message')  key = 'friend_message'
+  if (post_type === 'request')         key = 'request'
   if (post_type === 'group_notice')    key = 'group_notice'
   if (post_type === 'friend_notice')   key = 'friend_notice'
   if (post_type === 'bot_offline')     key = 'bot_offline'
