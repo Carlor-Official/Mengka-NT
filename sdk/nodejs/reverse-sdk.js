@@ -215,18 +215,24 @@ const apiDefs = {
   start_pet_pk: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
   get_pet_pk_status: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
   settle_pet_pk: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
-  // 发送群消息: message 为 [{type, data}] 数组, 支持 text/at/image/voice/video/face。
+  // 发送群消息: message 为 [{type, data}] 数组, 支持 text/reply/at/image/voice/video/face。
+  // 原生引用回复: [{type:'reply',data:{message_id}}, {type:'text',data:{text:'回复正文'}}]；兼容 data.id。
   // text 原生支持 Unicode emoji，并支持 QQ 表情简写 [bq190]；face 支持 qq_face（face_id 必填，face_code 可选）和 super_face（type=33 或 37）。
   // 注: image 需传 file_id, 且对应图片必须已在群内收到过(缓存 5 分钟)
   send_group_msg: {
     wait: true,
     build: (self_id, group_id, message) => ({ self_id, group_id, message }),
   },
-  // 发送好友消息: 支持 text/image；image 使用 upload_friend_image 返回的图片段。
+  // 发送好友消息: 支持 text/reply/image；reply 用法与群消息相同，且 message_id 必须属于当前好友会话。
   send_friend_msg: {
     // 好友消息支持 text/image/qq_face；text 同样支持 Unicode emoji 和 [bq190]。
     wait: true,
     build: (self_id, user_id, message) => ({ self_id, user_id, message }),
+  },
+  // 发送群临时会话消息: 目标无需是好友，但发送账号与目标必须同在 group_id 指定的群。
+  send_group_temp_msg: {
+    wait: true,
+    build: (self_id, group_id, user_id, message) => ({ self_id, group_id, user_id, message }),
   },
   // 获取好友列表: 返回 { friends, total_count, self_uin }，后端自动翻页拿完
   get_friend_list: {
@@ -312,6 +318,32 @@ const apiDefs = {
   get_pskey: {
     wait: true,
     build: (self_id, domain) => ({ self_id, domain }),
+  },
+  // 发送五种 QQ 群红包。total_amount 使用分为单位，支付密码只参与本次请求。
+  send_group_red_packet: {
+    wait: true,
+    timeout: 120 * 1000,
+    build: (
+      self_id,
+      group_id,
+      red_packet_type,
+      total_amount,
+      total_num,
+      payment_password,
+      wishing = '恭喜发财',
+      target_uins = [],
+      options = {},
+    ) => ({
+      ...options,
+      self_id,
+      group_id,
+      red_packet_type,
+      total_amount,
+      total_num,
+      payment_password,
+      wishing,
+      target_uins,
+    }),
   },
   // 查询红包详情，返回值顶层包含正式领取所需的 pre_grap_token。
   get_red_packet_info: {
@@ -761,7 +793,7 @@ export function createReverseAPI(config = {}) {
       const id = String(++nextId)
       const timer = setTimeout(() => {
         pending.delete(id)
-        const error = `action ${action} 超时 (30s)`
+        const error = `action ${action} 超时 (${timeoutMs}ms)`
         if (resultMessage) resolve({ code: 1, msg: error })
         else reject(new Error(error))
       }, timeoutMs)
@@ -793,7 +825,14 @@ export function createReverseAPI(config = {}) {
     return new Promise(resolve => server.close(() => resolve()))
   }
 
-  const api = { on, listen, waitForConnection, close }
+  const callAction = (action, params = {}, options = {}) => call(
+    action,
+    params,
+    options.resultMessage || '',
+    options.resultData !== false,
+    options.timeout || 30000,
+  )
+  const api = { on, listen, waitForConnection, close, call: callAction, callAction }
   Object.defineProperty(api, 'connected', { enumerable: true, get: () => ready })
 
   for (const [apiName, def] of Object.entries(apiDefs)) {
