@@ -42,6 +42,12 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 按框架前端“一键生成”规则创建并保存一套独立设备指纹。
+  // 该 action 为全局无参数调用，返回记录的 id 可直接用于 add_account。
+  generate_device_profile: {
+    wait: true,
+    build: () => ({}),
+  },
   // 获取媒体访问 RKey。get_rkey 与 nc_get_rkey 返回同一标准列表。
   get_rkey: { wait: true, build: (self_id) => ({ self_id }) },
   nc_get_rkey: { wait: true, build: (self_id) => ({ self_id }) },
