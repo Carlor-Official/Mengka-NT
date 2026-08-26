@@ -53,6 +53,12 @@ const apiDefs = {
     wait: true,
     build: (self_id, options = {}) => ({ ...options, self_id }),
   },
+  // 生成带内容绑定签名的 QQ 音乐 Ark 卡片。
+  get_music_ark: {
+    wait: true,
+    timeout: 60 * 1000,
+    build: (self_id, options = {}) => ({ ...options, self_id }),
+  },
   // 生成好友或群聊分享 Ark。兼容调用名与原调用名返回相同数据。
   ArkSharePeer: {
     wait: true,
