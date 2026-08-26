@@ -544,6 +544,11 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id, target_uin, set_admin) => ({ self_id, group_id, target_uin, set_admin }),
   },
+  // 修改群成员名片；card 传空字符串时清空群名片
+  set_group_card: {
+    wait: true,
+    build: (self_id, group_id, user_id, card) => ({ self_id, group_id, user_id, card }),
+  },
   // 群打卡，返回打卡文案、累计天数、群排名、详情地址及结构化响应字段
   group_sign: {
     wait: true,
