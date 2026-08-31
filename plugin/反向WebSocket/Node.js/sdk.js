@@ -32,6 +32,51 @@ function buildRedPacketParams(self_id, group_id, sender_uin, redPacket) {
 
 // ========== API 定义 ==========
 const apiDefs = {
+  // 1.8.0 正式公开目录补充（options 对象按文档字段原样透传）。
+  set_restart: { wait: true, build: (options = {}) => ({ ...options }) },
+  check_url_safely: { wait: true, build: (options = {}) => ({ ...options }) },
+  translate_en2zh: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_group_msg_history: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_friend_msg_history: { wait: true, build: (options = {}) => ({ ...options }) },
+  send_private_msg: { wait: true, build: (options = {}) => ({ ...options }) },
+  delete_msg: { wait: true, build: (options = {}) => ({ ...options }) },
+  mark_group_msg_as_read: { wait: true, build: (options = {}) => ({ ...options }) },
+  mark_private_msg_as_read: { wait: true, build: (options = {}) => ({ ...options }) },
+  mark_msg_as_read: { wait: true, build: (options = {}) => ({ ...options }) },
+  upload_private_file: { wait: true, timeout: 5 * 60 * 1000, build: (options = {}) => ({ ...options }) },
+  send_forward_msg: { wait: true, build: (options = {}) => ({ ...options }) },
+  send_private_forward_msg: { wait: true, build: (options = {}) => ({ ...options }) },
+  mark_all_as_read: { wait: true, build: (options = {}) => ({ ...options }) },
+  handle_quick_operation: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_unidirectional_friend_list: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_profile_like: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_friend_remark: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_group_at_all_remain: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_essence_msg_list: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_group_file_system_info: { wait: true, build: (options = {}) => ({ ...options }) },
+  create_group: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_member_invite_policy: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_member_permissions: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_new_member_history_visibility: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_add_option: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_search: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_robot_add_option: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_qun_album_list: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_group_album_media_list: { wait: true, build: (options = {}) => ({ ...options }) },
+  upload_image_to_qun_album: { wait: true, timeout: 5 * 60 * 1000, build: (options = {}) => ({ ...options }) },
+  do_group_album_comment: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_album_media_like: { wait: true, build: (options = {}) => ({ ...options }) },
+  cancel_group_album_media_like: { wait: true, build: (options = {}) => ({ ...options }) },
+  del_group_album_media: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_group_root_files: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_group_files_by_folder: { wait: true, build: (options = {}) => ({ ...options }) },
+  create_group_file_folder: { wait: true, build: (options = {}) => ({ ...options }) },
+  delete_group_folder: { wait: true, build: (options = {}) => ({ ...options }) },
+  upload_group_file: { wait: true, timeout: 5 * 60 * 1000, build: (options = {}) => ({ ...options }) },
+  delete_group_file: { wait: true, build: (options = {}) => ({ ...options }) },
+  send_group_notice: { wait: true, build: (options = {}) => ({ ...options }) },
+  del_group_notice: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_qq_farm_code: { wait: true, build: (options = {}) => ({ ...options }) },
   // 获取 skey
   get_skey: {
     wait: true,
@@ -42,6 +87,82 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
+  // 按框架前端“一键生成”规则创建并保存一套独立设备指纹。
+  generate_device_profile: { wait: true, build: () => ({}) },
+  // 兼容系统状态查询；这些 action 只读取框架本地运行状态，不发送 QQ 协议请求。
+  get_login_info: { wait: true, build: (self_id) => ({ self_id }) },
+  get_status: { wait: true, build: (self_id) => ({ self_id }) },
+  get_online_clients: { wait: true, build: (self_id, no_cache = false) => ({ self_id, no_cache }) },
+  get_model_show: { wait: true, build: (self_id, model = '') => ({ self_id, model }) },
+  set_model_show: { wait: true, build: (self_id, model = '', model_show = '') => ({ self_id, model, model_show }) },
+  get_version_info: { wait: true, build: (self_id) => ({ self_id }) },
+  can_send_image: { wait: true, build: (self_id) => ({ self_id }) },
+  can_send_record: { wait: true, build: (self_id) => ({ self_id }) },
+  // 安全文件下载和临时流文件接口。
+  download_file: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (url, thread_count = 1, headers = {}) => (
+      url && typeof url === 'object' ? { ...url } : { url, thread_count, headers }
+    ),
+  },
+  upload_file_stream: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (options = {}) => ({ ...options }),
+  },
+  clean_stream_temp_file: { wait: true, build: () => ({}) },
+  test_download_stream: {
+    wait: true,
+    build: (options = false) => (
+      options && typeof options === 'object' ? { ...options } : { error: Boolean(options) }
+    ),
+  },
+  // 第二批安全兼容接口：流式下载只接受 file，不会通过 file_id 查询 QQ 文件服务。
+  download_file_stream: {
+    wait: true, stream: true, timeout: 2 * 60 * 1000,
+    build: (options = {}) => ({ ...options }),
+  },
+  download_file_image_stream: {
+    wait: true, stream: true, timeout: 2 * 60 * 1000,
+    build: (options = {}) => ({ ...options }),
+  },
+  download_file_record_stream: {
+    wait: true, stream: true, timeout: 2 * 60 * 1000,
+    build: (options = {}) => ({ ...options }),
+  },
+  // 消息查询只读取框架进程内、按账号隔离的近期消息缓存。
+  get_msg: { wait: true, build: (self_id, message_id) => ({ self_id, message_id }) },
+  get_recent_contact: { wait: true, build: (self_id, count = 10) => ({ self_id, count }) },
+
+  // 复用现有好友/群发送与进程内消息缓存的 OneBot 兼容接口。
+  send_msg: {
+    wait: true,
+    build: (self_id, message_type, target_id, message) => {
+      const target = message_type === 'group' ? { group_id: target_id } : { user_id: target_id }
+      return { self_id, message_type, target_id, message, ...target }
+    },
+  },
+  forward_friend_single_msg: {
+    wait: true,
+    build: (self_id, message_id, user_id) => ({ self_id, message_id, user_id }),
+  },
+  forward_group_single_msg: {
+    wait: true,
+    build: (self_id, message_id, group_id) => ({ self_id, message_id, group_id }),
+  },
+  get_forward_msg: {
+    wait: true,
+    build: (options = {}) => ({ ...options }),
+  },
+  set_group_kick_members: {
+    wait: true,
+    timeout: 2 * 60 * 1000,
+    build: (self_id, group_id, user_ids, reject_add_request = false) => ({
+      self_id, group_id, user_ids, reject_add_request,
+    }),
+  },
+
   // 获取媒体访问 RKey。get_rkey 与 nc_get_rkey 返回同一标准列表。
   get_rkey: { wait: true, build: (self_id) => ({ self_id }) },
   nc_get_rkey: { wait: true, build: (self_id) => ({ self_id }) },
@@ -291,6 +412,9 @@ const apiDefs = {
     wait: true,
     build: (self_id, group_id) => ({ self_id, group_id }),
   },
+  get_group_notice: { wait: true, build: (self_id, group_id) => ({ self_id, group_id }) },
+  get_group_honor_info: { wait: true, build: (self_id, group_id, type = 'all') => ({ self_id, group_id, type }) },
+  get_group_signed_list: { wait: true, build: (self_id, group_id) => ({ self_id, group_id }) },
   // 获取群聊通知列表: 返回 { notifications, total_count }，包含所有通知类型。
   get_group_system_notifications: {
     wait: true,
@@ -652,7 +776,7 @@ function dispatchEvent(listeners, event) {
 
 // ========== createReverseAPI ==========
 export function createReverseAPI(config = {}) {
-  const { host = '0.0.0.0', port = 3002, path = '/', token } = config
+  const { host = '0.0.0.0', port = 3002, path = '/', token, sendPacketKey = '' } = config
   if (!token) throw new Error('token 必填')
 
   const listeners = {}
@@ -664,6 +788,7 @@ export function createReverseAPI(config = {}) {
   let closing = false
   let nextId = 0
   let connectionInfo = null
+  let rawPacketAccessKey = String(sendPacketKey || '').trim()
 
   function requestToken(req) {
     const authorization = String(req.headers.authorization || '')
@@ -695,6 +820,20 @@ export function createReverseAPI(config = {}) {
     ws.send(JSON.stringify(obj))
   }
 
+  function buildActionMessage(action, params, id = '', accessKey = '') {
+    const message = { type: 'action', ...(id ? { id } : {}), action, params }
+    if (action === 'send_packet') {
+      const key = String(accessKey || rawPacketAccessKey || '').trim()
+      // 正常模式由框架读取已固定绑定的 Key；显式值仅用于旧插件兼容。
+      if (key) message.access_key = key
+    }
+    return message
+  }
+
+  function setSendPacketKey(value) {
+    rawPacketAccessKey = String(value || '').trim()
+  }
+
   function handleActionResult(msg) {
     if (!msg.id || !pending.has(msg.id)) return
     const item = pending.get(msg.id)
@@ -712,6 +851,14 @@ export function createReverseAPI(config = {}) {
       item.resolve(msg.data)
     } else {
       item.reject(new Error(msg.error || 'action failed'))
+    }
+  }
+
+  function handleActionStream(msg) {
+    if (!msg.id || !pending.has(msg.id)) return
+    const { onStream } = pending.get(msg.id)
+    if (typeof onStream === 'function') {
+      try { onStream(msg.data) } catch (e) { log.err('流式回调异常:', e) }
     }
   }
 
@@ -739,6 +886,8 @@ export function createReverseAPI(config = {}) {
         resolveConnectionWaiters()
       } else if (msg.type === 'event') {
         dispatchEvent(listeners, msg.data)
+      } else if (msg.type === 'action_stream') {
+        handleActionStream(msg)
       } else if (msg.type === 'action_result') {
         handleActionResult(msg)
       }
@@ -796,20 +945,27 @@ export function createReverseAPI(config = {}) {
     })
   }
 
-  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000) {
+  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000, onStream = null, accessKey = '') {
     if (!ready || !ws || ws.readyState !== WebSocket.OPEN) {
       return Promise.reject(new Error('萌卡NT 后台尚未建立反向 WebSocket 连接'))
     }
     return new Promise((resolve, reject) => {
       const id = String(++nextId)
+      let message
+      try {
+        message = buildActionMessage(action, params, id, accessKey)
+      } catch (error) {
+        reject(error)
+        return
+      }
       const timer = setTimeout(() => {
         pending.delete(id)
         const error = `action ${action} 超时 (${timeoutMs}ms)`
         if (resultMessage) resolve({ code: 1, msg: error })
         else reject(new Error(error))
       }, timeoutMs)
-      pending.set(id, { resolve, reject, timer, resultMessage, resultData })
-      _send({ type: 'action', id, action, params })
+      pending.set(id, { resolve, reject, timer, resultMessage, resultData, onStream })
+      _send(message)
     })
   }
 
@@ -842,15 +998,22 @@ export function createReverseAPI(config = {}) {
     options.resultMessage || '',
     options.resultData !== false,
     options.timeout || 30000,
+    options.onStream || null,
+    options.accessKey || '',
   )
-  const api = { on, listen, waitForConnection, close, call: callAction, callAction }
+  const api = { on, listen, waitForConnection, close, call: callAction, callAction, setSendPacketKey }
   Object.defineProperty(api, 'connected', { enumerable: true, get: () => ready })
 
   for (const [apiName, def] of Object.entries(apiDefs)) {
     api[apiName] = (...args) => {
+      if (def.stream) {
+        const options = args[0] || {}
+        const onStream = args[1]
+        return call(apiName, def.build(options), def.resultMessage, def.resultData !== false, def.timeout, onStream)
+      }
       const params = def.build(...args)
       if (def.wait) return call(apiName, params, def.resultMessage, def.resultData !== false, def.timeout)
-      _send({ type: 'action', action: apiName, params })
+      _send(buildActionMessage(apiName, params))
     }
   }
 

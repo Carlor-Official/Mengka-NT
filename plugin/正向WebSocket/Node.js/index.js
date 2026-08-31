@@ -4,6 +4,8 @@ const api = createAPI({
   host: '127.0.0.1',
   port: 3001,
   token: '在管理后台填写服务令牌',
+  pluginId: 'example-plugin',
+  sendPacketKey: process.env.MENGKA_SEND_PACKET_KEY || '',
   name: 'test',
   version: '1.0.0',
   author: 'test',

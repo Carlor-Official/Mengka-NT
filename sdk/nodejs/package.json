@@ -4,7 +4,8 @@
   "description": "萌卡 NT Node.js 插件 SDK",
   "type": "module",
   "scripts": {
-    "check": "node --check sdk.js && node --check reverse-sdk.js"
+    "check": "node --check sdk.js && node --check reverse-sdk.js",
+    "test": "node --test access-key.test.mjs"
   },
   "dependencies": {
     "ws": "^8.18.0"

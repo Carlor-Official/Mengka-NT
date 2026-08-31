@@ -17,6 +17,27 @@ await api.call('action_name', { self_id, ...params }, { timeout: 60000 })
 
 `api.callAction` 与 `api.call` 等价。调用仍会经过服务授权检查。
 
+`send_packet` 除原有参数外还必须在 action 外层携带算法系统签发的专属 Key。推荐通过 SDK 配置注入，Key 不会进入 `params`，因此 `self_id/cmd/data/rsp/reserve` 契约保持不变：
+
+```js
+const api = createAPI({
+  host: '127.0.0.1',
+  port: 3001,
+  token: process.env.MENGKA_PLUGIN_TOKEN,
+  pluginId: 'example-plugin',
+  // 专属 Key 由框架管理端固定绑定，插件通常无需配置。
+  // sendPacketKey 仅保留给旧版 envelope 兼容，且必须与框架绑定值一致。
+  sendPacketKey: process.env.MENGKA_SEND_PACKET_KEY || '',
+  name: 'example',
+  version: '1.0.0',
+  author: 'developer',
+})
+
+await api.send_packet(self_id, cmd, data, true, reserve)
+```
+
+运行中轮换 Key 可以调用 `api.setSendPacketKey(newKey)`。通用入口也可以对单次调用传入 `{ accessKey }`。不要把专属 Key 写入源码、URL、业务日志或错误信息。
+
 随机设备指纹与框架前端“指纹 → 添加指纹 → 一键生成其余内容”使用同一套规则。接口不需要参数，会创建并保存一条随机命名的独立指纹记录；返回的 `id` 可以直接作为 `add_account` 的 `device_profile_id`：
 
 ```js
@@ -82,8 +103,6 @@ await api.send_group_temp_msg(self_id, group_id, user_id, [
   { type: 'text', data: { text: '你好，这是群临时会话。' } },
 ])
 ```
-
-`send_private_msg` 传入 `group_id` 时也会走相同的群临时会话路由。
 
 发送群红包支持 `lucky`、`normal`、`exclusive`、`voice` 和 `command` 五种类型。金额单位为分，支付密码只应在本次调用中传入：
 
