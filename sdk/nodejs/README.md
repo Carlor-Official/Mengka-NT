@@ -45,13 +45,7 @@ const profile = await api.generate_device_profile()
 await api.add_account(self_id, password, protocol_id, profile.id)
 ```
 
-Linux 账号使用萌卡 NT 原生 WTLogin 扫码登录；创建接口在账号不存在时会自动加入当前节点，查询接口在手机确认后自动完成登录：
-
-```js
-const qr = await api.create_linux_login_qr(self_id, linux_protocol_id, profile.id)
-// 展示 qr.image（PNG data URL）或用 qr.url 生成二维码
-const state = await api.query_linux_login_qr(self_id)
-```
+Linux 账号登录完整使用框架管理端的原生账号链路。SDK 不提供额外的创建二维码或高频轮询 API；插件业务调用选择 Linux 实例时只传附件约定的 `client_type: 'linuxqq'`，可使用 `api.forClient('linuxqq')`。
 
 在线 Android Bot 也可以扫描并授权另一个登录二维码：
 

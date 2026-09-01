@@ -30,6 +30,27 @@ function buildRedPacketParams(self_id, group_id, sender_uin, redPacket) {
   }
 }
 
+function normalizeProtocolTarget(value) {
+  switch (String(value ?? '').trim().toLowerCase()) {
+    case '':
+    case 'android':
+    case 'phone':
+    case 'pad':
+      return { protocol: 'android', client_type: 'android' }
+    case 'linux':
+    case 'linuxqq':
+    case 'linux_qq':
+    case 'linux-qq':
+      return { protocol: 'linux', client_type: 'linuxqq' }
+    default:
+      throw new Error('协议仅支持 android 或 linux')
+  }
+}
+
+function withProtocolTarget(params, target) {
+  return { ...(params || {}), client_type: target.client_type }
+}
+
 // ========== API 定义 ==========
 const apiDefs = {
   // 1.8.0 正式公开目录补充（options 对象按文档字段原样透传）。
@@ -336,10 +357,10 @@ const apiDefs = {
   get_pet_pk_power: { wait: true, build: (self_id) => ({ self_id }) },
   poke_friend_pet: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
   get_friend_pet_profile: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
-  feed_friend_pet: { wait: true, build: (self_id, friend_id, food) => ({ self_id, friend_id, food }) },
-  bathe_friend_pet: { wait: true, build: (self_id, friend_id, item, count = 1) => ({ self_id, friend_id, item, count }) },
-  visit_friend_pet: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
-  start_pet_pk: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
+  feed_friend_pet: { wait: true, build: (self_id, friend_id, food, friend_pet_id = '') => ({ self_id, friend_id, food, friend_pet_id }) },
+  bathe_friend_pet: { wait: true, build: (self_id, friend_id, item, count = 1, friend_pet_id = '') => ({ self_id, friend_id, item, count, friend_pet_id }) },
+  visit_friend_pet: { wait: true, build: (self_id, friend_id, friend_pet_id = '') => ({ self_id, friend_id, friend_pet_id }) },
+  start_pet_pk: { wait: true, build: (self_id, friend_id, friend_pet_id = '') => ({ self_id, friend_id, friend_pet_id }) },
   get_pet_pk_status: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
   settle_pet_pk: { wait: true, build: (self_id, story_id) => ({ self_id, story_id }) },
   // 发送群消息: message 为 [{type, data}] 数组, 支持 text/reply/at/image/voice/video/face。
@@ -668,16 +689,6 @@ const apiDefs = {
   query_login_qr_status: {
     wait: true,
     build: (self_id, guarantee_token) => ({ self_id, guarantee_token }),
-  },
-  // 创建 Linux 原生 WTLogin 登录二维码。账号不存在时会在当前节点创建 Linux 账号。
-  create_linux_login_qr: {
-    wait: true,
-    build: (self_id, protocol_id, device_profile_id) => ({ self_id, platform: 'linux', protocol_id, device_profile_id }),
-  },
-  // 查询 Linux 原生登录二维码状态；确认后后端自动完成登录。
-  query_linux_login_qr: {
-    wait: true,
-    build: self_id => ({ self_id, platform: 'linux' }),
   },
   // 使用当前在线 Android Bot 扫描登录二维码，k 可传二维码 URL 或 k 参数值。
   scan_qr: {
@@ -1024,18 +1035,37 @@ export function createReverseAPI(config = {}) {
   const api = { on, listen, waitForConnection, close, call: callAction, callAction, setSendPacketKey }
   Object.defineProperty(api, 'connected', { enumerable: true, get: () => ready })
 
-  for (const [apiName, def] of Object.entries(apiDefs)) {
-    api[apiName] = (...args) => {
-      if (def.stream) {
-        const options = args[0] || {}
-        const onStream = args[1]
-        return call(apiName, def.build(options), def.resultMessage, def.resultData !== false, def.timeout, onStream)
+  const installActionMethods = (targetApi, protocolTarget = null) => {
+    for (const [apiName, def] of Object.entries(apiDefs)) {
+      targetApi[apiName] = (...args) => {
+        if (def.stream) {
+          const options = args[0] || {}
+          const onStream = args[1]
+          const params = def.build(options)
+          return call(apiName, protocolTarget ? withProtocolTarget(params, protocolTarget) : params, def.resultMessage, def.resultData !== false, def.timeout, onStream)
+        }
+        const built = def.build(...args)
+        const params = protocolTarget ? withProtocolTarget(built, protocolTarget) : built
+        if (def.wait) return call(apiName, params, def.resultMessage, def.resultData !== false, def.timeout)
+        _send(buildActionMessage(apiName, params))
       }
-      const params = def.build(...args)
-      if (def.wait) return call(apiName, params, def.resultMessage, def.resultData !== false, def.timeout)
-      _send(buildActionMessage(apiName, params))
     }
   }
+  installActionMethods(api)
+
+  api.forProtocol = value => {
+    const protocolTarget = normalizeProtocolTarget(value)
+    const scopedCall = (action, params = {}, options = {}) => callAction(action, withProtocolTarget(params, protocolTarget), options)
+    const scoped = {
+      on, listen, waitForConnection, close,
+      call: scopedCall, callAction: scopedCall, setSendPacketKey,
+      protocol: protocolTarget.protocol, client_type: protocolTarget.client_type,
+    }
+    Object.defineProperty(scoped, 'connected', { enumerable: true, get: () => ready })
+    installActionMethods(scoped, protocolTarget)
+    return scoped
+  }
+  api.forClient = api.forProtocol
 
   return api
 }
