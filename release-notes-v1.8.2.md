@@ -27,6 +27,9 @@
 ## API 与 SDK
 
 - 官网、正向 Node.js SDK、反向 Node.js SDK 均同步为 194 个公开 API。
+- 194 个公开 API 统一作为萌卡 NT 原生能力展示，不再标记为其他框架兼容接口。
+- `send_group_notice`、`del_group_notice`、`mark_all_as_read`、`handle_quick_operation` 已按公开 action 名直接注册；旧内部名称仅用于保障既有插件平滑升级。
+- API 文档示例、详情跳转和 SDK 调用名统一使用公开 action，参数契约与 1.8.2 处理函数逐项核对无差异。
 - QQ 宠物文档增加完整参数、返回值和错误边界；官网“专属 Key”分组只展示 `send_packet`。
 - 框架版本和管理前端可见版本更新为 1.8.2。
 
