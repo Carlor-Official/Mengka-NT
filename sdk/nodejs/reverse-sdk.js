@@ -679,6 +679,26 @@ const apiDefs = {
     wait: true,
     build: (self_id, guarantee_token) => ({ self_id, guarantee_token }),
   },
+  // 创建 Linux 原生 WTLogin 登录二维码。账号不存在时会在当前节点创建 Linux 账号。
+  create_linux_login_qr: {
+    wait: true,
+    build: (self_id, protocol_id, device_profile_id) => ({ self_id, platform: 'linux', protocol_id, device_profile_id }),
+  },
+  // 查询 Linux 原生登录二维码状态；确认后后端自动完成登录。
+  query_linux_login_qr: {
+    wait: true,
+    build: self_id => ({ self_id, platform: 'linux' }),
+  },
+  // 使用当前在线 Android Bot 扫描登录二维码，k 可传二维码 URL 或 k 参数值。
+  scan_qr: {
+    wait: true,
+    build: (self_id, k) => ({ self_id, k }),
+  },
+  // 使用当前在线 Android Bot 授权登录二维码。
+  auth_qr: {
+    wait: true,
+    build: (self_id, k, skip_phone_confirm = false) => ({ self_id, k, skip_phone_confirm }),
+  },
   // 设置/取消群管理员: set_admin=true 设为管理, false 取消
   set_group_admin: {
     wait: true,

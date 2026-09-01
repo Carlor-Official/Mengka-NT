@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "check": "node --check sdk.js && node --check reverse-sdk.js",
-    "test": "node --test access-key.test.mjs"
+    "test": "node --test *.test.mjs"
   },
   "dependencies": {
     "ws": "^8.18.0"

@@ -1,6 +1,6 @@
 # 萌卡 NT v1.8.2
 
-本版本在 1.8.1 的现代管理端、SQLite 运行边界和专属 Key 机制上，补全 QQ 宠物公开 API，并将官网、正向 SDK、反向 SDK 统一到 194 个公开 API。
+本版本在 1.8.1 的现代管理端、SQLite 运行边界和专属 Key 机制上，补全 QQ 宠物与 Linux 原生扫码登录公开 API，并将官网、正向 SDK、反向 SDK 统一到 198 个公开 API。
 
 ## QQ 宠物公开 API
 
@@ -26,8 +26,9 @@
 
 ## API 与 SDK
 
-- 官网、正向 Node.js SDK、反向 Node.js SDK 均同步为 194 个公开 API。
-- 194 个公开 API 统一作为萌卡 NT 原生能力展示，不再标记为其他框架兼容接口。
+- 新增萌卡 NT 原生 `create_linux_login_qr`、`query_linux_login_qr`、`scan_qr`、`auth_qr`。
+- 官网、正向 Node.js SDK、反向 Node.js SDK 均同步为 198 个公开 API。
+- 198 个公开 API 统一作为萌卡 NT 原生能力展示，不标记为兼容接口。
 - `send_group_notice`、`del_group_notice`、`mark_all_as_read`、`handle_quick_operation` 已按公开 action 名直接注册；旧内部名称仅用于保障既有插件平滑升级。
 - API 文档示例、详情跳转和 SDK 调用名统一使用公开 action，参数契约与 1.8.2 处理函数逐项核对无差异。
 - QQ 宠物文档增加完整参数、返回值和错误边界；官网“专属 Key”分组只展示 `send_packet`。
