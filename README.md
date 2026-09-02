@@ -46,7 +46,7 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前 1.9.6 测试 SDK 共 218 个 action：196 个原有公开 API，加上 22 个仅供管理员显式授权的 `system_management` action。QQ 宠物 API 仍为普通公开接口，专属 Key 仅用于 `send_packet`。系统管理 action 同时受服务总开关与允许清单校验，不会自动授予普通插件。
+当前 1.9.6 SDK 共 218 个 action：196 个原有公开 API，加上 22 个仅供管理员显式授权的 `system_management` action。QQ 宠物 API 仍为普通公开接口，专属 Key 仅用于 `send_packet`。系统管理 action 同时受服务总开关与允许清单校验，不会自动授予普通插件。
 
 ## 平台支持
 
