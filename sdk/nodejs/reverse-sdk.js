@@ -601,17 +601,41 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 获取节点下所有 Bot 列表（无需 self_id）；每项包含 is_qq_vip 会员状态。
+  // 1.9.6 系统管理插件接口。框架仅在服务启用 system_management
+  // 且 action 位于服务授权清单时执行。
+  get_plugin_context: { wait: true, build: () => ({}) },
+  get_node_list: { wait: true, build: () => ({}) },
+  create_node: { wait: true, build: (options = {}) => ({ ...options }) },
+  update_node: { wait: true, build: (options = {}) => ({ ...options }) },
+  delete_node: { wait: true, build: id => ({ id }) },
+  test_node_latency: { wait: true, build: id => ({ id }) },
+  create_device_profile: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
+  delete_device_profile: { wait: true, build: id => ({ id }) },
+  get_account_settings: { wait: true, build: () => ({}) },
+  update_account_settings: { wait: true, build: (options = {}) => ({ ...options }) },
+  clear_account_cache: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
+  stop_account_login: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
+  submit_account_identity_captcha: { wait: true, build: (self_id, ticket, randstr, protocol = 'android') => withProtocolTarget({ self_id, ticket, randstr }, normalizeProtocolTarget(protocol)) },
+  submit_account_identity_phone: { wait: true, build: (self_id, mobile, area_code = '86', protocol = 'android') => withProtocolTarget({ self_id, mobile, area_code }, normalizeProtocolTarget(protocol)) },
+  confirm_account_identity_sms: { wait: true, build: (self_id, mobile, area_code = '86', protocol = 'android') => withProtocolTarget({ self_id, mobile, area_code }, normalizeProtocolTarget(protocol)) },
+  retry_account_identity_verify: { wait: true, build: (options = {}) => ({ ...options }) },
+  open_account_security_access: { wait: true, build: (options = {}) => ({ ...options }) },
+  retry_account_security_verify: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_account_access_list: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_account_access: { wait: true, build: (options = {}) => ({ ...options }) },
+  clear_account_access: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_account_recent_logs: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
+  // 获取节点下所有 Bot 列表（无需 self_id）；每项包含节点和协议字段。
   get_bot_list: {
     wait: true,
-    build: () => ({}),
+    build: (options = {}) => ({ ...options }),
   },
   // 获取当前节点下指定 Bot 的运行信息，返回值包含 is_qq_vip 会员状态。
   get_bot_info: {
     wait: true,
     build: self_id => ({ self_id }),
   },
-  // 获取本地 protocol.json 的完整数组，不额外注入 ID（无需 self_id）
+  // 获取本地 protocol.json 的完整数组，包含 add_account 所需的稳定 id（无需 self_id）
   get_protocol_list: {
     wait: true,
     build: () => ({}),
@@ -626,14 +650,18 @@ const apiDefs = {
     wait: true,
     resultMessage: '账号添加成功',
     resultData: false,
-    build: (self_id, password, protocol_id, device_profile_id) => ({ self_id, password, protocol_id, device_profile_id }),
+    build: (self_id, password, protocol_id, device_profile_id) => (
+      self_id && typeof self_id === 'object' ? { ...self_id } : { self_id, password, protocol_id, device_profile_id }
+    ),
   },
   // 编辑当前插件所属节点内的账号
   update_account: {
     wait: true,
     resultMessage: '账号编辑成功',
     resultData: false,
-    build: (self_id, password, protocol_id, device_profile_id) => ({ self_id, password, protocol_id, device_profile_id }),
+    build: (self_id, password, protocol_id, device_profile_id) => (
+      self_id && typeof self_id === 'object' ? { ...self_id } : { self_id, password, protocol_id, device_profile_id }
+    ),
   },
   // 取消登录中账号或使已登录账号离线，仅限当前插件所属节点
   offline_account: {

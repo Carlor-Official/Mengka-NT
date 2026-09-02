@@ -18,15 +18,18 @@ function actionNames(source) {
   return [...source.slice(start, end).matchAll(/^  ([A-Za-z0-9_]+):/gm)].map(match => match[1])
 }
 
-test('正反向 SDK 保持附件的协议选择与扫码授权边界', async () => {
+test('正反向 SDK 保持 Linux 原生链路并同步 1.9.6 系统管理 action', async () => {
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
     const actions = actionNames(source)
-    assert.equal(actions.length, 196, `${file.pathname} must expose exactly 196 actions`)
+    assert.equal(actions.length, 218, `${file.pathname} must expose exactly 218 actions`)
     if (expectedActions == null) expectedActions = actions
     else assert.deepEqual(actions, expectedActions, `${file.pathname} action catalog differs from the canonical SDK`)
     for (const action of ['scan_qr', 'auth_qr']) {
+      assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
+    }
+    for (const action of ['get_plugin_context', 'get_node_list', 'create_device_profile', 'get_account_access_list', 'set_account_access', 'get_account_recent_logs']) {
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
     assert.match(source, /api\.forProtocol\s*=\s*value\s*=>/, `${file.pathname} missing protocol-scoped API`)
