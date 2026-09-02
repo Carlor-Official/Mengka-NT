@@ -596,7 +596,7 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 1.9.6 系统管理插件接口。框架仅在服务启用 system_management 且 action 位于服务授权清单时执行。
+  // 1.9.7 系统管理插件接口。框架仅在服务启用 system_management 且 action 位于服务授权清单时执行。
   get_plugin_context: { wait: true, build: () => ({}) },
   get_node_list: { wait: true, build: () => ({}) },
   create_node: { wait: true, build: (options = {}) => ({ ...options }) },

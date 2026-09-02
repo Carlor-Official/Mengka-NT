@@ -18,7 +18,7 @@ function actionNames(source) {
   return [...source.slice(start, end).matchAll(/^  ([A-Za-z0-9_]+):/gm)].map(match => match[1])
 }
 
-test('正反向 SDK 保持 Linux 原生链路并同步 1.9.6 系统管理 action', async () => {
+test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理 action', async () => {
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
