@@ -364,7 +364,7 @@ const apiDefs = {
   get_pet_pk_friends: { wait: true, build: (self_id, cursor = '') => ({ self_id, cursor }) },
   get_pet_pk_strangers: { wait: true, build: (self_id, cursor = '') => ({ self_id, cursor }) },
   get_pet_interaction_messages: { wait: true, build: (self_id, limit = 20) => ({ self_id, limit }) },
-  get_pet_pk_power: { wait: true, build: (self_id) => ({ self_id }) },
+  get_pet_pk_power: { wait: true, build: (self_id, pet_id) => ({ self_id, pet_id }) },
   poke_friend_pet: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
   get_friend_pet_profile: { wait: true, build: (self_id, friend_id) => ({ self_id, friend_id }) },
   feed_friend_pet: { wait: true, build: (self_id, friend_id, food, friend_pet_id = '') => ({ self_id, friend_id, food, friend_pet_id }) },
