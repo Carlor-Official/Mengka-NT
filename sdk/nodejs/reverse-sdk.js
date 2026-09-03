@@ -110,7 +110,7 @@ const apiDefs = {
     build: (self_id) => ({ self_id }),
   },
   // 按框架前端“一键生成”规则创建并保存一套独立设备指纹。
-  // 该 action 为全局无参数调用，返回记录的 id 可直接用于 add_account。
+  // create_device_profile 的兼容别名；新代码应使用标准 action。
   generate_device_profile: {
     wait: true,
     build: () => ({}),
@@ -601,8 +601,8 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 1.9.7 系统管理插件接口。框架仅在服务启用 system_management
-  // 且 action 位于服务授权清单时执行。
+  // 1.9.7 系统管理专用接口。system_management 权限包还会按授权
+  // 提升现有 Bot 管理 action 的节点作用域，不复制其处理器。
   get_plugin_context: { wait: true, build: () => ({}) },
   get_node_list: { wait: true, build: () => ({}) },
   create_node: { wait: true, build: (options = {}) => ({ ...options }) },
@@ -614,6 +614,7 @@ const apiDefs = {
   get_account_settings: { wait: true, build: () => ({}) },
   update_account_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   clear_account_cache: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
+  // offline_account 的兼容别名；新代码应使用标准 action。
   stop_account_login: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
   submit_account_identity_captcha: { wait: true, build: (self_id, ticket, randstr, protocol = 'android') => withProtocolTarget({ self_id, ticket, randstr }, normalizeProtocolTarget(protocol)) },
   submit_account_identity_phone: { wait: true, build: (self_id, mobile, area_code = '86', protocol = 'android') => withProtocolTarget({ self_id, mobile, area_code }, normalizeProtocolTarget(protocol)) },
