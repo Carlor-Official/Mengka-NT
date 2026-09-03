@@ -46,7 +46,7 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前 1.9.8 SDK 提供 218 个 action，只有一套当前契约。`system_management` 是权限覆盖层：完整权限包由 24 个框架管理专用 action 和 18 个复用现有处理器的 Bot 管理 action 组成。新增扫码找回接口仅返回手机 QQ 明确确认后的账号，不完成登录或保存票据。QQ 宠物 API 仍为普通公开接口，专属 Key 仅用于 `send_packet`。管理能力同时受服务总开关与允许清单校验，不会自动授予普通插件。
+当前 1.9.9 SDK 提供 218 个 action，只有一套当前契约。`system_management` 是权限覆盖层：完整权限包由 24 个框架管理专用 action 和 18 个复用现有处理器的 Bot 管理 action 组成。新增扫码找回接口仅返回手机 QQ 明确确认后的账号，不完成登录或保存票据。QQ 宠物 API 仍为普通公开接口，专属 Key 仅用于 `send_packet`。管理能力同时受服务总开关与允许清单校验，不会自动授予普通插件。
 
 系统管理服务可使用 `get_plugin_context` 检查授权上下文，以 `get_bot_list({ all_nodes: true })` 读取全节点账号，并通过 `add_account({...})` / `update_account({...})` 的对象参数指定 `node_id` 与 `client_type`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；旧的 `generate_device_profile`、`offline_account` 已移除。完整权限清单、调用示例和安全边界见 [Node.js SDK 文档](sdk/nodejs/README.md#198-系统管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
 
