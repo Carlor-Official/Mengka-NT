@@ -18,8 +18,8 @@ function actionNames(source) {
   return [...source.slice(start, end).matchAll(/^  ([A-Za-z0-9_]+):/gm)].map(match => match[1])
 }
 
-test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理 action', async () => {
-  const systemManagementActions = [
+test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理权限包', async () => {
+  const nativeSystemManagementActions = [
     'get_plugin_context', 'get_node_list', 'create_node', 'update_node', 'delete_node', 'test_node_latency',
     'create_device_profile', 'delete_device_profile', 'get_account_settings', 'update_account_settings',
     'clear_account_cache', 'stop_account_login', 'submit_account_identity_captcha',
@@ -27,6 +27,15 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理 action
     'open_account_security_access', 'retry_account_security_verify', 'get_account_access_list',
     'set_account_access', 'clear_account_access', 'get_account_recent_logs',
   ]
+  const delegatedSystemManagementActions = [
+    'get_bot_list', 'get_bot_info', 'get_protocol_list', 'get_device_profile_list',
+    'generate_device_profile', 'add_account', 'update_account', 'offline_account', 'delete_account',
+    'login_account', 'check_cache', 'cache_login', 'submit_slider', 'get_security_verify_methods',
+    'get_sms', 'check_sms', 'create_login_qr', 'query_login_qr_status', 'get_level_tasks',
+    'execute_level_tasks',
+  ]
+  const systemManagementActions = [...nativeSystemManagementActions, ...delegatedSystemManagementActions]
+  assert.equal(new Set(systemManagementActions).size, 42)
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
