@@ -5,7 +5,7 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前 1.9.9 正向与反向 SDK 均提供 218 个 action，只有一套当前参数契约。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
+当前 2.0.0 正向与反向 SDK 均提供 218 个 action，只有一套当前参数契约。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
 
 ## 1.9.8 系统管理接口
 
@@ -55,7 +55,7 @@ await api.call('action_name', { self_id, ...params }, { timeout: 60000 })
 
 `api.callAction` 与 `api.call` 等价。调用仍会经过服务授权检查。
 
-`send_packet` 除原有参数外还必须在 action 外层携带算法系统签发的专属 Key。推荐通过 SDK 配置注入，Key 不会进入 `params`，因此 `self_id/cmd/data/rsp/reserve` 契约保持不变：
+`send_packet` 与 30 个 QQ 宠物 API 由框架统一执行专属 Key 鉴权。插件只提交原有业务参数，框架会自动读取当前实例已固定绑定并加密保存的 Key；插件配置、action 外层和 `params` 均不接受 `access_key`：
 
 ```js
 const api = createAPI({
@@ -63,9 +63,6 @@ const api = createAPI({
   port: 3001,
   token: process.env.MENGKA_PLUGIN_TOKEN,
   pluginId: 'example-plugin',
-  // 专属 Key 由框架管理端固定绑定，插件通常无需配置。
-  // sendPacketKey 仅保留给旧版 envelope 兼容，且必须与框架绑定值一致。
-  sendPacketKey: process.env.MENGKA_SEND_PACKET_KEY || '',
   name: 'example',
   version: '1.0.0',
   author: 'developer',
@@ -74,7 +71,7 @@ const api = createAPI({
 await api.send_packet(self_id, cmd, data, true, reserve)
 ```
 
-运行中轮换 Key 可以调用 `api.setSendPacketKey(newKey)`。通用入口也可以对单次调用传入 `{ accessKey }`。不要把专属 Key 写入源码、URL、业务日志或错误信息。
+Key 的选择、固定绑定、续期和吊销只在框架管理端完成。插件无权读取、提交、替换或记录完整 Key；绑定失效时，框架会返回稳定的专属 Key 鉴权错误。
 
 随机设备指纹与框架前端“指纹 → 添加指纹 → 一键生成其余内容”使用同一套规则。接口不需要参数，会创建并保存一条随机命名的独立指纹记录；返回的 `id` 可以直接作为 `add_account` 的 `device_profile_id`：
 

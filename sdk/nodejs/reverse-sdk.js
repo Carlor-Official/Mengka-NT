@@ -830,7 +830,7 @@ function dispatchEvent(listeners, event) {
 
 // ========== createReverseAPI ==========
 export function createReverseAPI(config = {}) {
-  const { host = '0.0.0.0', port = 3002, path = '/', token, sendPacketKey = '' } = config
+  const { host = '0.0.0.0', port = 3002, path = '/', token } = config
   if (!token) throw new Error('token 必填')
 
   const listeners = {}
@@ -842,7 +842,6 @@ export function createReverseAPI(config = {}) {
   let closing = false
   let nextId = 0
   let connectionInfo = null
-  let rawPacketAccessKey = String(sendPacketKey || '').trim()
 
   function requestToken(req) {
     const authorization = String(req.headers.authorization || '')
@@ -874,18 +873,8 @@ export function createReverseAPI(config = {}) {
     ws.send(JSON.stringify(obj))
   }
 
-  function buildActionMessage(action, params, id = '', accessKey = '') {
-    const message = { type: 'action', ...(id ? { id } : {}), action, params }
-    if (action === 'send_packet') {
-      const key = String(accessKey || rawPacketAccessKey || '').trim()
-      // 正常模式由框架读取已固定绑定的 Key；显式值仅用于旧插件兼容。
-      if (key) message.access_key = key
-    }
-    return message
-  }
-
-  function setSendPacketKey(value) {
-    rawPacketAccessKey = String(value || '').trim()
+  function buildActionMessage(action, params, id = '') {
+    return { type: 'action', ...(id ? { id } : {}), action, params }
   }
 
   function handleActionResult(msg) {
@@ -999,7 +988,7 @@ export function createReverseAPI(config = {}) {
     })
   }
 
-  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000, onStream = null, accessKey = '') {
+  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000, onStream = null) {
     if (!ready || !ws || ws.readyState !== WebSocket.OPEN) {
       return Promise.reject(new Error('萌卡NT 后台尚未建立反向 WebSocket 连接'))
     }
@@ -1007,7 +996,7 @@ export function createReverseAPI(config = {}) {
       const id = String(++nextId)
       let message
       try {
-        message = buildActionMessage(action, params, id, accessKey)
+        message = buildActionMessage(action, params, id)
       } catch (error) {
         reject(error)
         return
@@ -1053,9 +1042,8 @@ export function createReverseAPI(config = {}) {
     options.resultData !== false,
     options.timeout || 30000,
     options.onStream || null,
-    options.accessKey || '',
   )
-  const api = { on, listen, waitForConnection, close, call: callAction, callAction, setSendPacketKey }
+  const api = { on, listen, waitForConnection, close, call: callAction, callAction }
   Object.defineProperty(api, 'connected', { enumerable: true, get: () => ready })
 
   const installActionMethods = (targetApi, protocolTarget = null) => {
@@ -1081,7 +1069,7 @@ export function createReverseAPI(config = {}) {
     const scopedCall = (action, params = {}, options = {}) => callAction(action, withProtocolTarget(params, protocolTarget), options)
     const scoped = {
       on, listen, waitForConnection, close,
-      call: scopedCall, callAction: scopedCall, setSendPacketKey,
+      call: scopedCall, callAction: scopedCall,
       protocol: protocolTarget.protocol, client_type: protocolTarget.client_type,
     }
     Object.defineProperty(scoped, 'connected', { enumerable: true, get: () => ready })

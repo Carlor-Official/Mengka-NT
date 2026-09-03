@@ -829,7 +829,7 @@ function dispatchEvent(listeners, event) {
 
 // ========== createAPI ==========
 export function createAPI(config) {
-  const { host = '127.0.0.1', port = 3001, token, pluginId = '', name, version, author, sendPacketKey = '' } = config
+  const { host = '127.0.0.1', port = 3001, token, pluginId = '', name, version, author } = config
   if (!token)  throw new Error('token 必填')
   if (!name)   throw new Error('name 必填')
   if (!version) throw new Error('version 必填')
@@ -840,33 +840,22 @@ export function createAPI(config) {
   let ws = null
   let nextId = 0
   let connected = false
-  let rawPacketAccessKey = String(sendPacketKey || '').trim()
 
   function _send(obj) {
     if (!ws || ws.readyState !== WebSocket.OPEN) return
     ws.send(JSON.stringify(obj))
   }
 
-  function buildActionMessage(action, params, id = '', accessKey = '') {
-    const message = { type: 'action', ...(id ? { id } : {}), action, params }
-    if (action === 'send_packet') {
-      const key = String(accessKey || rawPacketAccessKey || '').trim()
-      // 正常模式由框架读取已固定绑定的 Key；显式值仅用于旧插件兼容。
-      if (key) message.access_key = key
-    }
-    return message
+  function buildActionMessage(action, params, id = '') {
+    return { type: 'action', ...(id ? { id } : {}), action, params }
   }
 
-  function setSendPacketKey(value) {
-    rawPacketAccessKey = String(value || '').trim()
-  }
-
-  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000, onStream = null, accessKey = '') {
+  function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000, onStream = null) {
     return new Promise((resolve, reject) => {
       const id = String(++nextId)
       let message
       try {
-        message = buildActionMessage(action, params, id, accessKey)
+        message = buildActionMessage(action, params, id)
       } catch (error) {
         reject(error)
         return
@@ -978,9 +967,8 @@ export function createAPI(config) {
     options.resultData !== false,
     options.timeout || 30000,
     options.onStream || null,
-    options.accessKey || '',
   )
-  const api = { on, connect, disconnect, call: callAction, callAction, setSendPacketKey }
+  const api = { on, connect, disconnect, call: callAction, callAction }
 
   const installActionMethods = (targetApi, protocolTarget = null) => {
     for (const [apiName, def] of Object.entries(apiDefs)) {
@@ -1005,7 +993,7 @@ export function createAPI(config) {
     const scopedCall = (action, params = {}, options = {}) => callAction(action, withProtocolTarget(params, protocolTarget), options)
     const scoped = {
       on, connect, disconnect,
-      call: scopedCall, callAction: scopedCall, setSendPacketKey,
+      call: scopedCall, callAction: scopedCall,
       protocol: protocolTarget.protocol, client_type: protocolTarget.client_type,
     }
     installActionMethods(scoped, protocolTarget)

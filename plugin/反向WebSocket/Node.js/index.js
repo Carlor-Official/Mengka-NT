@@ -5,7 +5,6 @@ const api = createReverseAPI({
   port: 3002,
   path: '/',
   token: '在管理后台填写相同的服务令牌',
-  sendPacketKey: process.env.MENGKA_SEND_PACKET_KEY || '',
 })
 
 api.on('group_message', event => {

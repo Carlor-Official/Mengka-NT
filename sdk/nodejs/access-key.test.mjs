@@ -28,26 +28,32 @@ async function withForwardServer(run) {
   }
 }
 
-function createClient(port, sendPacketKey = '') {
+function createClient(port, extra = {}) {
   return createAPI({
     host: '127.0.0.1',
     port,
     token: 'plugin-token',
-    sendPacketKey,
     name: 'access-key-test',
     version: '1.0.0',
     author: 'test',
+    ...extra,
   })
 }
 
-test('send_packet keeps business params unchanged and adds the key to the action envelope', async () => {
+test('send_packet never accepts a plugin-provided dedicated key', async () => {
   await withForwardServer(async ({ port, received }) => {
-    const api = createClient(port, 'mksp_test.secret')
+    const api = createClient(port, { sendPacketKey: 'mksp_legacy.secret' })
     await api.connect()
-    const result = await api.send_packet(123456, 'Test.Command', 'aabb', true, 'ccdd')
+    const result = await api.callAction('send_packet', {
+      self_id: 123456,
+      cmd: 'Test.Command',
+      data: 'aabb',
+      rsp: true,
+      reserve: 'ccdd',
+    }, { accessKey: 'mksp_legacy.secret' })
     assert.equal(result, 'aabb')
     const action = received.find(item => item.type === 'action')
-    assert.equal(action.access_key, 'mksp_test.secret')
+    assert.equal(Object.hasOwn(action, 'access_key'), false)
     assert.deepEqual(action.params, {
       self_id: 123456,
       cmd: 'Test.Command',
@@ -107,22 +113,20 @@ test('send_packet uses the framework-bound key when the plugin does not carry on
   })
 })
 
-test('a key can be rotated without changing send_packet parameters', async () => {
+test('the SDK exposes no dedicated-key setter', async () => {
   await withForwardServer(async ({ port, received }) => {
     const api = createClient(port)
-    api.setSendPacketKey('mksp_rotated.secret')
+    assert.equal(Object.hasOwn(api, 'setSendPacketKey'), false)
     await api.connect()
     await api.send_packet(123456, 'Test.Command', 'aabb', false)
     const action = received.find(item => item.type === 'action')
-    assert.equal(action.access_key, 'mksp_rotated.secret')
+    assert.equal(Object.hasOwn(action, 'access_key'), false)
     assert.equal(action.params.rsp, false)
     api.disconnect()
   })
 })
 
-test('reverse SDK uses the same protected action envelope contract', async () => {
+test('reverse SDK also leaves dedicated-key ownership to the framework', async () => {
   const source = await readFile(new URL('./reverse-sdk.js', import.meta.url), 'utf8')
-  assert.match(source, /if \(key\) message\.access_key = key/)
-  assert.doesNotMatch(source, /send_packet 专属 Key 未配置/)
-  assert.match(source, /options\.accessKey/)
+  assert.doesNotMatch(source, /sendPacketKey|setSendPacketKey|options\.accessKey|message\.access_key/)
 })
