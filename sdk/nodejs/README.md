@@ -5,9 +5,9 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前 1.9.7 正向与反向 SDK 均保留 218 个 action 名称，对应 216 项能力与 2 个兼容别名。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
+当前 1.9.8 正向与反向 SDK 均保留 218 个 action 名称，对应 216 项能力与 2 个兼容别名。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
 
-## 1.9.7 系统管理接口
+## 1.9.8 系统管理接口
 
 系统管理服务必须在框架服务设置中同时开启 `system_management`，并逐项勾选需要的 action。普通插件仍受绑定节点隔离；客户端隐藏按钮不能代替框架服务端鉴权。
 
@@ -82,7 +82,7 @@ const profile = await api.create_device_profile()
 await api.add_account(self_id, password, protocol_id, profile.id)
 ```
 
-Linux 账号登录完整使用框架管理端的原生账号链路。SDK 不提供额外的创建二维码或高频轮询 API；插件业务调用选择 Linux 实例时只传附件约定的 `client_type: 'linuxqq'`，可使用 `api.forClient('linuxqq')`。
+Linux 账号登录完整使用框架管理端的原生账号链路。调用 `login_account` 并传 `client_type: 'linuxqq'` 时，框架会返回原生二维码信息；使用现有 `query_login_qr_status` 按管理端相同的 1.5 秒间隔查询，确认后由框架完成上线。二维码失效后可调用现有 `create_login_qr` 刷新，不新增平行 action。
 
 在线 Android Bot 也可以扫描并授权另一个登录二维码：
 

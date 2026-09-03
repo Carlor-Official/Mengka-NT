@@ -18,7 +18,7 @@ function actionNames(source) {
   return [...source.slice(start, end).matchAll(/^  ([A-Za-z0-9_]+):/gm)].map(match => match[1])
 }
 
-test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理权限包', async () => {
+test('正反向 SDK 保持 Linux 原生链路并同步 1.9.8 系统管理权限包', async () => {
   const nativeSystemManagementActions = [
     'get_plugin_context', 'get_node_list', 'create_node', 'update_node', 'delete_node', 'test_node_latency',
     'create_device_profile', 'delete_device_profile', 'get_account_settings', 'update_account_settings',
@@ -56,6 +56,8 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理权限�
     assert.match(source, /client_type:\s*'linuxqq'/, `${file.pathname} missing Linux client selector`)
     assert.doesNotMatch(source, /create_linux_login_qr\s*:/, `${file.pathname} must not expose a parallel Linux login API`)
     assert.doesNotMatch(source, /query_linux_login_qr\s*:/, `${file.pathname} must not expose a parallel Linux polling API`)
+    assert.match(source, /Linux[^\n]*原生二维码信息/, `${file.pathname} must document protocol-aware login_account`)
+    assert.match(source, /Linux 可省略 guarantee_token/, `${file.pathname} must document native Linux QR polling`)
     assert.match(source, /return \{ \.\.\.\(params \|\| \{\}\), client_type: target\.client_type \}/, `${file.pathname} must use the attachment client_type selector only`)
     assert.doesNotMatch(source, /get_login_qr\s*:/, `${file.pathname} must not expose attachment aliases`)
     assert.match(source, /get_pet_pk_power:\s*\{[^\n]*build:\s*\(self_id, pet_id\)\s*=>\s*\(\{ self_id, pet_id \}\)/, `${file.pathname} must query pet power by pet_id`)

@@ -601,7 +601,7 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 1.9.7 系统管理专用接口。system_management 权限包还会按授权
+  // 1.9.8 系统管理专用接口。system_management 权限包还会按授权
   // 提升现有 Bot 管理 action 的节点作用域，不复制其处理器。
   get_plugin_context: { wait: true, build: () => ({}) },
   get_node_list: { wait: true, build: () => ({}) },
@@ -678,7 +678,7 @@ const apiDefs = {
     resultData: false,
     build: self_id => ({ self_id }),
   },
-  // 登录当前插件所属节点内的离线账号。返回 { code, message }；
+  // 登录当前插件所属节点内的离线账号。Android 返回 { code, message }；Linux 返回原生二维码信息；
   // 滑块、身份验证附带 slider_url、identity_url；安全验证会返回 security_verify
   // （QQ 原始验证原因和可用方法），仅在响应带 URL 时才附带 security_url。
   login_account: {
@@ -719,12 +719,12 @@ const apiDefs = {
     wait: true,
     build: (self_id, verify_type, sign, code) => ({ self_id, verify_type, sign, code }),
   },
-  // 创建扫码安全验证二维码，返回 qr_url、guarantee_token 和 expires_in。
+  // Android 创建扫码安全验证二维码；Linux 刷新原生登录二维码。
   create_login_qr: {
     wait: true,
     build: self_id => ({ self_id }),
   },
-  // 查询扫码状态。confirmed 时后端会继续登录，最终返回结构与 login_account 一致。
+  // 查询扫码状态。Linux 可省略 guarantee_token；confirmed 时框架会继续并完成登录。
   query_login_qr_status: {
     wait: true,
     build: (self_id, guarantee_token) => ({ self_id, guarantee_token }),
