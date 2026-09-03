@@ -5,7 +5,7 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前 1.9.8 正向与反向 SDK 均保留 218 个 action 名称，对应 216 项能力与 2 个兼容别名。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
+当前 1.9.8 正向与反向 SDK 均提供 218 个 action，只有一套当前参数契约。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
 
 ## 1.9.8 系统管理接口
 
@@ -28,19 +28,20 @@ await api.add_account({
 })
 ```
 
-系统管理完整权限包共 42 个 action 名称：22 个框架管理专用接口，加上 20 个复用原处理器的 Bot 管理接口。
+系统管理完整权限包共 42 个 action：24 个框架管理专用接口，加上 18 个复用原处理器的 Bot 管理接口。
 
-22 个管理专用 action 分为：
+24 个管理专用 action 分为：
 
 - 插件与节点：`get_plugin_context`、`get_node_list`、`create_node`、`update_node`、`delete_node`、`test_node_latency`
 - 指纹：`create_device_profile`、`delete_device_profile`
 - 账号设置与缓存：`get_account_settings`、`update_account_settings`、`clear_account_cache`、`stop_account_login`
 - 身份与安全验证：`submit_account_identity_captcha`、`submit_account_identity_phone`、`confirm_account_identity_sms`、`retry_account_identity_verify`、`open_account_security_access`、`retry_account_security_verify`
 - 授权租约与诊断：`get_account_access_list`、`set_account_access`、`clear_account_access`、`get_account_recent_logs`
+- 账号归属验证：`create_account_recovery_qr`、`query_account_recovery_qr_status`。二维码由 Linux 原生链路生成，仅在手机 QQ 确认后返回账号，不执行登录、不保存登录票据。
 
-20 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`generate_device_profile`、`add_account`、`update_account`、`offline_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。获得对应授权后，它们只扩展到跨节点作用域，仍执行原 Bot 管理处理器。
+18 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。获得对应授权后，它们只扩展到跨节点作用域，仍执行原 Bot 管理处理器。
 
-`generate_device_profile` 是 `create_device_profile` 的兼容别名，`stop_account_login` 是 `offline_account` 的兼容别名。SDK 暂时保留旧方法，新的插件代码应使用标准 action。
+`create_device_profile`、`stop_account_login` 是当前唯一名称；`generate_device_profile`、`offline_account` 不再注册。`add_account`、`update_account` 只接受对象参数，不再接受旧位置参数。
 
 节点列表不会返回代理密码；更新节点时省略 `proxy_password` 表示保留，传空字符串表示清除。账号授权租约按 `(self_id, platform)` 独立，Android 与 Linux 不共享权益。
 
@@ -79,7 +80,7 @@ await api.send_packet(self_id, cmd, data, true, reserve)
 
 ```js
 const profile = await api.create_device_profile()
-await api.add_account(self_id, password, protocol_id, profile.id)
+await api.add_account({ self_id, password, protocol_id, device_profile_id: profile.id, node_id, client_type: 'android' })
 ```
 
 Linux 账号登录完整使用框架管理端的原生账号链路。调用 `login_account` 并传 `client_type: 'linuxqq'` 时，框架会返回原生二维码信息；使用现有 `query_login_qr_status` 按管理端相同的 1.5 秒间隔查询，确认后由框架完成上线。二维码失效后可调用现有 `create_login_qr` 刷新，不新增平行 action。

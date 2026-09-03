@@ -109,12 +109,6 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按框架前端“一键生成”规则创建并保存一套独立设备指纹。
-  // create_device_profile 的兼容别名；新代码应使用标准 action。
-  generate_device_profile: {
-    wait: true,
-    build: () => ({}),
-  },
   // 兼容系统状态查询；这些 action 只读取框架本地运行状态，不发送 QQ 协议请求。
   get_login_info: { wait: true, build: (self_id) => ({ self_id }) },
   get_status: { wait: true, build: (self_id) => ({ self_id }) },
@@ -604,6 +598,8 @@ const apiDefs = {
   // 1.9.8 系统管理专用接口。system_management 权限包还会按授权
   // 提升现有 Bot 管理 action 的节点作用域，不复制其处理器。
   get_plugin_context: { wait: true, build: () => ({}) },
+  create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
+  query_account_recovery_qr_status: { wait: true, build: recovery_token => ({ recovery_token }) },
   get_node_list: { wait: true, build: () => ({}) },
   create_node: { wait: true, build: (options = {}) => ({ ...options }) },
   update_node: { wait: true, build: (options = {}) => ({ ...options }) },
@@ -614,7 +610,6 @@ const apiDefs = {
   get_account_settings: { wait: true, build: () => ({}) },
   update_account_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   clear_account_cache: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
-  // offline_account 的兼容别名；新代码应使用标准 action。
   stop_account_login: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
   submit_account_identity_captcha: { wait: true, build: (self_id, ticket, randstr, protocol = 'android') => withProtocolTarget({ self_id, ticket, randstr }, normalizeProtocolTarget(protocol)) },
   submit_account_identity_phone: { wait: true, build: (self_id, mobile, area_code = '86', protocol = 'android') => withProtocolTarget({ self_id, mobile, area_code }, normalizeProtocolTarget(protocol)) },
@@ -651,25 +646,14 @@ const apiDefs = {
     wait: true,
     resultMessage: '账号添加成功',
     resultData: false,
-    build: (self_id, password, protocol_id, device_profile_id) => (
-      self_id && typeof self_id === 'object' ? { ...self_id } : { self_id, password, protocol_id, device_profile_id }
-    ),
+    build: (options = {}) => ({ ...options }),
   },
   // 编辑当前插件所属节点内的账号
   update_account: {
     wait: true,
     resultMessage: '账号编辑成功',
     resultData: false,
-    build: (self_id, password, protocol_id, device_profile_id) => (
-      self_id && typeof self_id === 'object' ? { ...self_id } : { self_id, password, protocol_id, device_profile_id }
-    ),
-  },
-  // 取消登录中账号或使已登录账号离线，仅限当前插件所属节点
-  offline_account: {
-    wait: true,
-    resultMessage: '账号已离线',
-    resultData: false,
-    build: self_id => ({ self_id }),
+    build: (options = {}) => ({ ...options }),
   },
   // 删除当前插件所属节点内已离线的账号
   delete_account: {

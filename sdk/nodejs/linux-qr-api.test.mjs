@@ -26,10 +26,11 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.8 系统管理权限�
     'submit_account_identity_phone', 'confirm_account_identity_sms', 'retry_account_identity_verify',
     'open_account_security_access', 'retry_account_security_verify', 'get_account_access_list',
     'set_account_access', 'clear_account_access', 'get_account_recent_logs',
+    'create_account_recovery_qr', 'query_account_recovery_qr_status',
   ]
   const delegatedSystemManagementActions = [
     'get_bot_list', 'get_bot_info', 'get_protocol_list', 'get_device_profile_list',
-    'generate_device_profile', 'add_account', 'update_account', 'offline_account', 'delete_account',
+    'add_account', 'update_account', 'delete_account',
     'login_account', 'check_cache', 'cache_login', 'submit_slider', 'get_security_verify_methods',
     'get_sms', 'check_sms', 'create_login_qr', 'query_login_qr_status', 'get_level_tasks',
     'execute_level_tasks',
@@ -50,8 +51,9 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.8 系统管理权限�
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
     assert.match(source, /get_bot_list:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must support all_nodes options`)
-    assert.match(source, /add_account:\s*\{[\s\S]*?typeof self_id === 'object' \? \{ \.\.\.self_id \}/, `${file.pathname} must support object account parameters`)
-    assert.match(source, /update_account:\s*\{[\s\S]*?typeof self_id === 'object' \? \{ \.\.\.self_id \}/, `${file.pathname} must support object account parameters`)
+    assert.match(source, /add_account:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must use object-only account parameters`)
+    assert.match(source, /update_account:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must use object-only account parameters`)
+    assert.doesNotMatch(source, /^  (generate_device_profile|offline_account):/gm, `${file.pathname} must not expose removed aliases`)
     assert.match(source, /api\.forProtocol\s*=\s*value\s*=>/, `${file.pathname} missing protocol-scoped API`)
     assert.match(source, /client_type:\s*'linuxqq'/, `${file.pathname} missing Linux client selector`)
     assert.doesNotMatch(source, /create_linux_login_qr\s*:/, `${file.pathname} must not expose a parallel Linux login API`)
