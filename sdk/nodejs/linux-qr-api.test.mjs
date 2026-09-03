@@ -59,6 +59,7 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理权限�
     assert.match(source, /return \{ \.\.\.\(params \|\| \{\}\), client_type: target\.client_type \}/, `${file.pathname} must use the attachment client_type selector only`)
     assert.doesNotMatch(source, /get_login_qr\s*:/, `${file.pathname} must not expose attachment aliases`)
     assert.match(source, /get_pet_pk_power:\s*\{[^\n]*build:\s*\(self_id, pet_id\)\s*=>\s*\(\{ self_id, pet_id \}\)/, `${file.pathname} must query pet power by pet_id`)
+    assert.match(source, /get_pet_vitals:\s*\{[^\n]*build:\s*\(self_id, pet_id\)\s*=>\s*\(\{ self_id, pet_id \}\)/, `${file.pathname} must query pet vitals by pet_id`)
     assert.match(source, /start_pet_activity:\s*\{[^\n]*sub_event_type = 0[^\n]*\{ self_id, activity, option_name, friend_id, sub_event_type \}/, `${file.pathname} must keep the complete activity request contract`)
   }
 })

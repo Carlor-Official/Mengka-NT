@@ -344,7 +344,7 @@ const apiDefs = {
   // 宠物资料会返回 pet_id；食物和洗护用品可传目录中的名称或 ID。
   get_pet_profile: { wait: true, build: (self_id) => ({ self_id }) },
   get_pet_medal_gallery: { wait: true, build: (self_id) => ({ self_id }) },
-  get_pet_vitals: { wait: true, build: (self_id) => ({ self_id }) },
+  get_pet_vitals: { wait: true, build: (self_id, pet_id) => ({ self_id, pet_id }) },
   get_pet_attributes: { wait: true, build: (self_id) => ({ self_id }) },
   get_pet_food_catalog: { wait: true, build: (self_id) => ({ self_id }) },
   feed_pet: { wait: true, build: (self_id, pet_id, food) => ({ self_id, pet_id, food }) },

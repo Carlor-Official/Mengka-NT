@@ -75,6 +75,21 @@ test('get_pet_pk_power sends the requested self or friend pet_id', async () => {
   })
 })
 
+test('get_pet_vitals sends the requested self or friend pet_id', async () => {
+  await withForwardServer(async ({ port, received }) => {
+    const api = createClient(port)
+    await api.connect()
+    await api.get_pet_vitals(123456, 'friend-pet-456')
+    const action = received.find(item => item.type === 'action')
+    assert.equal(action.action, 'get_pet_vitals')
+    assert.deepEqual(action.params, {
+      self_id: 123456,
+      pet_id: 'friend-pet-456',
+    })
+    api.disconnect()
+  })
+})
+
 test('send_packet uses the framework-bound key when the plugin does not carry one', async () => {
   await withForwardServer(async ({ port, received }) => {
     const api = createClient(port)
