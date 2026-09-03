@@ -48,6 +48,8 @@
 
 当前 1.9.7 SDK 共 218 个 action：196 个原有公开 API，加上 22 个仅供管理员显式授权的 `system_management` action。QQ 宠物 API 仍为普通公开接口，专属 Key 仅用于 `send_packet`。系统管理 action 同时受服务总开关与允许清单校验，不会自动授予普通插件。
 
+系统管理服务可使用 `get_plugin_context` 检查授权上下文，以 `get_bot_list({ all_nodes: true })` 读取全节点账号，并通过 `add_account({...})` / `update_account({...})` 的对象参数指定 `node_id` 与 `client_type`。完整 22 项清单、调用示例和安全边界见 [Node.js SDK 文档](sdk/nodejs/README.md#197-系统管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
+
 ## 平台支持
 
 | 平台 | 外发包 | 启动文件 | 架构 |

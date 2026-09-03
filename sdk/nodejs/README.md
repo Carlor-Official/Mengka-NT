@@ -7,6 +7,37 @@
 
 当前 1.9.7 正向与反向 SDK 均为 218 个 action，其中新增的 22 个系统管理 action 只对框架管理员明确授权的服务生效。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
 
+## 1.9.7 系统管理接口
+
+系统管理服务必须在框架服务设置中同时开启 `system_management`，并逐项勾选需要的 action。普通插件仍受绑定节点隔离；客户端隐藏按钮不能代替框架服务端鉴权。
+
+```js
+const context = await api.get_plugin_context()
+if (!context.system_management) throw new Error('框架未授权系统管理权限')
+
+const nodes = await api.get_node_list()
+const bots = await api.get_bot_list({ all_nodes: true })
+
+await api.add_account({
+  self_id,
+  password,
+  protocol_id,
+  device_profile_id,
+  node_id: nodes[0].id,
+  client_type: 'linuxqq',
+})
+```
+
+22 个管理 action 分为：
+
+- 插件与节点：`get_plugin_context`、`get_node_list`、`create_node`、`update_node`、`delete_node`、`test_node_latency`
+- 指纹：`create_device_profile`、`delete_device_profile`
+- 账号设置与缓存：`get_account_settings`、`update_account_settings`、`clear_account_cache`、`stop_account_login`
+- 身份与安全验证：`submit_account_identity_captcha`、`submit_account_identity_phone`、`confirm_account_identity_sms`、`retry_account_identity_verify`、`open_account_security_access`、`retry_account_security_verify`
+- 授权租约与诊断：`get_account_access_list`、`set_account_access`、`clear_account_access`、`get_account_recent_logs`
+
+节点列表不会返回代理密码；更新节点时省略 `proxy_password` 表示保留，传空字符串表示清除。账号授权租约按 `(self_id, platform)` 独立，Android 与 Linux 不共享权益。
+
 本轮补充了随机设备指纹、群成员名片、群红包、媒体 RKey、用户在线状态、小程序与 Ark 分享、带内容绑定签名的音乐 Ark、AI 语音、语音转文字、消息表情回应、输入状态、可疑好友申请、空间动态、群文件移动与重命名以及原生协议包调用方法。正向和反向 SDK 的参数顺序保持一致。
 
 目录中尚未提供便捷方法的 API，可以使用通用调用入口：

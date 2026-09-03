@@ -19,6 +19,14 @@ function actionNames(source) {
 }
 
 test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理 action', async () => {
+  const systemManagementActions = [
+    'get_plugin_context', 'get_node_list', 'create_node', 'update_node', 'delete_node', 'test_node_latency',
+    'create_device_profile', 'delete_device_profile', 'get_account_settings', 'update_account_settings',
+    'clear_account_cache', 'stop_account_login', 'submit_account_identity_captcha',
+    'submit_account_identity_phone', 'confirm_account_identity_sms', 'retry_account_identity_verify',
+    'open_account_security_access', 'retry_account_security_verify', 'get_account_access_list',
+    'set_account_access', 'clear_account_access', 'get_account_recent_logs',
+  ]
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
@@ -29,9 +37,12 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.7 系统管理 action
     for (const action of ['scan_qr', 'auth_qr']) {
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
-    for (const action of ['get_plugin_context', 'get_node_list', 'create_device_profile', 'get_account_access_list', 'set_account_access', 'get_account_recent_logs']) {
+    for (const action of systemManagementActions) {
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
+    assert.match(source, /get_bot_list:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must support all_nodes options`)
+    assert.match(source, /add_account:\s*\{[\s\S]*?typeof self_id === 'object' \? \{ \.\.\.self_id \}/, `${file.pathname} must support object account parameters`)
+    assert.match(source, /update_account:\s*\{[\s\S]*?typeof self_id === 'object' \? \{ \.\.\.self_id \}/, `${file.pathname} must support object account parameters`)
     assert.match(source, /api\.forProtocol\s*=\s*value\s*=>/, `${file.pathname} missing protocol-scoped API`)
     assert.match(source, /client_type:\s*'linuxqq'/, `${file.pathname} missing Linux client selector`)
     assert.doesNotMatch(source, /create_linux_login_qr\s*:/, `${file.pathname} must not expose a parallel Linux login API`)
