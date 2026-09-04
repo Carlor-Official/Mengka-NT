@@ -595,9 +595,10 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 1.9.8 系统管理专用接口。system_management 权限包还会按授权
-  // 提升现有 Bot 管理 action 的节点作用域，不复制其处理器。
+  // 2.0 服务管理接口。插件服务完成令牌认证后可直接调用；
+  // 管理端地址只用于管理员 SSO，不参与 API 授权。
   get_plugin_context: { wait: true, build: () => ({}) },
+  get_account_management_context: { wait: true, build: () => ({}) },
   create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
   query_account_recovery_qr_status: { wait: true, build: recovery_token => ({ recovery_token }) },
   get_node_list: { wait: true, build: () => ({}) },
@@ -609,6 +610,8 @@ const apiDefs = {
   delete_device_profile: { wait: true, build: id => ({ id }) },
   get_account_settings: { wait: true, build: () => ({}) },
   update_account_settings: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_account_offline_notification: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
+  update_account_offline_notification: { wait: true, build: (self_id, options = {}, protocol = 'android') => withProtocolTarget({ self_id, ...options }, normalizeProtocolTarget(protocol)) },
   clear_account_cache: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
   stop_account_login: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
   submit_account_identity_captcha: { wait: true, build: (self_id, ticket, randstr, protocol = 'android') => withProtocolTarget({ self_id, ticket, randstr }, normalizeProtocolTarget(protocol)) },
@@ -641,7 +644,7 @@ const apiDefs = {
     wait: true,
     build: () => ({}),
   },
-  // 添加账号到当前插件所属节点，self_id 为 5-10 位无符号 QQ 整数
+  // 添加账号到当前插件所属节点，self_id 为 5-12 位无符号 QQ 整数
   add_account: {
     wait: true,
     resultMessage: '账号添加成功',

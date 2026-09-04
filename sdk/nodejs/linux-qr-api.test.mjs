@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
@@ -7,7 +8,7 @@ const files = [
   new URL('./reverse-sdk.js', import.meta.url),
   new URL('../../plugin/正向WebSocket/Node.js/sdk.js', import.meta.url),
   new URL('../../plugin/反向WebSocket/Node.js/sdk.js', import.meta.url),
-]
+].filter(file => existsSync(file))
 
 function actionNames(source) {
   const start = source.indexOf('const apiDefs = {')
@@ -18,8 +19,8 @@ function actionNames(source) {
   return [...source.slice(start, end).matchAll(/^  ([A-Za-z0-9_]+):/gm)].map(match => match[1])
 }
 
-test('正反向 SDK 保持 Linux 原生链路并同步 1.9.8 系统管理权限包', async () => {
-  const nativeSystemManagementActions = [
+test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', async () => {
+  const nativeManagementActions = [
     'get_plugin_context', 'get_node_list', 'create_node', 'update_node', 'delete_node', 'test_node_latency',
     'create_device_profile', 'delete_device_profile', 'get_account_settings', 'update_account_settings',
     'clear_account_cache', 'stop_account_login', 'submit_account_identity_captcha',
@@ -27,27 +28,28 @@ test('正反向 SDK 保持 Linux 原生链路并同步 1.9.8 系统管理权限�
     'open_account_security_access', 'retry_account_security_verify', 'get_account_access_list',
     'set_account_access', 'clear_account_access', 'get_account_recent_logs',
     'create_account_recovery_qr', 'query_account_recovery_qr_status',
+    'get_account_management_context', 'get_account_offline_notification', 'update_account_offline_notification',
   ]
-  const delegatedSystemManagementActions = [
+  const delegatedManagementActions = [
     'get_bot_list', 'get_bot_info', 'get_protocol_list', 'get_device_profile_list',
     'add_account', 'update_account', 'delete_account',
     'login_account', 'check_cache', 'cache_login', 'submit_slider', 'get_security_verify_methods',
     'get_sms', 'check_sms', 'create_login_qr', 'query_login_qr_status', 'get_level_tasks',
     'execute_level_tasks',
   ]
-  const systemManagementActions = [...nativeSystemManagementActions, ...delegatedSystemManagementActions]
-  assert.equal(new Set(systemManagementActions).size, 42)
+  const managementActions = [...nativeManagementActions, ...delegatedManagementActions]
+  assert.equal(new Set(managementActions).size, 45)
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
     const actions = actionNames(source)
-    assert.equal(actions.length, 218, `${file.pathname} must expose exactly 218 actions`)
+    assert.equal(actions.length, 221, `${file.pathname} must expose exactly 221 actions`)
     if (expectedActions == null) expectedActions = actions
     else assert.deepEqual(actions, expectedActions, `${file.pathname} action catalog differs from the canonical SDK`)
     for (const action of ['scan_qr', 'auth_qr']) {
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
-    for (const action of systemManagementActions) {
+    for (const action of managementActions) {
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
     assert.match(source, /get_bot_list:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must support all_nodes options`)

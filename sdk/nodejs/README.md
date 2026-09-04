@@ -5,18 +5,19 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前 2.0.0 正向与反向 SDK 均提供 218 个 action，只有一套当前参数契约。`system_management` 不是另一套 API，而是现有处理器之上的权限覆盖层。插件市场服务的可调用 API 和可订阅事件仍以审核并随安装冻结的权限快照为准；SDK 中存在某个方法不代表插件已经获得该权限。
+当前源码的正向与反向 SDK 均提供 221 个 action，只有一套当前参数契约。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
 
-## 1.9.8 系统管理接口
+## 2.0 服务管理接口
 
-系统管理服务必须在框架服务设置中同时开启 `system_management`，并逐项勾选需要的 action。普通插件仍受绑定节点隔离；客户端隐藏按钮不能代替框架服务端鉴权。
+服务管理接口不再使用单独开关或逐项授权清单。插件通过框架服务令牌认证后可直接调用；管理端地址仅用于管理员 SSO，可留空。
 
 ```js
 const context = await api.get_plugin_context()
-if (!context.system_management) throw new Error('框架未授权系统管理权限')
+if (context.management_api_version !== 1) throw new Error('框架服务管理 API 版本不匹配')
 
 const nodes = await api.get_node_list()
 const bots = await api.get_bot_list({ all_nodes: true })
+const accountContext = await api.get_account_management_context()
 
 await api.add_account({
   self_id,
@@ -28,20 +29,23 @@ await api.add_account({
 })
 ```
 
-系统管理完整权限包共 42 个 action：24 个框架管理专用接口，加上 18 个复用原处理器的 Bot 管理接口。
+服务管理接口共 45 个 action：27 个框架管理专用接口，加上 18 个复用原处理器的 Bot 管理接口。
 
-24 个管理专用 action 分为：
+27 个管理专用 action 分为：
 
 - 插件与节点：`get_plugin_context`、`get_node_list`、`create_node`、`update_node`、`delete_node`、`test_node_latency`
 - 指纹：`create_device_profile`、`delete_device_profile`
-- 账号设置与缓存：`get_account_settings`、`update_account_settings`、`clear_account_cache`、`stop_account_login`
+- 账号目录与设置：`get_account_management_context`、`get_account_settings`、`update_account_settings`
+- 离线通知与缓存：`get_account_offline_notification`、`update_account_offline_notification`、`clear_account_cache`、`stop_account_login`
 - 身份与安全验证：`submit_account_identity_captcha`、`submit_account_identity_phone`、`confirm_account_identity_sms`、`retry_account_identity_verify`、`open_account_security_access`、`retry_account_security_verify`
 - 授权租约与诊断：`get_account_access_list`、`set_account_access`、`clear_account_access`、`get_account_recent_logs`
 - 账号归属验证：`create_account_recovery_qr`、`query_account_recovery_qr_status`。二维码由 Linux 原生链路生成，仅在手机 QQ 确认后返回账号，不执行登录、不保存登录票据。
 
-18 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。获得对应授权后，它们只扩展到跨节点作用域，仍执行原 Bot 管理处理器。
+18 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。它们支持跨节点作用域，但仍执行原 Bot 管理处理器。
 
-`create_device_profile`、`stop_account_login` 是当前唯一名称；`generate_device_profile`、`offline_account` 不再注册。`add_account`、`update_account` 只接受对象参数，不再接受旧位置参数。
+`create_device_profile`、`stop_account_login` 是当前唯一名称；`generate_device_profile`、`offline_account` 不再注册。`add_account`、`update_account` 只接受对象参数。编辑账号协议时由 `client_type` 指定原协议、`target_client_type` 指定目标协议。
+
+升级时必须删除服务配置请求中的 `system_management` 与 `allowed_actions`。`get_plugin_context` 不再返回这两个字段，改为返回 `management_api_version` 与只读的 `available_actions`。这是当前契约切割，不提供旧字段兼容。
 
 节点列表不会返回代理密码；更新节点时省略 `proxy_password` 表示保留，传空字符串表示清除。账号授权租约按 `(self_id, platform)` 独立，Android 与 Linux 不共享权益。
 
@@ -53,7 +57,7 @@ await api.add_account({
 await api.call('action_name', { self_id, ...params }, { timeout: 60000 })
 ```
 
-`api.callAction` 与 `api.call` 等价。调用仍会经过服务授权检查。
+`api.callAction` 与 `api.call` 等价。调用会经过服务令牌认证、action 注册检查；专属 Key API 还会执行独立鉴权。
 
 `send_packet` 与 30 个 QQ 宠物 API 由框架统一执行专属 Key 鉴权。插件只提交原有业务参数，框架会自动读取当前实例已固定绑定并加密保存的 Key；插件配置、action 外层和 `params` 均不接受 `access_key`：
 

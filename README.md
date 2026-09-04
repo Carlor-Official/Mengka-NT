@@ -33,6 +33,8 @@
 
 > 本仓库是萌卡 NT 的官方版本发布与插件 SDK 文档入口，不提供框架核心业务源码，也不包含运行配置、账号数据、数据库或密钥。
 
+当前版本：**2.0.1**。详细变更与不兼容调整见 [v2.0.1 版本说明](release-notes-v2.0.1.md)。
+
 ## 核心能力
 
 | 模块 | 能力 |
@@ -46,9 +48,9 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前 2.0.0 SDK 提供 218 个 action，只有一套当前契约。`system_management` 是权限覆盖层：完整权限包由 24 个框架管理专用 action 和 18 个复用现有处理器的 Bot 管理 action 组成。新增扫码找回接口仅返回手机 QQ 明确确认后的账号，不完成登录或保存票据。`send_packet` 与 30 个 QQ 宠物 API 已纳入专属 Key 管理，插件不再填写或持有 Key，由框架依据当前实例的固定绑定自动鉴权。管理能力同时受服务总开关与允许清单校验，不会自动授予普通插件。
+当前源码 SDK 提供 221 个 action，只有一套当前契约。插件服务使用服务令牌完成连接认证后，可直接调用 45 个服务管理 API，不再配置 `system_management` 或 `allowed_actions`。`admin_base_url` 仅用于框架管理员 SSO 和“进入管理端”入口，不参与 API 授权。扫码找回接口仅返回手机 QQ 明确确认后的账号，不完成登录或保存票据。`send_packet` 与 30 个 QQ 宠物 API 仍由框架专属 Key 单独鉴权；插件不能读取、提交或持有该 Key。
 
-系统管理服务可使用 `get_plugin_context` 检查授权上下文，以 `get_bot_list({ all_nodes: true })` 读取全节点账号，并通过 `add_account({...})` / `update_account({...})` 的对象参数指定 `node_id` 与 `client_type`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；旧的 `generate_device_profile`、`offline_account` 已移除。完整权限清单、调用示例和安全边界见 [Node.js SDK 文档](sdk/nodejs/README.md#198-系统管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
+插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list({ all_nodes: true })` 读取全节点账号，并通过 `add_account({...})` / `update_account({...})` 的对象参数指定 `node_id`、`client_type` 与 `target_client_type`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
 
 ## 平台支持
 
