@@ -9,7 +9,39 @@ const log = {
 }
 
 // ========== 事件名常量 ==========
-const EVENTS = ['group_message', 'friend_message', 'request', 'group_notice', 'friend_notice', 'bot_offline']
+const EVENTS = [
+  'group_message', 'friend_message', 'request', 'group_notice', 'friend_notice', 'system_event', 'bot_offline',
+  'group_message_received', 'private_message_received', 'message_sent',
+  'friend_added', 'friend_message_recalled', 'group_message_recalled',
+  'group_member_joined', 'group_member_left', 'group_admin_changed', 'group_member_muted',
+  'group_file_uploaded', 'group_card_changed', 'group_name_changed', 'group_title_changed',
+  'group_essence_changed', 'group_system_tip', 'message_reaction_changed', 'user_poked',
+  'profile_liked', 'typing_status_changed', 'friend_request_received', 'group_request_received',
+  'account_offline', 'system_heartbeat', 'system_lifecycle',
+]
+export { EVENTS as NATIVE_EVENTS }
+
+const EVENT_PERMISSION_LISTENERS = {
+  group_message: ['group_message', 'group_message_received', 'message_sent'],
+  friend_message: ['friend_message', 'private_message_received', 'message_sent'],
+  request: ['request', 'friend_request_received', 'group_request_received'],
+  group_event: [
+    'group_notice', 'group_request_received', 'group_message_recalled', 'group_member_joined',
+    'group_member_left', 'group_admin_changed', 'group_member_muted', 'group_file_uploaded',
+    'group_card_changed', 'group_name_changed', 'group_title_changed', 'group_essence_changed',
+    'group_system_tip', 'message_reaction_changed', 'user_poked',
+  ],
+  friend_event: [
+    'friend_notice', 'friend_added', 'friend_message_recalled', 'profile_liked',
+    'typing_status_changed', 'user_poked',
+  ],
+  system_event: ['system_event', 'system_heartbeat', 'system_lifecycle'],
+  bot_offline: ['bot_offline', 'account_offline'],
+}
+
+function listensToAny(listeners, names) {
+  return names.some(name => typeof listeners[name] === 'function')
+}
 
 function normalizeRedPacket(redPacket) {
   if (!redPacket || typeof redPacket !== 'object' || Array.isArray(redPacket)) return {}
@@ -53,7 +85,8 @@ function withProtocolTarget(params, target) {
 
 // ========== API 定义 ==========
 const apiDefs = {
-  // 1.8.0 正式公开目录补充（options 对象按文档字段原样透传）。
+  // 1.8.0 正式公开目录补充。使用 options 对象可完整透传文档字段，
+  // 不改变后端 action 名或参数名，也避免为兼容接口重新发明位置参数。
   set_restart: { wait: true, build: (options = {}) => ({ ...options }) },
   check_url_safely: { wait: true, build: (options = {}) => ({ ...options }) },
   translate_en2zh: { wait: true, build: (options = {}) => ({ ...options }) },
@@ -594,7 +627,8 @@ const apiDefs = {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
   },
-  // 2.0 服务管理接口。插件服务完成令牌认证后可直接调用；管理端地址只用于管理员 SSO。
+  // 2.0 服务管理接口。插件服务完成令牌认证后可直接调用；
+  // 管理端地址只用于管理员 SSO，不参与 API 授权。
   get_plugin_context: { wait: true, build: () => ({}) },
   get_account_management_context: { wait: true, build: () => ({}) },
   create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
@@ -659,7 +693,6 @@ const apiDefs = {
     resultData: false,
     build: (options = {}) => ({ ...options }),
   },
-  // 取消指定协议账号的登录会话，或使已登录账号离线
   // 删除指定协议下已离线的账号
   delete_account: {
     wait: true,
@@ -820,16 +853,10 @@ const apiDefs = {
 
 // ========== 事件分发 ==========
 function dispatchEvent(listeners, event) {
-  const { post_type, group_id } = event
-  let key = null
-  if (post_type === 'group_message')   key = 'group_message'
-  if (post_type === 'friend_message')  key = 'friend_message'
-  if (post_type === 'request')         key = 'request'
-  if (post_type === 'group_notice')    key = 'group_notice'
-  if (post_type === 'friend_notice')   key = 'friend_notice'
-  if (post_type === 'bot_offline')     key = 'bot_offline'
-  if (key && listeners[key]) {
-    try { listeners[key](event) } catch (e) { log.err('事件回调异常:', e) }
+  const keys = new Set([event.post_type, event.category, event.event_type].filter(Boolean))
+  for (const key of keys) {
+    if (typeof listeners[key] !== 'function') continue
+    try { listeners[key](event) } catch (e) { log.err(`事件回调异常 (${key}):`, e) }
   }
 }
 

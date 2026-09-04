@@ -7,6 +7,30 @@
 
 当前源码的正向与反向 SDK 均提供 221 个 action，只有一套当前参数契约。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
 
+## 萌卡原生事件
+
+SDK 同时支持大类监听和具体事件监听。具体事件通过 `event.event_type` 分发，事件对象统一包含 `event_id`、`occurred_at`、`category`、`event_type`、`self_id`、`client_type` 和 `post_type`。
+
+```js
+api.on('group_member_joined', event => {
+  console.log(event.group_id, event.user_id)
+})
+
+api.on('system_heartbeat', event => {
+  console.log(event.status, event.interval_seconds)
+})
+```
+
+当前具体监听器：
+
+- 消息：`private_message_received`、`group_message_received`、`message_sent`。
+- 请求：`friend_request_received`、`group_request_received`。
+- 群通知：`group_message_recalled`、`group_member_joined`、`group_member_left`、`group_admin_changed`、`group_member_muted`、`group_file_uploaded`、`group_card_changed`、`group_name_changed`、`group_title_changed`、`group_essence_changed`、`group_system_tip`、`message_reaction_changed`。
+- 好友通知：`friend_added`、`friend_message_recalled`、`user_poked`、`profile_liked`、`typing_status_changed`。
+- 系统：`system_lifecycle`、`system_heartbeat`、`account_offline`。
+
+正向连接应在 `connect()` 前注册监听器。SDK 会根据具体监听器自动声明对应的消息、请求、通知或系统事件权限。
+
 ## 2.0 服务管理接口
 
 服务管理接口不再使用单独开关或逐项授权清单。插件通过框架服务令牌认证后可直接调用；管理端地址仅用于管理员 SSO，可留空。

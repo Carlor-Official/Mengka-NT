@@ -74,7 +74,7 @@ test('反向 SDK 不再读取或暴露插件服务节点', async () => {
   for (const file of [
     new URL('./reverse-sdk.js', import.meta.url),
     new URL('../../plugin/反向WebSocket/Node.js/sdk.js', import.meta.url),
-  ]) {
+  ].filter(file => existsSync(file))) {
     const source = await readFile(file, 'utf8')
     assert.doesNotMatch(source, /x-mengka-node-id/i, `${file.pathname} still reads the removed node header`)
     assert.doesNotMatch(source, /connectionInfo\.node_id/, `${file.pathname} still exposes a service node`)

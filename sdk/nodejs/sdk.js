@@ -9,7 +9,39 @@ const log = {
 }
 
 // ========== 事件名常量 ==========
-const EVENTS = ['group_message', 'friend_message', 'request', 'group_notice', 'friend_notice', 'bot_offline']
+const EVENTS = [
+  'group_message', 'friend_message', 'request', 'group_notice', 'friend_notice', 'system_event', 'bot_offline',
+  'group_message_received', 'private_message_received', 'message_sent',
+  'friend_added', 'friend_message_recalled', 'group_message_recalled',
+  'group_member_joined', 'group_member_left', 'group_admin_changed', 'group_member_muted',
+  'group_file_uploaded', 'group_card_changed', 'group_name_changed', 'group_title_changed',
+  'group_essence_changed', 'group_system_tip', 'message_reaction_changed', 'user_poked',
+  'profile_liked', 'typing_status_changed', 'friend_request_received', 'group_request_received',
+  'account_offline', 'system_heartbeat', 'system_lifecycle',
+]
+export { EVENTS as NATIVE_EVENTS }
+
+const EVENT_PERMISSION_LISTENERS = {
+  group_message: ['group_message', 'group_message_received', 'message_sent'],
+  friend_message: ['friend_message', 'private_message_received', 'message_sent'],
+  request: ['request', 'friend_request_received', 'group_request_received'],
+  group_event: [
+    'group_notice', 'group_request_received', 'group_message_recalled', 'group_member_joined',
+    'group_member_left', 'group_admin_changed', 'group_member_muted', 'group_file_uploaded',
+    'group_card_changed', 'group_name_changed', 'group_title_changed', 'group_essence_changed',
+    'group_system_tip', 'message_reaction_changed', 'user_poked',
+  ],
+  friend_event: [
+    'friend_notice', 'friend_added', 'friend_message_recalled', 'profile_liked',
+    'typing_status_changed', 'user_poked',
+  ],
+  system_event: ['system_event', 'system_heartbeat', 'system_lifecycle'],
+  bot_offline: ['bot_offline', 'account_offline'],
+}
+
+function listensToAny(listeners, names) {
+  return names.some(name => typeof listeners[name] === 'function')
+}
 
 function normalizeRedPacket(redPacket) {
   if (!redPacket || typeof redPacket !== 'object' || Array.isArray(redPacket)) return {}
@@ -821,16 +853,10 @@ const apiDefs = {
 
 // ========== 事件分发 ==========
 function dispatchEvent(listeners, event) {
-  const { post_type, group_id } = event
-  let key = null
-  if (post_type === 'group_message')   key = 'group_message'
-  if (post_type === 'friend_message')  key = 'friend_message'
-  if (post_type === 'request')         key = 'request'
-  if (post_type === 'group_notice')    key = 'group_notice'
-  if (post_type === 'friend_notice')   key = 'friend_notice'
-  if (post_type === 'bot_offline')     key = 'bot_offline'
-  if (key && listeners[key]) {
-    try { listeners[key](event) } catch (e) { log.err('事件回调异常:', e) }
+  const keys = new Set([event.post_type, event.category, event.event_type].filter(Boolean))
+  for (const key of keys) {
+    if (typeof listeners[key] !== 'function') continue
+    try { listeners[key](event) } catch (e) { log.err(`事件回调异常 (${key}):`, e) }
   }
 }
 
@@ -884,14 +910,8 @@ export function createAPI(config) {
     return new Promise((resolve, reject) => {
       ws = new WebSocket(url)
       ws.on('open', () => {
-        const p = {
-          group_message:  !!listeners['group_message'],
-          friend_message: !!listeners['friend_message'],
-          group_event:    !!listeners['group_notice'],
-          friend_event:   !!listeners['friend_notice'],
-		  request:        !!listeners['request'],
-          bot_offline:    !!listeners['bot_offline'],
-        }
+        const p = Object.fromEntries(Object.entries(EVENT_PERMISSION_LISTENERS)
+          .map(([permission, names]) => [permission, listensToAny(listeners, names)]))
         _send({ type: 'auth', token, plugin_id: String(pluginId || '').trim(), name, version, author, permissions: p })
       })
       ws.on('message', (data) => {
