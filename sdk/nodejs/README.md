@@ -16,7 +16,7 @@ const context = await api.get_plugin_context()
 if (context.management_api_version !== 1) throw new Error('框架服务管理 API 版本不匹配')
 
 const nodes = await api.get_node_list()
-const bots = await api.get_bot_list({ all_nodes: true })
+const bots = await api.get_bot_list()
 const accountContext = await api.get_account_management_context()
 
 await api.add_account({
@@ -41,11 +41,11 @@ await api.add_account({
 - 授权租约与诊断：`get_account_access_list`、`set_account_access`、`clear_account_access`、`get_account_recent_logs`
 - 账号归属验证：`create_account_recovery_qr`、`query_account_recovery_qr_status`。二维码由 Linux 原生链路生成，仅在手机 QQ 确认后返回账号，不执行登录、不保存登录票据。
 
-18 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。它们支持跨节点作用域，但仍执行原 Bot 管理处理器。
+18 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。插件 WS 服务不再绑定节点；普通账号接口根据 `self_id + client_type` 定位账号，并在账号自身的登录节点执行。`get_bot_list()` 始终返回当前框架实例的全部账号。
 
 `create_device_profile`、`stop_account_login` 是当前唯一名称；`generate_device_profile`、`offline_account` 不再注册。`add_account`、`update_account` 只接受对象参数。编辑账号协议时由 `client_type` 指定原协议、`target_client_type` 指定目标协议。
 
-升级时必须删除服务配置请求中的 `system_management` 与 `allowed_actions`。`get_plugin_context` 不再返回这两个字段，改为返回 `management_api_version` 与只读的 `available_actions`。这是当前契约切割，不提供旧字段兼容。
+升级时必须删除服务配置请求中的 `node_id`、`system_management` 与 `allowed_actions`。反向 WS 不再接收 `X-Mengka-Node-ID`，ready 消息及 `get_plugin_context` 也不再返回服务级 `node_id`。`get_plugin_context` 只返回 `management_api_version` 与只读的 `available_actions`。这是当前契约切割，不提供旧字段兼容。
 
 节点列表不会返回代理密码；更新节点时省略 `proxy_password` 表示保留，传空字符串表示清除。账号授权租约按 `(self_id, platform)` 独立，Android 与 Linux 不共享权益。
 

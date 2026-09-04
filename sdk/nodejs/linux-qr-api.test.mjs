@@ -52,7 +52,7 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
     for (const action of managementActions) {
       assert.match(source, new RegExp(`\\b${action}:\\s*\\{`), `${file.pathname} missing ${action}`)
     }
-    assert.match(source, /get_bot_list:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must support all_nodes options`)
+    assert.match(source, /get_bot_list:\s*\{[\s\S]*?build:\s*\(\.\.\.args\)[\s\S]*?args\.length !== 0[\s\S]*?return \{\}/, `${file.pathname} must enforce the instance-wide no-argument contract`)
     assert.match(source, /add_account:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must use object-only account parameters`)
     assert.match(source, /update_account:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must use object-only account parameters`)
     assert.doesNotMatch(source, /^  (generate_device_profile|offline_account):/gm, `${file.pathname} must not expose removed aliases`)
@@ -67,5 +67,16 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
     assert.match(source, /get_pet_pk_power:\s*\{[^\n]*build:\s*\(self_id, pet_id\)\s*=>\s*\(\{ self_id, pet_id \}\)/, `${file.pathname} must query pet power by pet_id`)
     assert.match(source, /get_pet_vitals:\s*\{[^\n]*build:\s*\(self_id, pet_id\)\s*=>\s*\(\{ self_id, pet_id \}\)/, `${file.pathname} must query pet vitals by pet_id`)
     assert.match(source, /start_pet_activity:\s*\{[^\n]*sub_event_type = 0[^\n]*\{ self_id, activity, option_name, friend_id, sub_event_type \}/, `${file.pathname} must keep the complete activity request contract`)
+  }
+})
+
+test('反向 SDK 不再读取或暴露插件服务节点', async () => {
+  for (const file of [
+    new URL('./reverse-sdk.js', import.meta.url),
+    new URL('../../plugin/反向WebSocket/Node.js/sdk.js', import.meta.url),
+  ]) {
+    const source = await readFile(file, 'utf8')
+    assert.doesNotMatch(source, /x-mengka-node-id/i, `${file.pathname} still reads the removed node header`)
+    assert.doesNotMatch(source, /connectionInfo\.node_id/, `${file.pathname} still exposes a service node`)
   }
 })

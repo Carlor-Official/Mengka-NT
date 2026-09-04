@@ -622,12 +622,15 @@ const apiDefs = {
   set_account_access: { wait: true, build: (options = {}) => ({ ...options }) },
   clear_account_access: { wait: true, build: (options = {}) => ({ ...options }) },
   get_account_recent_logs: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
-  // 获取节点下所有 Bot 列表（无需 self_id）；每项包含节点和协议字段。
+  // 获取当前框架实例的全部 Bot（无需 self_id）；每项包含其登录节点和协议字段。
   get_bot_list: {
     wait: true,
-    build: (options = {}) => ({ ...options }),
+    build: (...args) => {
+      if (args.length !== 0) throw new TypeError('get_bot_list 不接受参数')
+      return {}
+    },
   },
-  // 获取当前节点下指定 Bot 的运行信息，返回值包含 is_qq_vip 会员状态。
+  // 获取指定 Bot 的运行信息；框架按 self_id/client_type 路由到账号登录节点。
   get_bot_info: {
     wait: true,
     build: self_id => ({ self_id }),
@@ -642,29 +645,29 @@ const apiDefs = {
     wait: true,
     build: () => ({}),
   },
-  // 添加账号到当前插件所属节点，self_id 为 5-12 位无符号 QQ 整数
+  // 添加账号到 node_id 指定的登录节点，self_id 为 5-12 位无符号 QQ 整数
   add_account: {
     wait: true,
     resultMessage: '账号添加成功',
     resultData: false,
     build: (options = {}) => ({ ...options }),
   },
-  // 编辑当前插件所属节点内的账号
+  // 编辑账号；省略 node_id 时保留账号当前登录节点
   update_account: {
     wait: true,
     resultMessage: '账号编辑成功',
     resultData: false,
     build: (options = {}) => ({ ...options }),
   },
-  // 取消登录中账号或使已登录账号离线，仅限当前插件所属节点
-  // 删除当前插件所属节点内已离线的账号
+  // 取消指定协议账号的登录会话，或使已登录账号离线
+  // 删除指定协议下已离线的账号
   delete_account: {
     wait: true,
     resultMessage: '账号删除成功',
     resultData: false,
     build: self_id => ({ self_id }),
   },
-  // 登录当前插件所属节点内的离线账号。Android 返回 { code, message }；Linux 返回原生二维码信息；
+  // 登录指定协议下的离线账号，框架自动使用账号登录节点。Android 返回 { code, message }；Linux 返回原生二维码信息；
   // 滑块、身份验证附带 slider_url、identity_url；安全验证会返回 security_verify
   // （QQ 原始验证原因和可用方法），仅在响应带 URL 时才附带 security_url。
   login_account: {
@@ -917,7 +920,6 @@ export function createReverseAPI(config = {}) {
     ready = false
     connectionInfo = {
       service: String(req.headers['x-mengka-service'] || ''),
-      node_id: Number(req.headers['x-mengka-node-id'] || 0),
       mode: 'reverse',
     }
 
@@ -927,7 +929,7 @@ export function createReverseAPI(config = {}) {
       if (msg.type === 'ready') {
         ready = true
         connectionInfo = { ...connectionInfo, ...msg }
-        log.ok(`后台已连接 服务=${connectionInfo.service || '-'} 节点=${connectionInfo.node_id || '-'}`)
+        log.ok(`后台已连接 服务=${connectionInfo.service || '-'}`)
         resolveConnectionWaiters()
       } else if (msg.type === 'event') {
         dispatchEvent(listeners, msg.data)

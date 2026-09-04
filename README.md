@@ -33,7 +33,7 @@
 
 > 本仓库是萌卡 NT 的官方版本发布与插件 SDK 文档入口，不提供框架核心业务源码，也不包含运行配置、账号数据、数据库或密钥。
 
-当前版本：**2.0.2**。详细变更与不兼容调整见 [v2.0.2 版本说明](release-notes-v2.0.2.md)。
+当前开发版本：**2.0.3**。详细变更与不兼容调整见 [v2.0.3 版本说明](release-notes-v2.0.3.md)。
 
 ## 核心能力
 
@@ -45,12 +45,12 @@
 | 消息能力 | 群聊与私聊消息收发，支持图片、语音、视频、转发消息及消息撤回等常用操作 |
 | 联系人与群 | 好友、群和群成员列表查询，入群申请与邀请处理，管理员、禁言和群签到等管理能力 |
 | QQ 空间与任务 | 提供空间动态发布、点赞、浏览上报以及部分 QQ 服务任务的插件接口 |
-| 插件系统 | 正向或反向 WebSocket 插件服务，按节点绑定机器人，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
+| 插件系统 | 正向或反向 WebSocket 插件服务，按服务令牌和事件权限接入；账号请求自动路由到账号登录节点，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
 当前源码 SDK 提供 221 个 action，只有一套当前契约。插件服务使用服务令牌完成连接认证后，可直接调用 45 个服务管理 API，不再配置 `system_management` 或 `allowed_actions`。`admin_base_url` 仅用于框架管理员 SSO 和“进入管理端”入口，不参与 API 授权。扫码找回接口仅返回手机 QQ 明确确认后的账号，不完成登录或保存票据。`send_packet` 与 30 个 QQ 宠物 API 仍由框架专属 Key 单独鉴权；插件不能读取、提交或持有该 Key。
 
-插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list({ all_nodes: true })` 读取全节点账号，并通过 `add_account({...})` / `update_account({...})` 的对象参数指定 `node_id`、`client_type` 与 `target_client_type`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
+插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list()` 读取框架实例全部账号。普通账号 action 通过 `self_id + client_type` 自动路由到账号自身登录节点；只有 `add_account({...})`、`update_account({...})` 等账号/节点管理操作显式使用 `node_id`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
 
 ## 平台支持
 
@@ -142,7 +142,7 @@ chmod +x ./mengka-nt
 - **消息面板**：浏览群聊和私聊会话，并进行消息交互；
 - **指纹**：创建和维护账号设备指纹；
 - **节点**：维护连接节点、账号分配和代理配置；
-- **插件**：创建插件服务、选择连接模式、绑定节点并管理令牌；
+- **插件**：创建插件服务、选择连接模式并管理令牌与事件权限；
 - **容器**：查看和管理框架使用的容器运行环境；
 - **设置**：管理应用配置、访问令牌和版本信息。
 
@@ -183,7 +183,7 @@ await api.connect()
 
 - 外发包不包含用户账号、运行配置、数据库、日志或私钥；
 - 管理后台、应用接口与插件服务使用各自的身份凭据，请分别保存；
-- 插件只能访问自身绑定节点下的机器人，不能通过参数跨节点操作账号；
+- 插件服务不绑定账号节点；通过服务令牌认证后，普通账号 action 会根据 `self_id + client_type` 使用账号自身配置的节点。事件仍按插件连接声明的订阅权限推送；
 - `data` 目录包含框架运行数据，迁移或升级前必须单独备份；
 - 调试日志可能包含命令和错误上下文，排查完成后不建议长期启用 `-debug`；
 - 不要公开分享配置文件、数据库、插件令牌、Cookie 或登录缓存。
@@ -207,7 +207,7 @@ await api.connect()
 <details>
 <summary><strong>插件连接不上框架</strong></summary>
 
-检查插件服务的连接模式、监听地址、端口、令牌和节点绑定。插件与框架不在同一台机器时，还需要检查防火墙、安全组和反向代理是否允许 WebSocket 升级。
+检查插件服务的连接模式、监听地址、端口和令牌。插件与框架不在同一台机器时，还需要检查防火墙、安全组和反向代理是否允许 WebSocket 升级。账号 action 无需配置 WS 节点；框架会根据 `self_id + client_type` 定位账号及其登录节点。
 
 </details>
 

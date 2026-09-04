@@ -29,4 +29,4 @@ api.on('bot_offline', event => {
 
 await api.listen()
 const connection = await api.waitForConnection()
-console.log(`萌卡NT 已接入，服务=${connection.service}，节点=${connection.node_id}`)
+console.log(`萌卡NT 已接入，服务=${connection.service}`)
