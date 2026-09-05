@@ -35,10 +35,10 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
     'add_account', 'update_account', 'delete_account',
     'login_account', 'check_cache', 'cache_login', 'submit_slider', 'get_security_verify_methods',
     'get_sms', 'check_sms', 'create_login_qr', 'query_login_qr_status', 'get_level_tasks',
-    'execute_level_tasks',
+    'execute_level_tasks', 'get_summary_card', 'get_user_agent',
   ]
   const managementActions = [...nativeManagementActions, ...delegatedManagementActions]
-  assert.equal(new Set(managementActions).size, 45)
+  assert.equal(new Set(managementActions).size, 47)
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')

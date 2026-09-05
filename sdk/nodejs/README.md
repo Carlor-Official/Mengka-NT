@@ -53,7 +53,7 @@ await api.add_account({
 })
 ```
 
-服务管理接口共 45 个 action：27 个框架管理专用接口，加上 18 个复用原处理器的 Bot 管理接口。
+v2.0.5 服务管理接口共 47 个 action：27 个框架管理专用接口，加上 20 个复用原处理器的 Bot 管理接口。已有的 `get_summary_card` 与 `get_user_agent` 现在也由 `get_plugin_context().available_actions` 声明；SDK 总 action 数仍为 221，调用参数不变。插件应检查所需能力，不能仅凭 `management_api_version === 1` 假定全部 action 可用。
 
 27 个管理专用 action 分为：
 
