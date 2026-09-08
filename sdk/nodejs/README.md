@@ -5,7 +5,13 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-v2.0.7 的正向与反向 SDK 均提供 227 个 action。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
+v2.0.8 的正向与反向 SDK 均提供 227 个 action。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
+
+## v2.0.8：在线 API 调试
+
+当前文档与框架 v2.0.8 对齐，更新于 2026-09-09。控制台新增[在线 API 调试](../../docs/api-debugger.md)，支持 227 个 API 的参数填写、JSON / Python / JavaScript / cURL 预览、复制和手动发送。调试使用已启动的正向 WS 服务，沿用服务令牌、账号协议、专属 Key 与审计链路。
+
+本版没有新增或更名公开 action、事件或 SDK 方法。输入变化只刷新代码；发送失败、超时、断线及 401 均不会自动重放。前后端须同时升级到 v2.0.8，SDK 无需为了调试功能改变调用参数。
 
 ## v2.0.7：审计回报与初始化阅读器
 
