@@ -33,7 +33,7 @@
 
 > 本仓库是萌卡 NT 的官方版本发布与插件 SDK 文档入口，不提供框架核心业务源码，也不包含运行配置、账号数据、数据库或密钥。
 
-当前版本：**2.0.5**。详细变更与插件升级说明见 [v2.0.5 版本说明](release-notes-v2.0.5.md)。
+当前版本：**2.0.6**。详细变更与插件升级说明见 [v2.0.6 版本说明](release-notes-v2.0.6.md)。
 
 ## 核心能力
 
@@ -48,7 +48,9 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按服务令牌和事件权限接入；账号请求自动路由到账号登录节点，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前源码 SDK 提供 221 个 action，只有一套当前契约。插件服务使用服务令牌完成连接认证后，可直接调用 45 个服务管理 API，不再配置 `system_management` 或 `allowed_actions`。`admin_base_url` 仅用于框架管理员 SSO 和“进入管理端”入口，不参与 API 授权。扫码找回接口仅返回手机 QQ 明确确认后的账号，不完成登录或保存票据。`send_packet` 与 30 个 QQ 宠物 API 仍由框架专属 Key 单独鉴权；插件不能读取、提交或持有该 Key。
+当前 SDK 提供 227 个 action、47 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按订阅权限投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。`send_packet` 与 30 个宠物 API 使用实例绑定的专属 Key 鉴权，插件不读取或提交 Key；实例接管、清空后的重新激活说明见当前 SDK 文档。
+
+v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群名、精华设置和戳一戳，并修复原生申请、成员变化、消息引用、Linux 群图片和事件投递链路。事件字段、权限与实测边界见[官网原生事件](https://mknt.net/events/)，不将 API 成功等同于事件送达。
 
 插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list()` 读取框架实例全部账号。普通账号 action 通过 `self_id + client_type` 自动路由到账号自身登录节点；只有 `add_account({...})`、`update_account({...})` 等账号/节点管理操作显式使用 `node_id`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
 

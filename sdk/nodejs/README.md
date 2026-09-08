@@ -9,7 +9,9 @@ v2.0.6 的正向与反向 SDK 均提供 227 个 action，新增内容见下节�
 
 ## v2.0.6：主动申请及群操作
 
-2026-09-08 开发验收补充：原生26类事件已完成约定的有限混合场景检查，覆盖两个QQ、Android/Linux、跨节点及正反向WS；这不是任意外部客户端模板、所有媒体格式或正式外发包的无条件验收。最新修复补上群聊/好友发送的引用处理及私聊接收的引用段，并修正Linux群图片上传应用头；这些变更不属于已发布v2.0.5。
+当前文档与已发布框架 v2.0.6 对齐，更新于 2026-09-08。完整参数见[官网 API 目录](https://mknt.net/api/)，事件字段见[萌卡原生事件](https://mknt.net/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
+
+v2.0.6 已包含群聊/好友发送引用、私聊接收引用段和 Linux 群图片上传修复。26 类事件已完成列明的双账号、双协议、跨节点和正反向 WS 有限场景验证，不代表所有外部客户端模板或媒体格式均经过实测。
 
 `send_private_msg`成功返回`{ message_id }`，不要要求其返回`send_friend_msg`的`success/msg_seq/msg_random`字段。引用当前消息使用事件顶层`message_id`；接收到的reply段内部标识可能为空。图片URL中的临时`rkey`可能随协议或刷新变化，不应作为消息身份。好友图片和非好友临时会话引用的本轮真实全链路仍未认证，不能由共用单元测试推断已实测。
 
@@ -25,11 +27,11 @@ v2.0.6 补齐自身离群原生入口，并修复推送顺序、旧会话取消�
 
 v2.0.6 修复 `get_essence_msg_list` 的 `12002` 查询错误，无需更换方法名或传入额外凭据。使用 `api.forProtocol('android')` 选择账号协议；列表中的 `message_id` 属于当前查询账号，不可在不同账号之间复用。该修复尚未发布到 v2.0.5。
 
-v2.0.6 修复 Linux `kick_group_member` 的原生调用与结果校验。使用 `api.forProtocol('linuxqq').kick_group_member(self_id, group_id, user_id, false)`；参数和方法名不变，`false` 不禁止该成员后续申请。遇到超时或无法确认的结果，先查成员列表，勿自动重试。两个账号双协议、跨节点、双正向 WS 已验证邀请入群及被移出通知。主动退群三 WS 专项结果及间歇入群漏发问题见上文，不代表所有成员事件场景通过。此修复由 v2.0.6 提供。
+`api.forProtocol('linuxqq').kick_group_member(self_id, group_id, user_id, false)` 使用当前 Linux 会话执行移除，`false` 不禁止该成员后续申请。遇到超时或无法确认的结果先查成员列表，不自动重试。踢出、拒绝后重申请及批准恢复已完成双账号、双协议、两节点与三 WS 回归；未知外部模板不因此视为通过。
 
 v2.0.6 同时修复 Android 平板 `scan_qr` / `auth_qr` 的 `-10117`：框架读取同版本 Phone 协议的 `appid`。SDK 调用方式不变，插件不要自行传入 AppID；协议目录需包含匹配版本的 Phone 项。授权后仍须查询二维码登录流程，确认实际上线。
 
-后三个方法采用对象参数，账号必须包含 `self_id`，通过 `api.forProtocol('android' | 'linuxqq')` 选择协议。修改群名传 `group_id, group_name`（UTF-8 最多 60 字节）；精华传 `group_id, message_id, enabled`（`enabled` 必填，消息必须为当前账号已缓存的该群消息）；戳一戳传 `user_id`，群内操作另传 `group_id`。返回成功仅确认操作结果，不保证订阅方已收到事件；网络超时不可自动重复提交。
+`set_group_name`、`set_group_essence`、`send_poke` 和 `leave_group` 使用对象参数，包含 `self_id`，通过 `api.forProtocol('android' | 'linuxqq')` 选择协议。修改群名传 `group_id, group_name`（UTF-8 最多 60 字节）；精华传 `group_id, message_id, enabled`（`enabled` 必填，消息属于当前账号缓存中的目标群）；戳一戳传 `user_id`，群内操作另传 `group_id`。返回成功不保证事件已投递，超时不自动重试。
 
 ```js
 const result = await api.forProtocol('android').send_friend_request(
@@ -46,11 +48,11 @@ v2.0.6 后端的 Linux 主动好友申请已通过两个测试账号、跨节点
 
 ## 萌卡原生事件
 
-v2.0.6 的群文件目录回读按账号本次登录隔离：离线、重登会撤销旧任务，旧响应不会跨会话继续重试或提交事件。离线期间上传的文件请通过目录 API 查询，不会在重登后作为新上传重放；这不代表上传者自身的原生通知缺口已解决。
+群文件目录回读按账号本次登录隔离：离线、重登撤销旧任务，旧响应不会跨会话重试或提交事件。框架上传动态提交后会唤醒上传者在线协议独立回读，确认真实文件后才生成事件。离线期间的文件可查目录，不在重登后作为新上传重放。
 
 v2.0.6将事件发送改为每条 WS 独立的有序队列，避免一个慢插件阻塞其他插件和账号原生推送处理。单连接最多排队 256 条，待发送及正在发送的数据合计上限 8 MiB；超限或写入失败时断开该连接并记录原因。断线期间的事件不保证补发，插件重连后应重新查询好友申请、账号或群文件等所需状态，不能自动重放有副作用的 action。事件权限、名称、字段和同次广播的 `event_id` 保持不变。
 
-v2.0.6 的私聊事件已完成两个测试 QQ、Android/Linux、跨节点、两条正向 WS 加一条反向 WS 的同场对照：从反向 SDK 发起发送与撤回后，三通道收到相同 `event_id` 和完整载荷，消息来源保留反向服务名称。此项仅认证私聊发送、接收和撤回链路，不代表群文件、头衔、群申请及其他事件已完成反向通道验收。测试环境的反向监听绑定回环地址，错误令牌在框架连接前后均被拒绝。
+正反向 WS 使用相同事件契约。同一账号/协议事件在各合法订阅连接中的 `event_id` 和载荷一致；消息 `source` 保留实际发起服务名称。私聊、群文件、头衔和群申请等已分别完成三路有限场景验证，不能由单项结果外推所有通知来源。反向监听应配置令牌并限制网络访问范围。
 
 v2.0.6修复较长群撤回通知的长度解析。群历史查询的 `message_seq: 0` 改为读取服务器真实最新序号，返回消息将保存可供 `get_msg` 使用的账号范围内 `message_id`，排除已删除的无发送者占位记录；查询历史不会重播消息事件。接口名称及参数不变，Linux 仍须单独实机验收。
 
@@ -74,7 +76,23 @@ api.on('system_heartbeat', event => {
 - 好友通知：`friend_added`、`friend_message_recalled`、`user_poked`、`profile_liked`、`typing_status_changed`。
 - 系统：`system_lifecycle`、`system_heartbeat`、`account_online`、`account_offline`。`account_online` 需要 `system_event` 订阅，原生登录完成后触发，携带 `self_id`、`client_type`、`node_id`；重复在线状态不重复触发。
 
-正向连接应在 `connect()` 前注册监听器。SDK 会根据具体监听器自动声明对应的消息、请求、通知或系统事件权限。
+正向连接应在 `connect()` 前注册监听器，反向服务应在接入框架连接前注册。SDK 自动声明权限；`NATIVE_EVENTS` 导出包含 7 个大类加 26 个精确事件，共 33 项，不是 33 类独立业务事件。
+
+| 范围 | 认证权限字段 |
+| --- | --- |
+| 群 / 好友消息 | `group_message` / `friend_message` |
+| 好友 / 群申请 | `request` |
+| 群 / 好友通知 | `group_event` / `friend_event` |
+| 连接、心跳、账号上线 | `system_event` |
+| 账号离线 | `bot_offline` |
+
+好友申请必须有 `request`；当前群申请接受 `request` 或 `group_event` 任一权限，精确群申请监听器会声明两者。
+
+具体监听器和大类监听器同时注册会分别回调，不要把两次回调误判成两次服务器事件。同步回调异常由 SDK 捕获，异步处理需自行 `.catch()`。
+
+`system_lifecycle` 在认证成功后产生一次 `connected`，`system_heartbeat` 每 30 秒为 `alive`；两者按连接独立生成 ID，账号字段为 `self_id: 0, client_type: 'framework'`。账号上线/离线则按账号真实状态转换生成，不因 WS 重连补发；上线需要 `system_event`，离线需要 `bot_offline`。离线、重登及控制心跳不等同于业务事件补发。
+
+普通好友申请使用 `friend_request_received`，以事件的账号、协议和原样 `flag` 处理；`get_doubt_friends_add_request` 只查询 Android 可疑申请，空列表不能证明没有普通申请。拒绝不会产生 `friend_added`，新申请必须使用新标识。不要自动审批收到的所有申请。
 
 ### v2.0.6：结构化通知修复
 
@@ -93,19 +111,19 @@ api.on('system_heartbeat', event => {
 
 `operator` / `target` 可包含 `uid`，只有确认对应 QQ 时才包含 `user_id`；不要将缺失值当作账号 `0`。管理员原生通知未提供操作者时省略 `operator`。同一账号事件在不同 WS 上保留相同 `event_id`；不同账号收到同一群操作会各自生成事件，请结合 `self_id + client_type` 处理。
 
-v2.0.6 的 `group_member_left` 也直接处理原生完成通知，提供 `user_uid`、可选 `operator_uid` 和 `reason: 'left' | 'kicked'`。入群/退出事件不保证存在 `request_id`；不能把它们当作待处理请求调用审批接口。
+`group_member_left` 直接处理原生完成通知，提供可确认的 `user_uid`、`operator_uid` 和 `reason: 'left' | 'kicked'`；原因未知时省略。入群/退出事件不保证存在 `request_id`，不能把成员完成通知当作待处理请求审批。
 
 框架上传的 `group_file_uploaded` 已通过两账号 Android/Linux、跨节点、双正向 WS 的上传者及接收者验证；接收方两协议离线时，上传者仍能独立确认上传，接收方重登不重播离线期间的文件。该确认使用真实服务器目录，提供 `body.file_id`、`file_name`、`file_size`、`busid`、`upload_time`（秒）及 `parent_folder_id`，不伪造 `msg_seq`。
 
 框架发起的名片、管理员和头衔变更通过修改前后服务器状态确认补齐缺失通知；原生与回读共同去重，A → B → A 不会被连续相同值去重吞掉。文件与属性的回读事件有顶层 `source: 'server_readback'`、`confirmed_at`（毫秒）；原生通知省略这两个字段，无法确认的操作者不虚构。离线或重登会撤销旧回读，回读超时不是成功事件。
 
-同一候选已完成双账号 × Android/Linux × 两节点 × 双正向/单反向 WS 的整轮回归：文件、名片、管理员、头衔、群申请、加入和移出共 378 次投递，126 个独立账号事件逐条一致。反向监听关闭重开后，再次上传与修改头衔仍正常送达。此证据不包含重连后再次触发成员事件，也不代表其他客户端触发方式已验收。
+文件、名片、管理员、头衔、群申请、加入和移出已完成双账号、Android/Linux、两节点及双正向/单反向 WS 的对应回归。反向重连后的文件与头衔另有验证，但其他客户端触发方式不据此视为通过。
 
 文件树事件回读含重试总预算 45 秒，属性修改后所有观察者共享 15 秒预算，两类查询共用最多 8 个名额。外部客户端直接修改、没有任何提示的外部上传、完整原生文件消息、长期高负载必须独立验收；不要把框架 API 成功视为事件必达承诺。
 
 已确认的小页提前结束问题改为在原位置复核并扩大末页窗口：两个原失败目录的四会话、两种页大小共 16 份结果一致；含 21 个文件、8 个目录的混合列表在五种页大小下共 20 份结果一致。`file_count` 是初始单页数量，末页存在歧义时增加只读复核，单次仍不超过 100 条。满 100 条时移动半个窗口，以原生顺序核对重叠记录后确认尾部，不再直接报错。总条目上限 10000，单次完整目录读取最多 45 秒（调用方更短的截止时间优先）；视图矛盾、重复或无法确认完整性仍返回错误。
 
-最新独立测试目录逐步上传到 99、100、101 条，四会话与页大小 1/50/100 的 36 份结果一致；101 次上传在两节点、双正向 WS 共收到 808 次事件，404 个账号事件无缺失或重复。该批不包含反向 WS；此前 378 次三路回归是另一个候选的证据，不累计为同一轮结果。更大目录、并发变化和外部上传仍待验收，当前开发分支还不是“全部事件可上线”的验收版本。
+99/100/101 条目录边界已在四会话与页大小 1/50/100 下交叉验证，目录事件专项使用双正向 WS，与三路回归分别记录。更大目录、持续并发变化、无提示外部上传及长期高负载未由这些测试覆盖。真实被踢/票据过期、自然禁言到期、全员禁言、邀请待审批、好友图片和非好友临时会话引用也不在这组真实回归范围内。
 
 ## 2.0 服务管理接口
 
@@ -129,7 +147,7 @@ await api.add_account({
 })
 ```
 
-v2.0.5 服务管理接口共 47 个 action：27 个框架管理专用接口，加上 20 个复用原处理器的 Bot 管理接口。已有的 `get_summary_card` 与 `get_user_agent` 现在也由 `get_plugin_context().available_actions` 声明；v2.0.6 SDK 总 action 数为 227，调用参数不变。插件应检查所需能力，不能仅凭 `management_api_version === 1` 假定全部 action 可用。
+v2.0.6 服务管理接口共 47 个 action：27 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是 227 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
 
 27 个管理专用 action 分为：
 
@@ -144,20 +162,20 @@ v2.0.5 服务管理接口共 47 个 action：27 个框架管理专用接口，�
 
 `create_node` / `update_node` 的直连节点（`proxy_enabled: false`）默认使用 `proxy_type: 'http'`、`port: 8080`（空类型与端口 `0` 同样使用默认值）；明确提供的有效代理设置会保留，关闭代理不会清空这些字段。类型仅支持 `http` / `socks5`，端口为 1–65535。SDK 原样传递参数，默认值由框架处理。更新须提交完整配置，省略 `proxy_password` 保留密码、传入空字符串清除密码。启用中的节点只能保持原配置并设置 `enabled: false`，停用后再修改配置。旧直连节点的空类型、零端口可在停用时自动规范化，无需手动改库。此修复由 v2.0.6 提供。
 
-18 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`。插件 WS 服务不再绑定节点；普通账号接口根据 `self_id + client_type` 定位账号，并在账号自身的登录节点执行。`get_bot_list()` 始终返回当前框架实例的全部账号。
+20 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`、`get_summary_card`、`get_user_agent`。WS 服务不绑定节点，普通账号接口根据 `self_id + client_type` 在账号实际节点执行。`get_bot_list()` 返回当前框架实例的全部账号，插件用户归属与商业权限仍需由插件自己的后端校验。
 
 `create_device_profile`、`stop_account_login` 是当前唯一名称；`generate_device_profile`、`offline_account` 不再注册。`add_account`、`update_account` 只接受对象参数。编辑账号协议时由 `client_type` 指定原协议、`target_client_type` 指定目标协议。
 
-升级时必须删除服务配置请求中的 `node_id`、`system_management` 与 `allowed_actions`。反向 WS 不再接收 `X-Mengka-Node-ID`，ready 消息及 `get_plugin_context` 也不再返回服务级 `node_id`。`get_plugin_context` 只返回 `management_api_version` 与只读的 `available_actions`。这是当前契约切割，不提供旧字段兼容。
+服务配置请求不得携带 `node_id`、`system_management` 或 `allowed_actions`。反向 WS 不再接收 `X-Mengka-Node-ID`，ready 及上下文也不返回服务级 `node_id`。`get_plugin_context` 返回 `service_id`、`service_name`、`admin_base_url`、`management_api_version` 和 `available_actions`。这是当前契约，不提供旧服务字段兼容；账号新增/编辑与节点管理接口自己的 `node_id` 不应删除。
 
 节点列表不会返回代理密码；更新节点时省略 `proxy_password` 表示保留，传空字符串表示清除。账号授权租约按 `(self_id, platform)` 独立，Android 与 Linux 不共享权益。
 
-本轮补充了随机设备指纹、群成员名片、群红包、媒体 RKey、用户在线状态、小程序与 Ark 分享、带内容绑定签名的音乐 Ark、AI 语音、语音转文字、消息表情回应、输入状态、可疑好友申请、空间动态、群文件移动与重命名以及原生协议包调用方法。正向和反向 SDK 的参数顺序保持一致。
+正向与反向 SDK 的 action 与参数顺序一致。使用规范协议名 `android`、`linuxqq`；便捷方法的默认目标是 Android，切换协议请用 `forProtocol`。无作用域的通用 `call` 不会替你补账号协议，账号 action 必须显式传 `self_id` 和 `client_type`。
 
 目录中尚未提供便捷方法的 API，可以使用通用调用入口：
 
 ```js
-await api.call('action_name', { self_id, ...params }, { timeout: 60000 })
+await api.forProtocol('linuxqq').call('action_name', { self_id, ...params }, { timeout: 60000 })
 ```
 
 `api.callAction` 与 `api.call` 等价。调用会经过服务令牌认证、action 注册检查；专属 Key API 还会执行独立鉴权。
@@ -200,7 +218,7 @@ await api.scan_qr(android_self_id, qr_url_or_k)
 await api.auth_qr(android_self_id, qr_url_or_k, false)
 ```
 
-红包接口会保留规范的 `red_packet` 嵌套对象，并兼容尚未更新的框架版本。第 4 个参数既可以传消息段的 `data`，也可以传完整的 `red_packet` 消息段：
+红包接口保留规范的 `red_packet` 嵌套对象。第 4 个参数接受消息段的 `data` 或完整 `red_packet` 段，由 SDK 构造当前请求；这不代表可以连接任意旧版框架：
 
 ```js
 const redPacket = event.message.find(segment => segment.type === 'red_packet')
