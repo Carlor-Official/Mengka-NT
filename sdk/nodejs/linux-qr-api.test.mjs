@@ -21,6 +21,7 @@ function actionNames(source) {
 
 test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', async () => {
   const nativeManagementActions = [
+    'get_level_task_accounts', 'get_level_task_account', 'get_level_task_panel', 'get_level_task_settings', 'update_level_task_settings', 'execute_level_task_selection',
     'get_plugin_context', 'get_node_list', 'create_node', 'update_node', 'delete_node', 'test_node_latency',
     'create_device_profile', 'delete_device_profile', 'get_account_settings', 'update_account_settings',
     'clear_account_cache', 'stop_account_login', 'submit_account_identity_captcha',
@@ -38,12 +39,12 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
     'execute_level_tasks', 'get_summary_card', 'get_user_agent',
   ]
   const managementActions = [...nativeManagementActions, ...delegatedManagementActions]
-  assert.equal(new Set(managementActions).size, 47)
+  assert.equal(new Set(managementActions).size, 53)
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
     const actions = actionNames(source)
-    assert.equal(actions.length, 227, `${file.pathname} must expose exactly 227 actions`)
+    assert.equal(actions.length, 233, `${file.pathname} must expose exactly 233 actions`)
     for (const action of ['set_group_name', 'set_group_essence', 'send_poke', 'send_group_join_request', 'leave_group']) {
       assert.ok(actions.includes(action), `${file.pathname} missing ${action}`)
     }

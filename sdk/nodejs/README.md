@@ -5,11 +5,11 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-v2.0.8 的正向与反向 SDK 均提供 227 个 action。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
+v2.0.9 的正向与反向 SDK 均提供 233 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
 
 ## v2.0.8：在线 API 调试
 
-当前文档与框架 v2.0.8 对齐，更新于 2026-09-09。控制台新增[在线 API 调试](../../docs/api-debugger.md)，支持 227 个 API 的参数填写、JSON / Python / JavaScript / cURL 预览、复制和手动发送。调试使用已启动的正向 WS 服务，沿用服务令牌、账号协议、专属 Key 与审计链路。
+v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/api-debugger.md)，支持 227 个 API 的参数填写、JSON / Python / JavaScript / cURL 预览、复制和手动发送。调试使用已启动的正向 WS 服务，沿用服务令牌、账号协议、专属 Key 与审计链路。
 
 本版没有新增或更名公开 action、事件或 SDK 方法。输入变化只刷新代码；发送失败、超时、断线及 401 均不会自动重放。前后端须同时升级到 v2.0.8，SDK 无需为了调试功能改变调用参数。
 
@@ -159,9 +159,11 @@ await api.add_account({
 })
 ```
 
-v2.0.6 服务管理接口共 47 个 action：27 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是 227 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
+v2.0.9 服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是v2.0.9 的 233 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
 
-27 个管理专用 action 分为：
+33 个管理专用 action 分为：
+
+- 等级任务管理：`get_level_task_accounts`、`get_level_task_account`、`get_level_task_panel`、`get_level_task_settings`、`update_level_task_settings`、`execute_level_task_selection`
 
 - 插件与节点：`get_plugin_context`、`get_node_list`、`create_node`、`update_node`、`delete_node`、`test_node_latency`
 
@@ -304,3 +306,7 @@ await api.send_group_red_packet(
 ```
 
 可运行示例位于仓库的 `plugin/正向WebSocket/Node.js` 和 `plugin/反向WebSocket/Node.js`。
+
+## v2.0.9：共享等级任务管理
+
+六个共享管理 API 从 v2.0.9 起提供，使用前检查框架能力。参数、返回和用户插件迁移说明见[共享等级任务管理](../../docs/level-task-management.md)。

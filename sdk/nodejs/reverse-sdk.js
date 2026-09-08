@@ -635,6 +635,13 @@ const apiDefs = {
   // 管理端地址只用于管理员 SSO，不参与 API 授权。
   get_plugin_context: { wait: true, build: () => ({}) },
   get_account_management_context: { wait: true, build: () => ({}) },
+  // Framework-owned level settings/cache/scheduler; plugins must not run a second scheduler.
+  get_level_task_accounts: { wait: true, build: () => ({}) },
+  get_level_task_account: { wait: true, build: (options = {}) => ({ ...options }) },
+  get_level_task_panel: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
+  get_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
+  update_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
+  execute_level_task_selection: { wait: true, timeout: 5 * 60 * 1000, build: (options = {}) => ({ ...options }) },
   create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
   query_account_recovery_qr_status: { wait: true, build: recovery_token => ({ recovery_token }) },
   get_node_list: { wait: true, build: () => ({}) },
