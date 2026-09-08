@@ -17,7 +17,7 @@ const EVENTS = [
   'group_file_uploaded', 'group_card_changed', 'group_name_changed', 'group_title_changed',
   'group_essence_changed', 'group_system_tip', 'message_reaction_changed', 'user_poked',
   'profile_liked', 'typing_status_changed', 'friend_request_received', 'group_request_received',
-  'account_offline', 'system_heartbeat', 'system_lifecycle',
+  'account_offline', 'account_online', 'system_heartbeat', 'system_lifecycle',
 ]
 export { EVENTS as NATIVE_EVENTS }
 
@@ -35,7 +35,7 @@ const EVENT_PERMISSION_LISTENERS = {
     'friend_notice', 'friend_added', 'friend_message_recalled', 'profile_liked',
     'typing_status_changed', 'user_poked',
   ],
-  system_event: ['system_event', 'system_heartbeat', 'system_lifecycle'],
+  system_event: ['system_event', 'account_online', 'system_heartbeat', 'system_lifecycle'],
   bot_offline: ['bot_offline', 'account_offline'],
 }
 
@@ -85,6 +85,10 @@ function withProtocolTarget(params, target) {
 
 // ========== API 定义 ==========
 const apiDefs = {
+  set_group_name: { wait: true, build: (options = {}) => ({ ...options }) },
+  leave_group: { wait: true, build: (options = {}) => ({ ...options }) },
+  set_group_essence: { wait: true, build: (options = {}) => ({ ...options }) },
+  send_poke: { wait: true, build: (options = {}) => ({ ...options }) },
   // 1.8.0 正式公开目录补充。使用 options 对象可完整透传文档字段，
   // 不改变后端 action 名或参数名，也避免为兼容接口重新发明位置参数。
   set_restart: { wait: true, build: (options = {}) => ({ ...options }) },
@@ -622,7 +626,7 @@ const apiDefs = {
     timeout: 45 * 1000,
     build: (self_id, group_id, file) => ({ self_id, group_id, file }),
   },
-  // 点赞 QQ 名片，like_count 默认 1。返回 SSO 错误码、错误信息和原始回包 hex。
+  // 点赞 QQ 名片，like_count 默认 1。返回业务 code/msg；用 forProtocol 选择协议。
   like_summary_card: {
     wait: true,
     build: (self_id, target_uin, like_count = 1) => ({ self_id, target_uin, like_count }),
@@ -634,6 +638,7 @@ const apiDefs = {
   create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
   query_account_recovery_qr_status: { wait: true, build: recovery_token => ({ recovery_token }) },
   get_node_list: { wait: true, build: () => ({}) },
+  // Keep false and explicit proxy fields; direct-node defaults (http/8080) are applied by the framework.
   create_node: { wait: true, build: (options = {}) => ({ ...options }) },
   update_node: { wait: true, build: (options = {}) => ({ ...options }) },
   delete_node: { wait: true, build: id => ({ id }) },
@@ -818,6 +823,16 @@ const apiDefs = {
   delete_friend: {
     wait: true,
     build: (self_id, target_uin) => ({ self_id, target_uin }),
+  },
+  // 主动提交好友申请；submitted 不表示已经成为好友，不自动重试。
+  send_friend_request: {
+    wait: true,
+    build: (self_id, user_id, message = '', remark = '') => ({ self_id, client_type: 'android', user_id, message, remark }),
+  },
+  // 主动申请入群（开发中，仅 Android）；submitted 不代表已入群，禁止自动重试。
+  send_group_join_request: {
+    wait: true,
+    build: (self_id, group_id, message = '') => ({ self_id, client_type: 'android', group_id, message }),
   },
   // 处理好友申请: flag 必须原样使用 request 事件提供的值
   set_friend_add_request: {

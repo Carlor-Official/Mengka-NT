@@ -43,7 +43,10 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
   for (const file of files) {
     const source = await readFile(file, 'utf8')
     const actions = actionNames(source)
-    assert.equal(actions.length, 221, `${file.pathname} must expose exactly 221 actions`)
+    assert.equal(actions.length, 227, `${file.pathname} must expose exactly 227 actions`)
+    for (const action of ['set_group_name', 'set_group_essence', 'send_poke', 'send_group_join_request', 'leave_group']) {
+      assert.ok(actions.includes(action), `${file.pathname} missing ${action}`)
+    }
     if (expectedActions == null) expectedActions = actions
     else assert.deepEqual(actions, expectedActions, `${file.pathname} action catalog differs from the canonical SDK`)
     for (const action of ['scan_qr', 'auth_qr']) {
