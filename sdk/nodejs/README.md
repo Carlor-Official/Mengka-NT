@@ -5,11 +5,15 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-v2.0.6 的正向与反向 SDK 均提供 227 个 action，新增内容见下节。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
+v2.0.7 的正向与反向 SDK 均提供 227 个 action。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
+
+## v2.0.7：审计回报与初始化阅读器
+
+当前文档与框架 v2.0.7 对齐，更新于 2026-09-09。本次没有新增或变更插件 action、事件字段及 SDK 方法。框架修复审计日志误标为 `send_packet` 和未执行请求反复上报的问题；插件无需新增权限或重放请求。初始化 HTTP 客户端需遵守[新版协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
 
 ## v2.0.6：主动申请及群操作
 
-当前文档与已发布框架 v2.0.6 对齐，更新于 2026-09-08。完整参数见[官网 API 目录](https://mknt.net/api/)，事件字段见[萌卡原生事件](https://mknt.net/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
+以下能力从 v2.0.6 起提供。完整参数见[官网 API 目录](https://mknt.net/api/)，事件字段见[萌卡原生事件](https://mknt.net/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
 
 v2.0.6 已包含群聊/好友发送引用、私聊接收引用段和 Linux 群图片上传修复。26 类事件已完成列明的双账号、双协议、跨节点和正反向 WS 有限场景验证，不代表所有外部客户端模板或媒体格式均经过实测。
 
@@ -57,6 +61,8 @@ v2.0.6将事件发送改为每条 WS 独立的有序队列，避免一个慢插�
 v2.0.6修复较长群撤回通知的长度解析。群历史查询的 `message_seq: 0` 改为读取服务器真实最新序号，返回消息将保存可供 `get_msg` 使用的账号范围内 `message_id`，排除已删除的无发送者占位记录；查询历史不会重播消息事件。接口名称及参数不变，Linux 仍须单独实机验收。
 
 SDK 同时支持大类监听和具体事件监听。具体事件通过 `event.event_type` 分发，事件对象统一包含 `event_id`、`occurred_at`、`category`、`event_type`、`self_id`、`client_type` 和 `post_type`。
+
+7 个大类监听入口为 `group_message`、`friend_message`、`request`、`group_notice`、`friend_notice`、`system_event`、`bot_offline`；它们与下列 26 个精确事件共享对应事件数据，不应计为 7 类新增原生事件。
 
 ```js
 api.on('group_member_joined', event => {
