@@ -33,7 +33,9 @@
 
 > 本仓库是萌卡 NT 的官方版本发布与插件 SDK 文档入口，不提供框架核心业务源码，也不包含运行配置、账号数据、数据库或密钥。
 
-当前版本：**2.0.9**。详细变更与升级注意见 [v2.0.9 版本说明](release-notes-v2.0.9.md)。
+当前版本：**2.1.0**。详细变更与升级注意见 [v2.1.0 版本说明](release-notes-v2.1.0.md)。
+
+插件市场支持[一体化安装与网页管理](docs/managed-plugins.md)，Linux 账号支持同 QQ 安卓授权免扫登录，等级任务“电脑QQ在线”复用同一流程。
 
 新增[在线 API 调试](docs/api-debugger.md)：左侧菜单“容器 → 调试 → 设置”，支持参数填写、JSON / Python / JavaScript / cURL 请求预览与复制，点击按钮后发送一次请求并查看响应。
 
@@ -50,7 +52,7 @@
 | 插件系统 | 正向或反向 WebSocket 插件服务，按服务令牌和事件权限接入；账号请求自动路由到账号登录节点，提供 Node.js SDK、插件 WebUI SDK 与统一 action 结果 |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前 SDK 提供 233 个 action、53 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按订阅权限投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。`send_packet` 与 30 个宠物 API 使用实例绑定的专属 Key 鉴权，插件不读取或提交 Key；实例接管、清空后的重新激活说明见当前 SDK 文档。
+当前 SDK 提供 233 个 action、53 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按服务配置投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。`send_packet` 与 30 个宠物 API 使用实例绑定的专属 Key 鉴权，插件不读取或提交 Key；实例接管、清空后的重新激活说明见当前 SDK 文档。
 
 v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群名、精华设置和戳一戳，并修复原生申请、成员变化、消息引用、Linux 群图片和事件投递链路。事件字段、权限与实测边界见[官网原生事件](https://mknt.net/events/)，不将 API 成功等同于事件送达。
 
@@ -60,9 +62,9 @@ v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群�
 
 | 平台 | 外发包 | 启动文件 | 架构 |
 | --- | --- | --- | --- |
-| Windows | `mengka-nt-v*-windows-amd64.zip` | `mengka-nt.exe` | AMD64 / x86_64 |
-| Linux | `mengka-nt-v*-linux-amd64.tar.gz` | `mengka-nt` | AMD64 / x86_64 |
-| Linux | `mengka-nt-v*-linux-arm64.tar.gz` | `mengka-nt` | ARM64 / AArch64 |
+| Windows | `mengka-nt-*-windows-amd64.zip` | `mengka-nt.exe` | AMD64 / x86_64 |
+| Linux | `mengka-nt-*-linux-amd64.tar.gz` | `mengka-nt` | AMD64 / x86_64 |
+| Linux | `mengka-nt-*-linux-arm64.tar.gz` | `mengka-nt` | ARM64 / AArch64 |
 
 不同平台和架构的程序不能混用。请只从本仓库 [Releases](https://github.com/Carlor-Official/Mengka-NT/releases) 下载正式外发包。
 

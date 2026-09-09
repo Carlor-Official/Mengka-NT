@@ -10,5 +10,9 @@
       "import": "./index.js"
     }
   },
-  "files": ["index.js", "index.d.ts", "README.md"]
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ]
 }

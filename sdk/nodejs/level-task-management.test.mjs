@@ -48,7 +48,9 @@ for (const mode of ['forward', 'reverse']) {
       await api.get_level_task_settings(target)
       await api.update_level_task_settings(settings)
       await api.get_level_task_panel({ ...target, refresh: false })
-      const result = await api.execute_level_task_selection({ ...target, tasks: ['签到', 'unsupported'] })
+      const result = await api.execute_level_task_selection({ ...target, tasks: ['电脑QQ在线', 'QQ会员公众号签到', 'unsupported'] })
+      await api.set_friend_remark({ ...target, user_id: 654321, remark: ' 中文备注 ' })
+      await api.set_friend_remark({ ...target, user_id: 654321, remark: '' })
       assert.equal(result.payload.marker, 'shared cache')
       assert.equal(result.refreshed, true)
       assert.deepEqual(result.skippedTasks, ['unsupported'])
@@ -58,7 +60,9 @@ for (const mode of ['forward', 'reverse']) {
         { action: 'get_level_task_settings', params: target },
         { action: 'update_level_task_settings', params: settings },
         { action: 'get_level_task_panel', params: { ...target, refresh: false } },
-        { action: 'execute_level_task_selection', params: { ...target, tasks: ['签到', 'unsupported'] } },
+        { action: 'execute_level_task_selection', params: { ...target, tasks: ['电脑QQ在线', 'QQ会员公众号签到', 'unsupported'] } },
+        { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: ' 中文备注 ' } },
+        { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: '' } },
       ])
     } finally {
       socket?.terminate()

@@ -5,7 +5,13 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-v2.0.9 的正向与反向 SDK 均提供 233 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。插件市场的事件订阅仍按安装清单处理，SDK 中存在某个方法不代表框架支持任意未知 action。
+v2.1.0 的正向与反向 SDK 均提供 233 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
+
+## v2.1.0：一体化运行与电脑在线任务
+
+新增独立服务端助手 `managed-connection.js`：`loadManagedConnection()` 读取每次启动分配的 WS 地址及令牌，`loadManagedStorage()` 读取存储与允许目录。详见[一体化插件接入](../../docs/managed-plugins.md)。公开 WS action 数量、名称、参数顺序与 2.0.9 一致，市场发布不再填写指纹或 JSON。
+
+等级任务 `电脑QQ在线` 现在可通过原 `execute_level_tasks` / `execute_level_task_selection` 执行：同 QQ 安卓账号在线时免扫登录 Linux；首次执行自动创建独立 Linux 账号及设备，沿用安卓账号的登录节点，已有 Linux 配置不改写。Linux 已在线时不重复登录，QQ 按实际在线时长判定完成，不立即增加任务积分。插件应在自身业务授权允许创建和登录该 Linux 账号时才开放此任务。
 
 ## v2.0.8：在线 API 调试
 
@@ -15,7 +21,7 @@ v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/
 
 ## v2.0.7：审计回报与初始化阅读器
 
-当前文档与框架 v2.0.7 对齐，更新于 2026-09-09。本次没有新增或变更插件 action、事件字段及 SDK 方法。框架修复审计日志误标为 `send_packet` 和未执行请求反复上报的问题；插件无需新增权限或重放请求。初始化 HTTP 客户端需遵守[新版协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
+当前文档与框架 v2.1.0 对齐，更新于 2026-09-10。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
 
 ## v2.0.6：主动申请及群操作
 
@@ -310,3 +316,14 @@ await api.send_group_red_packet(
 ## v2.0.9：共享等级任务管理
 
 六个共享管理 API 从 v2.0.9 起提供，使用前检查框架能力。参数、返回和用户插件迁移说明见[共享等级任务管理](../../docs/level-task-management.md)。
+
+## 一体化插件部署
+
+v2.1.0 支持由框架管理安装、连接和进程。Node.js 服务端可通过独立的 managed-connection.js 助手读取启动时的私有连接文件。契约与部署要求见[托管插件接入](../../docs/managed-plugins.md)。WS action 契约保持 v2.0.9 不变。
+
+
+## 2.1.0 升级
+
+- [等级任务与会员签到](../../docs/level-task-management.md)：会员任务通过同一套面板、设置和选中执行 API 接入，新增开关默认关闭。
+- [好友备注](../../docs/api/set_friend_remark.md)：Android、Linux 写入后回读确认；必须显式传字符串，`remark: ''` 表示清空，缺失或非字符串不再误清空。
+- [一体化插件接入](../../docs/managed-plugins.md)：使用 `managed-connection.js` 读取框架提供的连接与存储信息。
