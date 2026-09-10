@@ -1,5 +1,7 @@
 # Node.js SDK
 
+当前 SDK 版本：**v2.1.1**。支持正反向 WS、市场自动部署与托管管理员初始化；公开 action 契约保持不变。
+
 ## 双模式部署与管理员免登 SDK
 
 `plugin-connection.js` 提供统一的 `start/stop` 入口，支持手动正向、手动反向和市场自动部署；`plugin-runtime.js` 提供托管配置、管理员免登校验及生命周期。完整说明见[双模式接入指南](docs/dual-mode-sdk.md)，可运行 Demo 位于 `examples/dual-mode/server.mjs`。示例不含任何实际令牌、插件授权或支付密钥。
