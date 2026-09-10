@@ -906,6 +906,7 @@ export function createAPI(config) {
   }
 
   function call(action, params, resultMessage = '', resultData = true, timeoutMs = 30000, onStream = null) {
+    if (!connected) return Promise.reject(new Error('框架尚未连接'))
     return new Promise((resolve, reject) => {
       const id = String(++nextId)
       let message
@@ -927,10 +928,13 @@ export function createAPI(config) {
   }
 
   function connect() {
+    if (connected) return Promise.resolve()
     const url = `ws://${host}:${port}/`
     log.info(`连接 ${url} ...`)
     return new Promise((resolve, reject) => {
-      ws = new WebSocket(url)
+      ws = new WebSocket(url, { handshakeTimeout: 10000 })
+      const socket = ws
+      const authTimer = setTimeout(() => { reject(new Error('框架认证超时')); socket.terminate() }, 10000)
       ws.on('open', () => {
         const p = Object.fromEntries(Object.entries(EVENT_PERMISSION_LISTENERS)
           .map(([permission, names]) => [permission, listensToAny(listeners, names)]))
@@ -941,13 +945,16 @@ export function createAPI(config) {
         try { msg = JSON.parse(data.toString()) } catch { return }
         switch (msg.type) {
           case 'auth_ok':
+            clearTimeout(authTimer)
             connected = true
             log.ok('认证成功')
             resolve()
             startPing()
             break
           case 'auth_failed':
+            clearTimeout(authTimer)
             reject(new Error(msg.message || '认证失败'))
+            socket.close()
             break
           case 'event':
             dispatchEvent(listeners, msg.data)
@@ -981,6 +988,9 @@ export function createAPI(config) {
         }
       })
       ws.on('close', (code) => {
+        clearTimeout(authTimer)
+        clearInterval(pingTimer)
+        reject(new Error('框架连接已断开'))
         connected = false
         for (const [, p] of pending) {
           clearTimeout(p.timer)
@@ -990,13 +1000,14 @@ export function createAPI(config) {
         pending.clear()
         log.warn(`连接断开 code=${code}`)
       })
-      ws.on('error', (err) => { reject(err) })
+      ws.on('error', (err) => { clearTimeout(authTimer); reject(err) })
     })
   }
 
   let pingTimer = null
   function startPing() {
-    pingTimer = setInterval(() => _send({ type: 'ping' }), 30000)
+    clearInterval(pingTimer)
+    pingTimer = setInterval(() => { if (ws?.readyState === WebSocket.OPEN) ws.ping() }, 30000)
   }
 
   function on(eventType, fn) {
@@ -1005,8 +1016,10 @@ export function createAPI(config) {
   }
 
   function disconnect() {
+    connected = false
     if (pingTimer) clearInterval(pingTimer)
-    if (ws) ws.close()
+    if (ws?.readyState === WebSocket.CONNECTING) ws.terminate()
+    else if (ws) ws.close()
   }
 
   const callAction = (action, params = {}, options = {}) => call(
@@ -1018,6 +1031,7 @@ export function createAPI(config) {
     options.onStream || null,
   )
   const api = { on, connect, disconnect, call: callAction, callAction }
+  Object.defineProperty(api, 'connected', { enumerable: true, get: () => connected })
 
   const installActionMethods = (targetApi, protocolTarget = null) => {
     for (const [apiName, def] of Object.entries(apiDefs)) {

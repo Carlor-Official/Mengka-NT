@@ -5,7 +5,7 @@
   "description": "萌卡 NT Node.js 插件 SDK",
   "type": "module",
   "scripts": {
-    "check": "node --check sdk.js && node --check reverse-sdk.js",
+    "check": "node --check sdk.js && node --check reverse-sdk.js && node --check plugin-runtime.js && node --check plugin-connection.js && node --check examples/dual-mode/server.mjs",
     "test": "node --test *.test.mjs"
   },
   "dependencies": {
