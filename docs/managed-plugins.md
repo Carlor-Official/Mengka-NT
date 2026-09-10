@@ -105,7 +105,7 @@ location / {
 
 没有泛域名时，可设置 `MENGKA_PLUGIN_GATEWAY_ORIGINS_FILE`，指向插件内部 ID 到独立 HTTPS 地址的映射文件。每个插件必须使用不同域名或端口，不能共用框架来源；实际内部 ID 以安装记录为准。此文件由服务器管理员配置，不属于开发者发布表单。
 
-网关签发短期一次性票据，兑换 Secure、HttpOnly、Host-only Cookie，绑定当前框架管理员会话。框架会话过期后，从框架重新打开插件后台。内部控制路径不向浏览器开放。主站代理也应保留完整 Host 并覆盖 X-Forwarded-Proto。
+网关签发短期一次性票据，兑换 Secure、HttpOnly、Host-only Cookie，绑定当前框架管理员会话。框架会话过期后，从框架重新打开插件后台。内部控制路径不向浏览器开放。主站代理也应保留完整 Host 并覆盖 X-Forwarded-Proto。HTTP / HTTPS、IP / 域名及多层代理的说明见[框架访问与反向代理](framework-access.md)。
 
 ## 管理 HTTP API
 
