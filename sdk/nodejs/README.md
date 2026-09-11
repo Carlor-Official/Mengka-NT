@@ -1,6 +1,8 @@
 # Node.js SDK
 
-当前 SDK 版本：**v2.1.1**。支持正反向 WS、市场自动部署与托管管理员初始化；公开 action 契约保持不变。
+当前 SDK 版本：**v2.1.5**。支持正反向 WS、市场自动部署与托管管理员初始化；公开 action 契约保持不变。
+
+先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
 ## 双模式部署与管理员免登 SDK
 
@@ -12,7 +14,11 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-v2.1.0 的正向与反向 SDK 均提供 233 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
+当前正向与反向 SDK 均提供 233 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
+
+## v2.1.5：QQ 宠物 API
+
+**API 开源贡献者：星空花海**。30 个 QQ 宠物接口按贡献附件重新实现，仅接受对象参数。请同步升级框架、前端与 SDK，勿复用旧位置参数；详情见[宠物 API 说明](docs/qq-pet-apis.md)。
 
 ## v2.1.0：一体化运行与电脑在线任务
 
@@ -28,7 +34,7 @@ v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/
 
 ## v2.0.7：审计回报与初始化阅读器
 
-当前文档与框架 v2.1.0 对齐，更新于 2026-09-10。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
+当前文档与框架 v2.1.5 对齐，更新于 2026-09-11。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
 
 ## v2.0.6：主动申请及群操作
 
@@ -172,7 +178,7 @@ await api.add_account({
 })
 ```
 
-v2.0.9 服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是v2.0.9 的 233 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
+当前服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 233 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
 
 33 个管理专用 action 分为：
 
@@ -205,29 +211,11 @@ v2.0.9 服务管理接口共 53 个 action：33 个管理专用接口与 20 个�
 await api.forProtocol('linuxqq').call('action_name', { self_id, ...params }, { timeout: 60000 })
 ```
 
-`api.callAction` 与 `api.call` 等价。调用会经过服务令牌认证、action 注册检查；专属 Key API 还会执行独立鉴权。
+`api.callAction` 与 `api.call` 等价。可用接口以框架返回的能力列表为准。
 
-`send_packet` 与 30 个 QQ 宠物 API 由框架统一执行专属 Key 鉴权。插件只提交原有业务参数，框架会自动读取当前实例已固定绑定并加密保存的 Key；插件配置、action 外层和 `params` 均不接受 `access_key`：
+send_packet 仅供已获准的插件版本托管调用，用户不需要填写专属 Key。插件继续使用 `api.send_packet(self_id, cmd, data, true, reserve)`；无权限时通过 `error.code` 返回 `PLUGIN_NOT_ALLOWED`，失败请求不会自动重放。QQ 宠物接口继续使用普通插件 API。
 
-```js
-const api = createAPI({
-  host: '127.0.0.1',
-  port: 3001,
-  token: process.env.MENGKA_PLUGIN_TOKEN,
-  pluginId: 'example-plugin',
-  name: 'example',
-  version: '1.0.0',
-  author: 'developer',
-})
-
-await api.send_packet(self_id, cmd, data, true, reserve)
-```
-
-Key 的选择与绑定由框架管理端发起，权限、续期和吊销由算法系统管理。插件无权读取、提交、替换或记录完整 Key；绑定失效时，框架会返回稳定的专属 Key 鉴权错误。
-
-v2.0.6 增加明确确认的实例接管：同一框架的所有 WS 共用当前实例授权，不需要修改 SDK 参数。接管后旧实例的新受控调用被拒绝；已获准的在途请求可按原审计记录回报，不能重新申请或缓存正向授权继续调用。QQ 登录、非受控 API 与插件服务令牌保持独立。接管需协同更新算法服务和框架前后端，不能把 SDK 更新当作服务已升级；详情见仓库 `release-notes-v2.0.6.md`。
-
-管理员清空专属 Key 后，旧凭据不能继续申请授权。框架识别经过验证的清空状态后撤下本地激活，用户需要领取新的 Key 重新激活；插件不读取完整 Key，也不自行重绑或重试有副作用的受控调用。
+接入方式见[插件 API 授权](docs/plugin-api-authorization.md)，基础参数见[send_packet](docs/api/send_packet.md)。
 
 随机设备指纹与框架前端“指纹 → 添加指纹 → 一键生成其余内容”使用同一套规则。接口不需要参数，会创建并保存一条随机命名的独立指纹记录；返回的 `id` 可以直接作为 `add_account` 的 `device_profile_id`：
 

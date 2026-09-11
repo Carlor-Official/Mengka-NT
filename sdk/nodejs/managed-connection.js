@@ -14,7 +14,10 @@ export function loadManagedConnection(connectionFile = process.env.MENGKA_PLUGIN
   if (statSync(connection.token_file).size > 4096) throw new Error('Managed token is too large')
   const token = readFileSync(connection.token_file, 'utf8').trim()
   if (token.length < 24) throw new Error('Managed token is invalid')
-  return { host: url.hostname, port: Number(url.port), token }
+  const ipcPath = connection.ipc_path
+  if (ipcPath !== undefined && (typeof ipcPath !== 'string' || ipcPath.length > 512 || /[\r\n\0]/.test(ipcPath)
+    || !(isAbsolute(ipcPath) || ipcPath.startsWith('\\\\.\\pipe\\')))) throw new Error('Invalid managed local connection')
+  return { host: url.hostname, port: Number(url.port), token, ...(ipcPath ? { ipcPath } : {}) }
 }
 
 /** Directory policy for cooperating plugins; this does not sandbox a native process. */

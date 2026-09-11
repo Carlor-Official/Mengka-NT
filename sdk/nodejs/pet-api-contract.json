@@ -1,0 +1,998 @@
+[
+  {
+    "action": "get_pet_profile",
+    "title": "获取自身宠物档案",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "ownProfile / ownPetCache",
+    "description": "档案、生日、性别、等级经验与已获勋章。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_medal_gallery",
+    "title": "获取宠物勋章图鉴",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "medalGallery",
+    "description": "完整勋章及获得、佩戴状态。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_vitals",
+    "title": "获取目标宠物数值",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "display",
+    "description": "显式目标 petId；分别查询基础数值与金币。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_attributes",
+    "title": "获取宠物成长属性",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "overview",
+    "description": "读取学习场景中的力量、智力、魅力。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_food_catalog",
+    "title": "获取宠物食物库存",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "feedInventory",
+    "description": "读取食物目录与库存；服务端未提供的库存返回 null。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      }
+    ]
+  },
+  {
+    "action": "feed_pet",
+    "title": "给自身宠物喂食",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "feed",
+    "description": "给目标宠物喂食，可指定食物；提交后读取数值确认效果。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "food_id",
+        "type": "string",
+        "required": false,
+        "description": "指定食物 ID；不传或空串使用默认食物"
+      },
+      {
+        "name": "feed_type",
+        "type": "number",
+        "required": false,
+        "description": "喂食类型：0（默认）、1001、9990032、9990033、9990034"
+      }
+    ]
+  },
+  {
+    "action": "buy_pet_food",
+    "title": "购买宠物食物",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "buyFood",
+    "description": "按附件购买包补充默认食物，返回购得数量和金币花费。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": true,
+        "description": "正整数数量；洗护购买须满足目录步进及上下限"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_bath_catalog",
+    "title": "获取宠物洗护目录",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "bathItems",
+    "description": "含价格、数量步进、上下限及完整图形资源。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_bath_inventory",
+    "title": "获取宠物洗护库存",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "bathInventory",
+    "description": "读取用品 ID 与数量。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      }
+    ]
+  },
+  {
+    "action": "bathe_pet",
+    "title": "给自身宠物洗护",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "useBathItem",
+    "description": "给目标宠物使用洗护道具，可指定数量。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "item_id",
+        "type": "string",
+        "required": true,
+        "description": "洗护目录返回的用品 ID"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": false,
+        "description": "使用数量 1–99，默认 1"
+      }
+    ]
+  },
+  {
+    "action": "buy_pet_bath_item",
+    "title": "购买宠物洗护用品",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "buyBathItem",
+    "description": "先校验服务端目录数量规则，再提交商城订单。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "item_id",
+        "type": "string",
+        "required": true,
+        "description": "洗护目录返回的用品 ID"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": true,
+        "description": "正整数数量；洗护购买须满足目录步进及上下限"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_activity_overview",
+    "title": "获取宠物活动总览",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "overview",
+    "description": "读取学段、职业列表、当前职业和上次子事件。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "activity",
+        "type": "string",
+        "required": true,
+        "description": "school / work / adventure"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_activity_options",
+    "title": "获取宠物活动选项",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "catalog",
+    "description": "读取学习、打工或冒险选项、时长、奖励与可用状态。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "activity",
+        "type": "string",
+        "required": true,
+        "description": "school / work / adventure"
+      },
+      {
+        "name": "career_type",
+        "type": "number",
+        "required": false,
+        "description": "职业总览返回的职业类型；不传则选第一个可用职业"
+      },
+      {
+        "name": "stage",
+        "type": "number",
+        "required": false,
+        "description": "学习阶段 0–4；不传则读取总览"
+      },
+      {
+        "name": "friend_pet_id",
+        "type": "string",
+        "required": false,
+        "description": "work / adventure 可选雇佣好友宠物 ID；school 不接受"
+      }
+    ]
+  },
+  {
+    "action": "start_pet_activity",
+    "title": "发起宠物活动",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "startStory",
+    "description": "按选项目录发起活动；打工与冒险支持同时提供好友 QQ 和宠物 ID。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "activity",
+        "type": "string",
+        "required": true,
+        "description": "school / work / adventure"
+      },
+      {
+        "name": "option_name",
+        "type": "string",
+        "required": true,
+        "description": "选项目录返回的原始名称"
+      },
+      {
+        "name": "sub_event_type",
+        "type": "number",
+        "required": true,
+        "description": "目录返回的子事件类型；学习/打工须大于 0，冒险允许 0"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": false,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      },
+      {
+        "name": "friend_pet_id",
+        "type": "string",
+        "required": false,
+        "description": "好友或对手宠物 ID，由调用方保存或从目录获得"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_activity_status",
+    "title": "获取宠物当前活动",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "storyStatus",
+    "description": "读取状态与 finished 判定。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "settle_pet_activity",
+    "title": "结算宠物活动",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "storySettle",
+    "description": "只结算已完成的当前活动；冒险返回 reward_gold。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "story_id",
+        "type": "string",
+        "required": true,
+        "description": "状态接口返回的当前任务 ID；必须与目标活动类型匹配"
+      }
+    ]
+  },
+  {
+    "action": "encourage_pet_activity",
+    "title": "鼓励宠物活动",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "storyEncourage",
+    "description": "对指定当前活动提交鼓励，不补造积分或奖励。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "story_id",
+        "type": "string",
+        "required": true,
+        "description": "状态接口返回的当前任务 ID；必须与目标活动类型匹配"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_fatigue_status",
+    "title": "获取学习打工疲劳",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "overview / catalog",
+    "description": "优先可用职业，回退学习，按最短选项 warning 判断疲劳。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_pk_friends",
+    "title": "获取宠物好友目录",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "pkFriendList",
+    "description": "模式 6；只返回服务端好友条目，不使用普通 QQ 好友兜底。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "cursor",
+        "type": "string",
+        "required": false,
+        "description": "服务端返回的下一页游标"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_pk_strangers",
+    "title": "获取宠物陌生人目录",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "pkFriendList",
+    "description": "模式 4；过滤无效条目，单页最多 100 条。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "cursor",
+        "type": "string",
+        "required": false,
+        "description": "服务端返回的下一页游标"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_interaction_messages",
+    "title": "获取宠物互动消息",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "interactionHistory",
+    "description": "读取互动文本、消息分段、时间、来源和事件类型。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "limit",
+        "type": "number",
+        "required": false,
+        "description": "消息条数 1–50，默认 20"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_pk_power",
+    "title": "获取目标宠物战力",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "pkPower",
+    "description": "传本人或对手 petId；战力非正数时报 pk_power_missing。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "poke_friend_pet",
+    "title": "踩一踩好友宠物",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "friendPoke",
+    "description": "协议明确要求好友 QQ 号，使用 varint 编码。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": true,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      }
+    ]
+  },
+  {
+    "action": "get_friend_pet_profile",
+    "title": "获取好友宠物档案",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "otherPet / display",
+    "description": "查询好友档案与基础数值；已知目标宠物 ID 时可直接查询基础数值。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": true,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": false,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      }
+    ]
+  },
+  {
+    "action": "feed_friend_pet",
+    "title": "给好友宠物喂食",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "feed",
+    "description": "给目标宠物喂食，可指定食物；提交后读取数值确认效果。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": true,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      },
+      {
+        "name": "food_id",
+        "type": "string",
+        "required": false,
+        "description": "指定食物 ID；不传或空串使用默认食物"
+      },
+      {
+        "name": "feed_type",
+        "type": "number",
+        "required": false,
+        "description": "喂食类型：0（默认）、1001、9990032、9990033、9990034"
+      }
+    ]
+  },
+  {
+    "action": "bathe_friend_pet",
+    "title": "给好友宠物洗护",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "useBathItem",
+    "description": "给目标宠物使用洗护道具，可指定数量。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "item_id",
+        "type": "string",
+        "required": true,
+        "description": "洗护目录返回的用品 ID"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": true,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": false,
+        "description": "使用数量 1–99，默认 1"
+      }
+    ]
+  },
+  {
+    "action": "visit_friend_pet",
+    "title": "走访好友宠物",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "pageRules / reportEvent",
+    "description": "走访目标好友宠物，提交前查询可用规则，提交后回读规则。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "目标好友的宠物 ID，必须与 friend_uin 对应"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": true,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      }
+    ]
+  },
+  {
+    "action": "start_pet_pk",
+    "title": "发起宠物 PK",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "startStory",
+    "description": "显式本人和对手 petId，固定场景 6900 与子事件 6901。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "friend_uin",
+        "type": "string",
+        "required": true,
+        "description": "好友 QQ 号的十进制字符串；协议需要时显式传入"
+      },
+      {
+        "name": "friend_pet_id",
+        "type": "string",
+        "required": true,
+        "description": "好友或对手宠物 ID，由调用方保存或从目录获得"
+      }
+    ]
+  },
+  {
+    "action": "get_pet_pk_status",
+    "title": "获取宠物 PK 状态",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "pkStatus",
+    "description": "查询指定 PK，返回原始响应；当前完成状态可能未知。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "story_id",
+        "type": "string",
+        "required": true,
+        "description": "状态接口返回的当前任务 ID；必须与目标活动类型匹配"
+      }
+    ]
+  },
+  {
+    "action": "settle_pet_pk",
+    "title": "结算宠物 PK",
+    "group": "QQ 宠物",
+    "contributor": "星空花海",
+    "commands": "pkStatus / storySettle",
+    "description": "仅在 PK 完成状态可确认时结算；当前状态未知时返回错误，不发送结算。",
+    "fields": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "required": true,
+        "description": "在线机器人 QQ 号"
+      },
+      {
+        "name": "client_type",
+        "type": "string",
+        "required": true,
+        "description": "当前实现支持 android；须使用 Android 账号"
+      },
+      {
+        "name": "pet_id",
+        "type": "string",
+        "required": true,
+        "description": "宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替"
+      },
+      {
+        "name": "story_id",
+        "type": "string",
+        "required": true,
+        "description": "状态接口返回的当前任务 ID；必须与目标活动类型匹配"
+      }
+    ]
+  }
+]
