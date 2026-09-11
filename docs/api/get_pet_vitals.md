@@ -28,6 +28,6 @@ const result = await api.get_pet_vitals({
 
 ## 返回结果
 
-pet_id、mood、hunger、cleanliness、total、gold。
+pet_id、mood、hunger、cleanliness、total、gold。成功 OIDB 响应中，缺失的 `mood`、`hunger`、`cleanliness`、`total`、`gold` 数值字段均按 `0` 返回；服务端错误、超时或无效协议响应仍返回失败。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。

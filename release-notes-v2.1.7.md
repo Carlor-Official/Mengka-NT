@@ -1,5 +1,6 @@
 # 萌卡 NT v2.1.7
 
+- 修复 `get_pet_vitals` 因数值字段缺失而返回 `pet_response_incomplete` 的问题：成功响应中缺失的心情、饱食度、清洁度、总值和金币字段按 `0` 返回。
 - 修正 `get_pet_pk_status`：请求成功且业务 body 为空时返回 `finished=true`，body 非空时返回 `finished=false`；`999 / story detail not exist` 等服务端错误仍返回失败。
 - 修复 `settle_pet_pk` 无法发出结算请求的问题：取消强制查询 PK 完成状态，直接提交一次结算，并补齐结算来源字段。普通活动结算的完成状态检查保持不变。
 - 同步更新调试页说明、Node.js SDK 契约与 QQ 宠物 API 文档。感谢协议资料贡献者 **星空花海**。

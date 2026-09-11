@@ -55,7 +55,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "display",
-    "description": "显式目标 petId；分别查询基础数值与金币。",
+    "description": "读取宠物基础数值与金币；成功响应中缺失的数值字段按 0 返回。",
     "fields": [
       {
         "name": "self_id",

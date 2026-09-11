@@ -72,7 +72,9 @@ test('pet supplement parameters survive SDK transport unchanged', async () => {
       calls.push(message)
       const data = message.action === 'get_pet_pk_status'
         ? {status_known:true, finished:message.params.story_id === '6900_finished', raw_body_hex:message.params.story_id === '6900_finished' ? '' : '0a0178'}
-        : {submitted:true, effect_verified:false}
+        : message.action === 'get_pet_vitals'
+          ? {pet_id:message.params.pet_id, mood:0, hunger:71, cleanliness:0, total:65.20000457763672, gold:0}
+          : {submitted:true, effect_verified:false}
       socket.send(JSON.stringify({type:'action_result', id:message.id, ok:true, data}))
     }
   }))
@@ -85,6 +87,7 @@ test('pet supplement parameters survive SDK transport unchanged', async () => {
       ['settle_pet_pk', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_task'}],
       ['get_pet_pk_status', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_finished'}],
       ['get_pet_pk_status', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_running'}],
+      ['get_pet_vitals', {self_id:12345, pet_id:'MTIzNDUtcGV0'}],
       ['start_pet_activity', {self_id:12345, pet_id:'MTIzNDUtcGV0', activity:'adventure', option_name:'探索', sub_event_type:0, friend_uin:'67890', friend_pet_id:'Njc4OTAtcGV0'}],
     ]
     for (const [action, params] of cases) {
@@ -92,6 +95,12 @@ test('pet supplement parameters survive SDK transport unchanged', async () => {
       if (action === 'get_pet_pk_status') {
         assert.equal(result.status_known, true)
         assert.equal(result.finished, params.story_id === '6900_finished')
+      }
+      if (action === 'get_pet_vitals') {
+        assert.equal(result.cleanliness, 0)
+        assert.equal(result.gold, 0)
+        assert.equal(result.hunger, 71)
+        assert.equal(result.total, 65.20000457763672)
       }
       assert.deepEqual(calls.at(-1).params, {...params, client_type:'android'})
       assert.equal(calls.at(-1).action, action)
