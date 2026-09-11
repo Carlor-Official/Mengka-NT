@@ -84,6 +84,7 @@ test('pet supplement parameters survive SDK transport unchanged', async () => {
     const cases = [
       ['feed_friend_pet', {self_id:12345, pet_id:'Njc4OTAtcGV0', friend_uin:'67890', food_id:'3', feed_type:1001}],
       ['bathe_pet', {self_id:12345, pet_id:'MTIzNDUtcGV0', item_id:'1', count:4}],
+      ['buy_pet_bath_item', {self_id:12345, pet_id:'MTIzNDUtcGV0', item_id:'soap', count:10000}],
       ['settle_pet_pk', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_task'}],
       ['get_pet_pk_status', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_finished'}],
       ['get_pet_pk_status', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_running'}],

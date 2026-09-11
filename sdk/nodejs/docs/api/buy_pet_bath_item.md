@@ -2,7 +2,7 @@
 
 **API 开源贡献者：星空花海**
 
-先校验服务端目录数量规则，再提交商城订单。
+购买数量 count 大于 0 即提交商城订单，不预查目录或校验目录数量上下限、步进。
 
 - action：`buy_pet_bath_item`
 - 支持协议：Android。
@@ -16,7 +16,7 @@
 | `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
 | `pet_id` | string | 是 | 宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替 |
 | `item_id` | string | 是 | 洗护目录返回的用品 ID |
-| `count` | number | 是 | 正整数数量；洗护购买须满足目录步进及上下限 |
+| `count` | number | 是 | 购买数量，大于 0；不校验目录上下限或步进 |
 
 ## 调用示例
 
