@@ -309,7 +309,7 @@
         "name": "item_id",
         "type": "string",
         "required": true,
-        "description": "洗护目录返回的用品 ID"
+        "description": "洗护目录返回的用品 ID，使用数字字符串，例如 \"1\"；框架按商城整数类型编码"
       },
       {
         "name": "count",
