@@ -58,6 +58,7 @@ test('pet supplement keeps 30 actions and publishes explicit optional fields and
   assert.ok(fields('get_pet_activity_options').get('friend_pet_id').description.includes('adventure'))
   assert.ok(fields('visit_friend_pet').get('pet_id').description.includes('目标好友'))
   for (const action of ['get_pet_pk_friends', 'get_pet_pk_strangers']) assert.equal(fields(action).get('cursor').required, false)
+  assert.equal(contract.find(item => item.action === 'settle_pet_pk').commands, 'storySettle')
 })
 
 test('pet supplement parameters survive SDK transport unchanged', async () => {
@@ -69,7 +70,10 @@ test('pet supplement parameters survive SDK transport unchanged', async () => {
     if (message.type === 'auth') socket.send(JSON.stringify({type:'auth_ok'}))
     if (message.type === 'action') {
       calls.push(message)
-      socket.send(JSON.stringify({type:'action_result', id:message.id, ok:true, data:{submitted:true, effect_verified:false}}))
+      const data = message.action === 'get_pet_pk_status'
+        ? {status_known:true, finished:message.params.story_id === '6900_finished', raw_body_hex:message.params.story_id === '6900_finished' ? '' : '0a0178'}
+        : {submitted:true, effect_verified:false}
+      socket.send(JSON.stringify({type:'action_result', id:message.id, ok:true, data}))
     }
   }))
   const api = createAPI({host:'127.0.0.1', port:server.address().port, token:'test', name:'test', version:'1', author:'test'})
@@ -78,10 +82,17 @@ test('pet supplement parameters survive SDK transport unchanged', async () => {
     const cases = [
       ['feed_friend_pet', {self_id:12345, pet_id:'Njc4OTAtcGV0', friend_uin:'67890', food_id:'3', feed_type:1001}],
       ['bathe_pet', {self_id:12345, pet_id:'MTIzNDUtcGV0', item_id:'1', count:4}],
+      ['settle_pet_pk', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_task'}],
+      ['get_pet_pk_status', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_finished'}],
+      ['get_pet_pk_status', {self_id:12345, pet_id:'MTIzNDUtcGV0', story_id:'6900_running'}],
       ['start_pet_activity', {self_id:12345, pet_id:'MTIzNDUtcGV0', activity:'adventure', option_name:'探索', sub_event_type:0, friend_uin:'67890', friend_pet_id:'Njc4OTAtcGV0'}],
     ]
     for (const [action, params] of cases) {
-      await api.forProtocol('android')[action](params)
+      const result = await api.forProtocol('android')[action](params)
+      if (action === 'get_pet_pk_status') {
+        assert.equal(result.status_known, true)
+        assert.equal(result.finished, params.story_id === '6900_finished')
+      }
       assert.deepEqual(calls.at(-1).params, {...params, client_type:'android'})
       assert.equal(calls.at(-1).action, action)
     }

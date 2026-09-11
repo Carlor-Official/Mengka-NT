@@ -2,7 +2,7 @@
 
 **API 开源贡献者：星空花海**
 
-查询指定 PK，返回原始响应；当前完成状态可能未知。
+查询指定 PK：请求成功且 body 为空表示已完成，body 非空表示进行中；任务无效等错误直接返回。
 
 - action：`get_pet_pk_status`
 - 支持协议：Android。
@@ -30,6 +30,12 @@ const result = await api.get_pet_pk_status({
 
 ## 返回结果
 
-pet_id、story_id、raw_body_hex、status_known、finished。当前 status_known=false、finished=null；合法空响应也不能判定为已完成。
+返回 `pet_id`、`story_id`、`raw_body_hex`、`status_known`、`finished`。
+
+- 请求成功且 OIDB 业务 body 为空：`status_known=true`、`finished=true`，PK 已完成。
+- 请求成功且 body 非空：`status_known=true`、`finished=false`，PK 进行中。
+- `999 / story detail not exist` 表示任务不存在或无效；其他服务端错误、超时和无效响应同样返回错误，不判定为完成。
+
+本接口只查询状态，不会发起结算；需要结算时由调用方调用 `settle_pet_pk`。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。

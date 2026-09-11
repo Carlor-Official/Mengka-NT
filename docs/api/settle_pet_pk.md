@@ -2,7 +2,7 @@
 
 **API 开源贡献者：星空花海**
 
-仅在 PK 完成状态可确认时结算；当前状态未知时返回错误，不发送结算。
+直接提交一次 PK 结算，不预先查询 PK 状态；提交后请复查数值确认效果。
 
 - action：`settle_pet_pk`
 - 支持协议：Android。
@@ -15,7 +15,7 @@
 | `self_id` | number | 是 | 在线机器人 QQ 号 |
 | `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
 | `pet_id` | string | 是 | 宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替 |
-| `story_id` | string | 是 | 状态接口返回的当前任务 ID；必须与目标活动类型匹配 |
+| `story_id` | string | 是 | 发起 PK 返回的任务 ID，必须以 6900_ 开头 |
 
 ## 调用示例
 
@@ -30,6 +30,8 @@ const result = await api.settle_pet_pk({
 
 ## 返回结果
 
-当前 PK 完成状态无法确认时返回 pet_pk_status_unknown，不发送结算请求。此接口暂不能用于自动 PK 结算。
+返回 `submitted`、`pet_id`、`story_id`、`effect_verified`。`submitted=true` 表示结算请求已提交，`effect_verified=false` 表示尚未核验实际效果。
+
+调用方根据 PK 发起结果和业务时机调用本接口，无需先调用 `get_pet_pk_status`。框架直接发送一次结算请求；合法空响应也不自动重发。请在提交后通过 `get_pet_vitals` 复查数值，超时或结果未知时先等待并核对状态。普通活动结算的完成状态检查保持不变。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。

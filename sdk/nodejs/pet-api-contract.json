@@ -933,7 +933,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "pkStatus",
-    "description": "查询指定 PK，返回原始响应；当前完成状态可能未知。",
+    "description": "查询指定 PK：请求成功且 body 为空表示已完成，body 非空表示进行中；任务无效等错误直接返回。",
     "fields": [
       {
         "name": "self_id",
@@ -966,8 +966,8 @@
     "title": "结算宠物 PK",
     "group": "QQ 宠物",
     "contributor": "星空花海",
-    "commands": "pkStatus / storySettle",
-    "description": "仅在 PK 完成状态可确认时结算；当前状态未知时返回错误，不发送结算。",
+    "commands": "storySettle",
+    "description": "直接提交一次 PK 结算，不预先查询 PK 状态；提交后请复查数值确认效果。",
     "fields": [
       {
         "name": "self_id",
@@ -991,7 +991,7 @@
         "name": "story_id",
         "type": "string",
         "required": true,
-        "description": "状态接口返回的当前任务 ID；必须与目标活动类型匹配"
+        "description": "发起 PK 返回的任务 ID，必须以 6900_ 开头"
       }
     ]
   }
