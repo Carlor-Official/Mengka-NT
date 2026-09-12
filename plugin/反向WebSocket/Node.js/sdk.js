@@ -597,9 +597,10 @@ const apiDefs = {
   // 查询QQ名片，不传 target_uin 则查自己
   get_summary_card: {
     wait: true,
-    build: (self_id, target_uin) => {
+    build: (self_id, target_uin, options = {}) => {
       const p = { self_id }
       if (target_uin !== undefined) p.target_uin = target_uin
+      if (options.avatar_only !== undefined) p.avatar_only = options.avatar_only
       return p
     },
   },

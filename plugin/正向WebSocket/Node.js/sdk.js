@@ -598,9 +598,10 @@ const apiDefs = {
   // 查询QQ名片，不传 target_uin 则查自己
   get_summary_card: {
     wait: true,
-    build: (self_id, target_uin) => {
+    build: (self_id, target_uin, options = {}) => {
       const p = { self_id }
       if (target_uin !== undefined) p.target_uin = target_uin
+      if (options.avatar_only !== undefined) p.avatar_only = options.avatar_only
       return p
     },
   },
@@ -938,7 +939,7 @@ export function createAPI(config) {
       const authTimer = setTimeout(() => { reject(new Error('框架认证超时')); socket.terminate() }, 10000)
       ws.on('open', () => {
         const p = Object.fromEntries(Object.entries(EVENT_PERMISSION_LISTENERS)
-          .map(([permission, names]) => [permission, listensToAny(listeners, names)]))
+          .map(([permission, names]) => [permission, config.permissions?.[permission] === true || listensToAny(listeners, names)]))
         _send({ type: 'auth', token, plugin_id: String(pluginId || '').trim(), name, version, author, permissions: p })
       })
       ws.on('message', (data) => {
