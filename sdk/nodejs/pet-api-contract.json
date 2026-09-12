@@ -285,7 +285,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "buyBathItem",
-    "description": "购买数量 count 大于 0 即提交商城订单，不预查目录或校验目录数量上下限、步进。",
+    "description": "购买数量 count 大于 0 即提交商城订单，不预查目录或校验目录数量上下限、步进。业务 result 和 order_id 按响应返回，由调用方判断购买结果。",
     "fields": [
       {
         "name": "self_id",
