@@ -370,6 +370,7 @@ const apiDefs = {
     }),
   },
   // 发送原生协议包。仅已授权的托管插件会话可调用；data/reserve 为十六进制。
+  // Public action on any authenticated service; no plugin whitelist or dedicated Key.
   send_packet: {
     wait: true,
     timeout: 45 * 1000,
@@ -948,7 +949,9 @@ export function createReverseAPI(config = {}) {
     } else if (msg.ok) {
       item.resolve(msg.data)
     } else {
-      item.reject(new Error(msg.error || 'action failed'))
+      const error = new Error(msg.error || 'action failed')
+      if (typeof msg.error_code === 'string') error.code = msg.error_code
+      item.reject(error)
     }
   }
 

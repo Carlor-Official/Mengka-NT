@@ -1,26 +1,17 @@
-# 插件 API 授权
+# 插件 API 使用说明
 
-`send_packet` 仅供已获准的插件版本使用。普通插件 API 无需申请此权限，用户无需填写或绑定专属 Key。
-
-1. 开发者提交对应版本和平台的插件安装包，由管理员批准。
-2. 用户从插件市场安装获准版本，并由框架启动插件。
-3. 插件使用框架提供的连接配置调用 API。
-
-升级时同步更新框架和 SDK，保留框架启动时提供的连接参数。外部手动 WS 接入仍可使用普通 API；调用 `send_packet` 需要获准版本托管运行。
+从 v2.2.0 起，框架已将 `send_packet` 开放为普通 API。通过服务令牌认证的正向、反向 WebSocket 插件均可调用，不要求托管运行、平台白名单、插件版本审批、框架实例绑定或用户专属 Key。
 
 ```js
-try {
-  const responseHex = await connection.api.send_packet(selfId, command, packetHex, true)
-  // 按对应协议解析 responseHex。
-} catch (error) {
-  if (error.code === 'PLUGIN_NOT_ALLOWED') {
-    console.error('当前插件版本尚未获得 send_packet 调用权限')
-  } else {
-    throw error
-  }
-}
+const responseHex = await connection.api.send_packet(selfId, command, packetHex, true)
 ```
 
-遇到 `PLUGIN_NOT_ALLOWED`，检查插件版本是否获准、是否由框架启动，以及运行状态是否正常。不要重复提交失败的发送请求。
+托管插件直接使用框架提供的 `MENGKA_PLUGIN_CONNECTION_FILE`，外部插件使用服务配置中的地址和令牌。不要在浏览器或公开源码中暴露服务令牌。
 
-连接示例见[SDK 快速开始](sdk-quickstart.md)，参数和返回见[send_packet](api/send_packet.md)。
+## 升级
+
+同步更新框架主程序、前端和 SDK 后生效。旧框架仍按其原有规则工作，不会因为更新 SDK 自动获得新行为。算法系统已移除白名单管理，旧授权接口返回已停用；历史 Key 和调用日志保留查阅。
+
+托管插件以框架当前用户作为普通子进程运行，不再使用 Linux 独立 UID/GID、Windows AppContainer 或专用 IPC 通道。框架不会为插件创建系统用户、安装隔离依赖或要求专门的管理员身份。现有程序、数据、更新、日志和启停管理继续使用原流程。
+
+连接示例见[SDK 快速开始](sdk-quickstart.md)，完整参数见[send_packet](api/send_packet.md)。

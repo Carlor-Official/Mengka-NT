@@ -1,5 +1,4 @@
 import WebSocket from 'ws'
-import { createConnection as createLocalConnection } from 'node:net'
 
 // ========== 日志工具 ==========
 const log = {
@@ -371,6 +370,7 @@ const apiDefs = {
     }),
   },
   // 发送原生协议包。仅已授权的托管插件会话可调用；data/reserve 为十六进制。
+  // Public action on any authenticated service; no plugin whitelist or dedicated Key.
   send_packet: {
     wait: true,
     timeout: 45 * 1000,
@@ -886,7 +886,7 @@ function dispatchEvent(listeners, event) {
 
 // ========== createAPI ==========
 export function createAPI(config) {
-  const { host = '127.0.0.1', port = 3001, token, ipcPath, pluginId = '', name, version, author } = config
+  const { host = '127.0.0.1', port = 3001, token, pluginId = '', name, version, author } = config
   if (!token)  throw new Error('token 必填')
   if (!name)   throw new Error('name 必填')
   if (!version) throw new Error('version 必填')
@@ -934,7 +934,7 @@ export function createAPI(config) {
     const url = `ws://${host}:${port}/`
     log.info(`连接 ${url} ...`)
     return new Promise((resolve, reject) => {
-      ws = new WebSocket(url, { handshakeTimeout: 10000, ...(ipcPath ? { createConnection: () => createLocalConnection(ipcPath) } : {}) })
+      ws = new WebSocket(url, { handshakeTimeout: 10000 })
       const socket = ws
       const authTimer = setTimeout(() => { reject(new Error('框架认证超时')); socket.terminate() }, 10000)
       ws.on('open', () => {

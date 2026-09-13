@@ -1,8 +1,12 @@
 # Node.js SDK
 
-当前 SDK 版本：**v2.1.12**。支持正反向 WS、市场自动部署与托管管理员初始化；洗护购买结果由插件自行判断，见下方升级说明。
+当前 SDK 版本：**v2.2.0**。支持正反向 WS、市场自动部署与托管管理员初始化；洗护购买结果由插件自行判断，见下方升级说明。
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
+
+## v2.2.0：普通插件进程与公开原始发包
+
+`send_packet` 不再要求插件白名单或专属 Key，普通已认证 WS 连接即可调用。托管插件继承框架运行用户，移除独立低权限进程和隔离 IPC；请同步更新框架与 SDK。旧版运行方式仅作为下方对应版本的历史记录。
 
 ## 双模式部署与管理员免登 SDK
 
@@ -58,7 +62,7 @@ v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/
 
 ## v2.0.7：审计回报与初始化阅读器
 
-当前文档与框架 v2.1.12 对齐，更新于 2026-09-12。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
+当前文档与框架 v2.2.0 对齐，更新于 2026-09-12。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
 
 ## v2.0.6：主动申请及群操作
 
@@ -237,9 +241,9 @@ await api.forProtocol('linuxqq').call('action_name', { self_id, ...params }, { t
 
 `api.callAction` 与 `api.call` 等价。可用接口以框架返回的能力列表为准。
 
-send_packet 仅供已获准的插件版本托管调用，用户不需要填写专属 Key。插件继续使用 `api.send_packet(self_id, cmd, data, true, reserve)`；无权限时通过 `error.code` 返回 `PLUGIN_NOT_ALLOWED`，失败请求不会自动重放。QQ 宠物接口继续使用普通插件 API。
+send_packet 是普通公开 API，已认证的正向、反向及托管插件都可使用 `api.send_packet(self_id, cmd, data, true, reserve)`，无需白名单或专属 Key。参数无效、账号离线和协议错误会返回失败，失败请求不会自动重放。QQ 宠物接口继续使用普通插件 API。
 
-接入方式见[插件 API 授权](docs/plugin-api-authorization.md)，基础参数见[send_packet](docs/api/send_packet.md)。
+接入方式见[插件 API 使用说明](docs/plugin-api-authorization.md)，基础参数见[send_packet](docs/api/send_packet.md)。
 
 随机设备指纹与框架前端“指纹 → 添加指纹 → 一键生成其余内容”使用同一套规则。接口不需要参数，会创建并保存一条随机命名的独立指纹记录；返回的 `id` 可以直接作为 `add_account` 的 `device_profile_id`：
 

@@ -10,6 +10,7 @@ export function loadManagedConnection(connectionFile = process.env.MENGKA_PLUGIN
   const url = new URL(connection.websocket_url)
   if (url.protocol !== 'ws:' || url.hostname !== '127.0.0.1' || !url.port || url.username || url.password || url.search || url.hash || !['', '/'].includes(url.pathname)) throw new Error('Managed WebSocket must use loopback')
   if (!isAbsolute(connection.token_file || '') || dirname(resolve(connection.token_file)) !== dirname(resolve(connectionFile))) throw new Error('Token file must remain in the private connection directory')
+  if (dirname(realpathSync(connection.token_file)) !== dirname(realpathSync(connectionFile))) throw new Error('Token file must not escape through a symlink')
   if (statSync(connection.token_file).size > 4096) throw new Error('Managed token is too large')
   const token = readFileSync(connection.token_file, 'utf8').trim()
   if (token.length < 24) throw new Error('Managed token is invalid')

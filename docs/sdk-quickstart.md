@@ -54,7 +54,7 @@ const profile = await connection.api.forProtocol('android').get_pet_profile({ se
 
 账号接口使用 `self_id` 和明确的协议：`android` 或 `linuxqq`。宠物接口只支持 Android，且使用对象参数。通用调用可使用 `api.call(action, params)`，返回值为接口的业务数据，失败时抛出错误。
 
-需要 `send_packet` 的插件先申请对应版本权限，并通过框架托管运行；不需要用户 Key。详见[插件 API 授权](plugin-api-authorization.md)及[send_packet](api/send_packet.md)。
+`send_packet` 使用普通服务令牌认证，正向、反向及托管插件均可直接调用，无需申请白名单或专属 Key。详见[插件 API 使用说明](plugin-api-authorization.md)及[send_packet](api/send_packet.md)。
 
 完整方法、事件和服务管理接口见 SDK README；带管理页面的插件可参考[一体化插件接入](managed-plugins.md)与 SDK 中的 `examples/dual-mode/server.mjs`。
 
