@@ -14,7 +14,7 @@
 
 ## Node.js：统一连接入口
 
-下载 SDK 后运行 `npm install`。直接导入 `plugin-connection.js`，业务 API 仍是现有的 233 个 action，无需切换两套业务代码。
+下载 SDK 后运行 `npm install`。直接导入 `plugin-connection.js`，业务 API 仍是现有的 234 个 action，无需切换两套业务代码。
 
 ```javascript
 import { createPluginConnection } from './plugin-connection.js'

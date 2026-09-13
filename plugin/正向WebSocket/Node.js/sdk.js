@@ -221,6 +221,8 @@ const apiDefs = {
   },
   // 消息查询只读取框架进程内、按账号隔离的近期消息缓存。
   get_msg: { wait: true, build: (self_id, message_id) => ({ self_id, message_id }) },
+  // Read only an original URL from a flash message received by this account.
+  get_flash_image: { wait: true, build: (self_id, message_id, index = 0) => ({ self_id, client_type: 'android', message_id, index }) },
   get_recent_contact: { wait: true, build: (self_id, count = 10) => ({ self_id, count }) },
 
   // 复用现有好友/群发送与进程内消息缓存的 OneBot 兼容接口。

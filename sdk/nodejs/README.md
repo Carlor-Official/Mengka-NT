@@ -1,8 +1,12 @@
 # Node.js SDK
 
-当前 SDK 版本：**v2.2.0**。支持正反向 WS、市场自动部署与托管管理员初始化；洗护购买结果由插件自行判断，见下方升级说明。
+当前 SDK 版本：**v2.2.1**。支持正反向 WS、市场自动部署与托管管理员初始化；洗护购买结果由插件自行判断，见下方升级说明。
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
+
+## v2.2.1：闪照原图地址
+
+新增 `get_flash_image(self_id, message_id, index = 0)`，见[闪照接口](docs/api/get_flash_image.md)。请配套框架 v2.2.1 或更新版本使用。
 
 ## v2.2.0：普通插件进程与公开原始发包
 
@@ -18,7 +22,7 @@
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前正向与反向 SDK 均提供 233 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
+当前正向与反向 SDK 均提供 234 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
 
 ## v2.1.12：表情事件权限与名片头像
 
@@ -62,7 +66,7 @@ v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/
 
 ## v2.0.7：审计回报与初始化阅读器
 
-当前文档与框架 v2.2.0 对齐，更新于 2026-09-12。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
+当前文档与框架 v2.2.1 对齐，更新于 2026-09-12。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
 
 ## v2.0.6：主动申请及群操作
 
@@ -206,7 +210,7 @@ await api.add_account({
 })
 ```
 
-当前服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 233 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
+当前服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 234 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
 
 33 个管理专用 action 分为：
 
