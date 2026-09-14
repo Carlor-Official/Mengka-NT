@@ -8,7 +8,7 @@
 | --- | --- | --- | --- |
 | self_id | number | 是 | 在线 Bot QQ 号 |
 
-SDK 使用 `api.forProtocol('android').get_level_tasks(self_id)`；原位置参数不变。仅 `center_task_id=80` 且标题为“创建小游戏擂台并取得成绩”的任务增加 `available/executable`、`can_execute`、`attempted_today`、`status_text/execution_message`。安装能力决定未来自动计划，当天尝试决定本次能否执行；固定提示优先显示。
+SDK 使用 `api.forProtocol('android').get_level_tasks(self_id)`；原位置参数不变。仅 `center_task_id=80` 且标题为“创建小游戏擂台并取得成绩”的任务增加 `available/executable`、`can_execute`、`attempted_today`、`status_text/execution_message`。框架能力决定未来自动计划，不再以外部 worker 安装为前置；当天尝试决定本次能否执行，固定提示优先显示。查询只刷新，不触发分数上报。
 
 ## 返回
 
@@ -19,4 +19,4 @@ const panel = await api.forProtocol('android').get_level_tasks(123456)
 const tasks = panel.extra_info?.extra_task_list || []
 ```
 
-擂台扩展待发布，当前仅方块冲刺 v6；安装、每日重试门槛与授权提示见[小游戏擂台等级任务](../arena-level-task.md)。
+擂台扩展待发布，当前 Go 模式直接协议上报方块冲刺 v6 的固定 11 分，已在 Linux amd64 测试站通过 2082083 的标准任务验收；无新增分数、游戏或计时参数，尚无生产发布。每日尝试门槛与授权提示见[小游戏擂台等级任务](../arena-level-task.md)。

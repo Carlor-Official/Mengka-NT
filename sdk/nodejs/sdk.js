@@ -851,12 +851,12 @@ const apiDefs = {
     wait: true,
     build: (self_id, flag, approve = true, remark = '') => ({ self_id, flag, approve, remark }),
   },
-  // 获取QQ等级加速面板；task80附加安装能力/当日尝试提示，QQ完成与加速数值保持原样。
+  // 获取QQ等级加速面板；task80附加框架能力/当日尝试提示，查询不上报分数，QQ完成与加速数值保持原样。
   get_level_tasks: {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按数组顺序执行指定任务；task80仅方块冲刺v6，当日持久登记后不重试，不接受分数/游戏/计时参数。
+  // 按数组顺序执行指定任务；task80用Go直接协议固定上报11分，仅方块冲刺v6，须QQ最终刷新确认；不运行游戏、不增加分数/游戏/计时参数，当日持久登记后不重试。
   execute_level_tasks: {
     wait: true,
     timeout: 5 * 60 * 1000,

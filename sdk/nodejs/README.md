@@ -6,7 +6,7 @@
 
 ## 待发布：小游戏擂台等级任务
 
-task80“创建小游戏擂台并取得成绩”继续使用原等级 API，当前执行范围仅方块冲刺 v6，参数不变。以 `available` 判断未来计划是否可配置，以 `can_execute` 判断本次是否可执行；当天已持久登记的尝试不可重放。固定 `status_text/execution_message` 应原样展示；只有最终 `wx.login` 明确 `authorization_required` 才能显示“微信未授权登录”，缺少 QQ 提供的 `ilink_buffer`、普通认证或网络失败均不能这样推断。SDK 等待上限保持 5 分钟；框架请求预算 4 分 45 秒，worker 4 分 15 秒。正式 API 已在 `mknt.bilibilibot.com` 测试服务部署，1060221 的完整 worker 自然出分与等级入账验收已通过，尚无生产发布。详见[擂台契约与当前验收边界](../../docs/arena-level-task.md)。
+task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改由 Go 直接协议上报方块冲刺 v6 的固定 11 分，不运行游戏或依赖 Python、Node、Chrome、外部 worker；11 是已观察成功样本，不是已证实最低分。参数不变，不增加公开分数、游戏或计时参数。以 `available` 判断未来计划是否可配置，以 `can_execute` 判断本次是否可执行；当天已持久登记的尝试不可重放。固定 `status_text/execution_message` 应原样展示；只有最终 `wx.login` 明确 `authorization_required` 才能显示“微信未授权登录”，缺少 QQ 提供的 `ilink_buffer`、普通认证或网络失败均不能这样推断。SDK 等待上限保持 5 分钟；框架请求总预算 4 分 45 秒。仅 QQ 独立刷新确认完成才算成功。2026-09-15 02:37，2082083 已在 Linux amd64 测试站通过一次标准 API 的 Go 直接模式验收；Windows Go 只读认证已通过，Windows 与 Linux arm64 的完整任务未实测。尚无新版本或生产发布。详见[擂台契约](../../docs/arena-level-task.md)与[升级说明](../../docs/arena-direct-score-upgrade.md)。
 
 ## v2.2.2：宠物资料与参数更新
 

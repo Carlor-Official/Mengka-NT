@@ -37,7 +37,7 @@
 
 当前版本：**2.2.3**。查看[本版更新说明](release-notes-v2.2.3.md)。
 
-小游戏擂台等级任务扩展正在准备发布，当前仅方块冲刺 v6；已登记的每日尝试不重复创建。正式 API 已部署至授权测试服务 `mknt.bilibilibot.com`，1060221 已通过正式 worker 自然出分与等级入账验收；尚未发布新版本或部署生产环境。接口、安装能力和当前验收边界见[擂台任务说明](docs/arena-level-task.md)。
+小游戏擂台等级任务扩展正在准备发布，当前改为 Go 直接协议上报方块冲刺 v6 的固定 11 分，不运行游戏或依赖外部 worker；11 是已观察成功样本，不是已证实最低分。每日尝试不重放，仅 QQ 独立刷新确认完成才算成功。2026-09-15 02:37，2082083 已在 Linux amd64 测试站通过一次标准 API 的 Go 直接模式验收；Windows 仅验证只读认证，未验证 Windows 或 Linux arm64 的完整任务。尚无新版本或生产发布。见[擂台任务说明](docs/arena-level-task.md)与[升级说明](docs/arena-direct-score-upgrade.md)。
 
 插件市场支持[一体化安装与网页管理](docs/managed-plugins.md)，Linux 账号支持同 QQ 安卓授权免扫登录，等级任务“电脑QQ在线”复用同一流程。
 
