@@ -1,16 +1,16 @@
 # Node.js SDK
 
-当前 SDK 版本：**v2.2.3**。支持正反向 WS、市场自动部署与托管管理员初始化；洗护购买结果由插件自行判断，见下方升级说明。
+当前 SDK 版本：**v2.3.0**。支持正反向 WS、市场自动部署与托管管理员初始化；小游戏擂台任务继续使用现有等级 API，见下方升级说明。
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
-## 待发布：小游戏擂台等级任务
+## v2.3.0：小游戏擂台等级任务
 
-task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改由 Go 直接协议上报方块冲刺 v6 的固定 11 分，不运行游戏或依赖 Python、Node、Chrome、外部 worker；11 是已观察成功样本，不是已证实最低分。参数不变，不增加公开分数、游戏或计时参数。以 `available` 判断未来计划是否可配置，以 `can_execute` 判断本次是否可执行；当天已持久登记的尝试不可重放。固定 `status_text/execution_message` 应原样展示；只有最终 `wx.login` 明确 `authorization_required` 才能显示“微信未授权登录”，缺少 QQ 提供的 `ilink_buffer`、普通认证或网络失败均不能这样推断。SDK 等待上限保持 5 分钟；框架请求总预算 4 分 45 秒。仅 QQ 独立刷新确认完成才算成功。2026-09-15 02:37，2082083 已在 Linux amd64 测试站通过一次标准 API 的 Go 直接模式验收；Windows Go 只读认证已通过，Windows 与 Linux arm64 的完整任务未实测。尚无新版本或生产发布。详见[擂台契约](../../docs/arena-level-task.md)与[升级说明](../../docs/arena-direct-score-upgrade.md)。
+task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改由 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏或依赖 Python、Node、Chrome、外部 worker。参数不变，不增加公开分数、游戏或计时参数。以 `available` 判断未来计划是否可配置，以 `can_execute` 判断本次是否可执行；当天已持久登记的尝试不可重放。固定 `status_text/execution_message` 应原样展示；只有最终 `wx.login` 明确 `authorization_required` 才能显示“微信未授权登录”，缺少 QQ 提供的 `ilink_buffer`、普通认证或网络失败均不能这样推断。SDK 等待上限保持 5 分钟；框架请求总预算 4 分 45 秒。仅 QQ 独立刷新确认完成才算成功。2026-09-15 02:37，2082083 已在 Linux amd64 测试站通过一次标准 API 的 Go 直接模式验收；Windows Go 只读认证已通过，Windows 与 Linux arm64 的完整任务未实测。详见[擂台契约](../../docs/arena-level-task.md)与[升级说明](../../docs/arena-direct-score-upgrade.md)。
 
 ## v2.2.2：宠物资料与参数更新
 
-`get_pet_profile` 补充战力、性格属性和职业；互动消息的 limit 不再限制为 1–50，省略默认 20；`get_pet_pk_strangers` 新增可选 mode，省略默认 4。官网地址更新为 https://mknt.7ml.top。
+`get_pet_profile` 补充战力、性格属性和职业；互动消息的 limit 不再限制为 1–50，省略默认 20；`get_pet_pk_strangers` 新增可选 mode，省略默认 4。官网地址更新为 https://mknt.rezcwl.com。
 
 ## v2.2.1：闪照原图地址
 
@@ -74,11 +74,11 @@ v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/
 
 ## v2.0.7：审计回报与初始化阅读器
 
-当前文档与框架 v2.2.3 对齐，更新于 2026-09-14。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
+当前文档与框架 v2.3.0 对齐，更新于 2026-09-15。会员签到与电脑在线沿用共享等级任务 API；好友备注写入后回读确认，必须显式传入字符串。初始化 HTTP 客户端需遵守[协议确认契约](../../docs/initialization-agreement.md)，前后端必须一起更新。
 
 ## v2.0.6：主动申请及群操作
 
-以下能力从 v2.0.6 起提供。完整参数见[官网 API 目录](https://mknt.7ml.top/api/)，事件字段见[萌卡原生事件](https://mknt.7ml.top/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
+以下能力从 v2.0.6 起提供。完整参数见[官网 API 目录](https://mknt.rezcwl.com/api/)，事件字段见[萌卡原生事件](https://mknt.rezcwl.com/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
 
 v2.0.6 已包含群聊/好友发送引用、私聊接收引用段和 Linux 群图片上传修复。26 类事件已完成列明的双账号、双协议、跨节点和正反向 WS 有限场景验证，不代表所有外部客户端模板或媒体格式均经过实测。
 

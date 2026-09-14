@@ -12,7 +12,7 @@
 | client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
 | refresh | boolean | 否 | 默认 true；false 优先使用框架缓存，无有效缓存时尝试实时读取 |
 
-擂台扩展待发布：仅 task80“创建小游戏擂台并取得成绩”附加框架执行能力、当天尝试及固定提示，实时和缓存读取均投影。当前 Go 直接协议模式不依赖外部 worker 安装；`available`/`executable` 控制未来自动计划，`can_execute` 控制本次执行。当天尝试后补挂禁用，仍可调整次日计划；查询不触发分数上报。QQ 完成和加速字段保持原值，新模式已在 Linux amd64 测试站通过 2082083 的标准任务验收，尚无生产发布，见[擂台契约](../arena-level-task.md)。
+v2.3.0 中，仅 task80“创建小游戏擂台并取得成绩”附加框架执行能力、当天尝试及固定提示，实时和缓存读取均投影。当前 Go 直接协议模式不依赖外部 worker 安装；`available`/`executable` 控制未来自动计划，`can_execute` 控制本次执行。当天尝试后补挂禁用，仍可调整次日计划；查询不触发分数上报。QQ 完成和加速字段保持原值，新模式已在 Linux amd64 测试站通过 2082083 的标准任务验收，见[擂台契约](../arena-level-task.md)。
 
 ## 示例
 
