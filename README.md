@@ -35,7 +35,7 @@
 
 官网：[萌卡 NT](https://mknt.7ml.top/) · [官网域名迁移与登录说明](docs/official-site-migration.md)
 
-当前版本：**2.2.2**。查看[本版更新说明](release-notes-v2.2.2.md)。
+当前版本：**2.2.3**。查看[本版更新说明](release-notes-v2.2.3.md)。
 
 插件市场支持[一体化安装与网页管理](docs/managed-plugins.md)，Linux 账号支持同 QQ 安卓授权免扫登录，等级任务“电脑QQ在线”复用同一流程。
 
