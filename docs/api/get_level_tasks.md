@@ -1,0 +1,22 @@
+# 获取 QQ 等级加速面板
+
+`get_level_tasks` 刷新并返回当前 Android Bot 的 QQ 等级加速面板；调用不执行游戏。
+
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| self_id | number | 是 | 在线 Bot QQ 号 |
+
+SDK 使用 `api.forProtocol('android').get_level_tasks(self_id)`；原位置参数不变。仅 `center_task_id=80` 且标题为“创建小游戏擂台并取得成绩”的任务增加 `available/executable`、`can_execute`、`attempted_today`、`status_text/execution_message`。安装能力决定未来自动计划，当天尝试决定本次能否执行；固定提示优先显示。
+
+## 返回
+
+保持原面板对象外壳：`uin`、`overall_info`、`vip_info`、`base_info`、`extra_info`、`is_freeze` 等。QQ 的 `is_done`、成绩及加速数值不由本地记录生成。失败时 SDK 拒绝 Promise。
+
+```javascript
+const panel = await api.forProtocol('android').get_level_tasks(123456)
+const tasks = panel.extra_info?.extra_task_list || []
+```
+
+擂台扩展待发布，当前仅方块冲刺 v6；安装、每日重试门槛与授权提示见[小游戏擂台等级任务](../arena-level-task.md)。

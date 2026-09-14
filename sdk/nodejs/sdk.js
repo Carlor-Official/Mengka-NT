@@ -645,6 +645,7 @@ const apiDefs = {
   get_level_task_panel: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
   get_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   update_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
+  // task80: available controls future plans; can_execute controls today's attempt. Never retry a recorded attempt.
   execute_level_task_selection: { wait: true, timeout: 5 * 60 * 1000, build: (options = {}) => ({ ...options }) },
   create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
   query_account_recovery_qr_status: { wait: true, build: recovery_token => ({ recovery_token }) },
@@ -850,12 +851,12 @@ const apiDefs = {
     wait: true,
     build: (self_id, flag, approve = true, remark = '') => ({ self_id, flag, approve, remark }),
   },
-  // 获取QQ等级加速面板: 返回今日加速天数、付费倍率、任务列表等
+  // 获取QQ等级加速面板；task80附加安装能力/当日尝试提示，QQ完成与加速数值保持原样。
   get_level_tasks: {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按数组顺序执行指定的QQ等级加速任务。
+  // 按数组顺序执行指定任务；task80仅方块冲刺v6，当日持久登记后不重试，不接受分数/游戏/计时参数。
   execute_level_tasks: {
     wait: true,
     timeout: 5 * 60 * 1000,

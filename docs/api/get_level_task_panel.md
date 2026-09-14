@@ -12,6 +12,8 @@
 | client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
 | refresh | boolean | 否 | 默认 true；false 优先使用框架缓存，无有效缓存时尝试实时读取 |
 
+擂台扩展待发布：仅 task80“创建小游戏擂台并取得成绩”附加安装能力、当天尝试及固定提示，实时和缓存读取均投影。`available`/`executable` 控制未来自动计划，`can_execute` 控制本次执行；当天尝试后补挂禁用，仍可调整次日计划。QQ 完成和加速字段保持原值，见[擂台契约](../arena-level-task.md)。
+
 ## 示例
 
 ```javascript

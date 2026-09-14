@@ -37,6 +37,8 @@
 
 当前版本：**2.2.3**。查看[本版更新说明](release-notes-v2.2.3.md)。
 
+小游戏擂台等级任务扩展正在准备发布，当前仅方块冲刺 v6；已登记的每日尝试不重复创建。正式 API 已部署至授权测试服务 `mknt.bilibilibot.com`，1060221 已通过正式 worker 自然出分与等级入账验收；尚未发布新版本或部署生产环境。接口、安装能力和当前验收边界见[擂台任务说明](docs/arena-level-task.md)。
+
 插件市场支持[一体化安装与网页管理](docs/managed-plugins.md)，Linux 账号支持同 QQ 安卓授权免扫登录，等级任务“电脑QQ在线”复用同一流程。
 
 新增[在线 API 调试](docs/api-debugger.md)：左侧菜单“容器 → 调试 → 设置”，支持参数填写、JSON / Python / JavaScript / cURL 请求预览与复制，点击按钮后发送一次请求并查看响应。

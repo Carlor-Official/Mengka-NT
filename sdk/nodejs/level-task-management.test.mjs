@@ -10,12 +10,21 @@ import { createReverseAPI } from './reverse-sdk.js'
 for (const mode of ['forward', 'reverse']) {
   test(`${mode} level management APIs preserve explicit protocol, false, empty selections and full response`, { timeout: 5000 }, async () => {
     const received = []
+    const arenaTask = { center_task_id: 80, title: '创建小游戏擂台并取得成绩', available: true,
+      executable: true, can_execute: false, attempted_today: true, status_text: '今日已尝试',
+      execution_message: '微信未授权登录', is_done: false, speed_days: 0, finished_accelerate_days: 0 }
+    const panelPayload = { marker: 'shared cache', extra_info: { extra_task_list: [arenaTask] } }
     const respond = socket => socket.on('message', raw => {
       const message = JSON.parse(String(raw))
       if (message.type === 'auth') socket.send(JSON.stringify({ type: 'auth_ok' }))
       if (message.type === 'action') {
         received.push(message)
-        socket.send(JSON.stringify({ type: 'action_result', id: message.id, ok: true, data: { payload: { marker: 'shared cache' }, settings: { scheduleEnabled: false }, tasks: ['签到'], skippedTasks: ['unsupported'], refreshed: true } }))
+        if (message.action === 'execute_level_tasks') {
+          socket.send(JSON.stringify({ type: 'action_result', id: message.id, ok: false, error: '微信未授权登录' }))
+          return
+        }
+        const data = message.action === 'get_level_tasks' ? panelPayload : { payload: panelPayload, settings: { scheduleEnabled: false }, tasks: ['签到'], skippedTasks: ['unsupported'], refreshed: true }
+        socket.send(JSON.stringify({ type: 'action_result', id: message.id, ok: true, data }))
       }
     })
     let api, socket, server
@@ -64,6 +73,19 @@ for (const mode of ['forward', 'reverse']) {
         { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: ' 中文备注 ' } },
         { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: '' } },
       ])
+      const scoped = api.forProtocol('android')
+      const rawPanel = await scoped.get_level_tasks(target.self_id)
+      const cached = await api.get_level_task_panel({ ...target, refresh: false })
+      const fresh = await api.get_level_task_panel({ ...target, refresh: true })
+      for (const payload of [rawPanel, cached.payload, fresh.payload]) {
+        assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'daily block must preserve capability and original QQ values')
+      }
+      await assert.rejects(scoped.execute_level_tasks(target.self_id, [arenaTask.title]), error => String(error).includes('微信未授权登录'))
+      await new Promise(resolve => setTimeout(resolve, 20))
+      const attempts = received.filter(message => message.action === 'execute_level_tasks')
+      assert.equal(attempts.length, 1, 'fixed failure must not trigger an SDK retry')
+      assert.deepEqual(attempts[0].params, { self_id: target.self_id, client_type: 'android', tasks: [arenaTask.title] })
+      assert.deepEqual(received.at(-4).params, { self_id: target.self_id, client_type: 'android' })
     } finally {
       socket?.terminate()
       if (mode === 'forward') api?.disconnect()
@@ -84,4 +106,21 @@ test('all four SDK distributions share the six level management contracts', asyn
     })
   }))
   for (const contract of contracts) assert.deepEqual(contract, contracts[0])
+})
+
+test('arena extension keeps positional raw parameters and five minute SDK limits in every distribution', async () => {
+  const files = ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']
+  for (const file of files) {
+    const source = await readFile(new URL(file, import.meta.url), 'utf8')
+    assert.match(source, /get_level_tasks:\s*\{\s*wait: true,\s*build: \(self_id\) => \(\{ self_id \}\)/)
+    assert.match(source, /execute_level_tasks:\s*\{\s*wait: true,\s*timeout: 5 \* 60 \* 1000,\s*build: \(self_id, tasks\) => \(\{ self_id, tasks \}\)/)
+    assert.match(source, /execute_level_task_selection: \{ wait: true, timeout: 5 \* 60 \* 1000,/)
+  }
+  const docs = await readFile(new URL('../../docs/arena-level-task.md', import.meta.url), 'utf8')
+  for (const field of ['available', 'executable', 'can_execute', 'attempted_today', 'status_text', 'execution_message']) assert.ok(docs.includes('`' + field + '`'), field)
+  assert.match(docs, /服务器本地日期/)
+  assert.match(docs, /只有原登录响应确证 `authorization_required` 才显示“微信未授权登录”/)
+  assert.match(docs, /4 分 45 秒/)
+  assert.match(docs, /4 分 15 秒/)
+  assert.match(docs, /尚未部署/)
 })

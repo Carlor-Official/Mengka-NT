@@ -4,6 +4,10 @@
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
+## 待发布：小游戏擂台等级任务
+
+task80“创建小游戏擂台并取得成绩”继续使用原等级 API，当前执行范围仅方块冲刺 v6，参数不变。以 `available` 判断未来计划是否可配置，以 `can_execute` 判断本次是否可执行；当天已持久登记的尝试不可重放。固定 `status_text/execution_message` 应原样展示；只有最终 `wx.login` 明确 `authorization_required` 才能显示“微信未授权登录”，缺少 QQ 提供的 `ilink_buffer`、普通认证或网络失败均不能这样推断。SDK 等待上限保持 5 分钟；框架请求预算 4 分 45 秒，worker 4 分 15 秒。正式 API 已在 `mknt.bilibilibot.com` 测试服务部署，1060221 的完整 worker 自然出分与等级入账验收已通过，尚无生产发布。详见[擂台契约与当前验收边界](../../docs/arena-level-task.md)。
+
 ## v2.2.2：宠物资料与参数更新
 
 `get_pet_profile` 补充战力、性格属性和职业；互动消息的 limit 不再限制为 1–50，省略默认 20；`get_pet_pk_strangers` 新增可选 mode，省略默认 4。官网地址更新为 https://mknt.7ml.top。
