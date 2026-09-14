@@ -5,7 +5,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "ownProfile / ownPetCache",
-    "description": "档案、生日、性别、等级经验与已获勋章。",
+    "description": "档案、生日、性别、等级经验、勋章、实时 PK 战力、性格属性与当前职业。",
     "fields": [
       {
         "name": "self_id",
@@ -621,7 +621,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "pkFriendList",
-    "description": "模式 4；过滤无效条目，单页最多 100 条。",
+    "description": "可选 mode，默认 4；模式 4 过滤无效条目，单页最多 100 条。",
     "fields": [
       {
         "name": "self_id",
@@ -640,6 +640,12 @@
         "type": "string",
         "required": false,
         "description": "服务端返回的下一页游标"
+      },
+      {
+        "name": "mode",
+        "type": "number",
+        "required": false,
+        "description": "查询模式，非负安全整数；不传默认 4，显式传值原样发送"
       }
     ]
   },
@@ -667,7 +673,7 @@
         "name": "limit",
         "type": "number",
         "required": false,
-        "description": "消息条数 1–50，默认 20"
+        "description": "消息条数，非负安全整数，默认 20；不限制 1–50，显式传值原样发送"
       }
     ]
   },

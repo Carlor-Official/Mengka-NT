@@ -33,7 +33,9 @@
 
 > 本仓库是萌卡 NT 的官方版本发布与插件 SDK 文档入口，不提供框架核心业务源码，也不包含运行配置、账号数据、数据库或密钥。
 
-当前版本：**2.2.1**。查看[本版更新说明](release-notes-v2.2.1.md)。
+官网：[萌卡 NT](https://mknt.7ml.top/) · [官网域名迁移与登录说明](docs/official-site-migration.md)
+
+当前版本：**2.2.2**。查看[本版更新说明](release-notes-v2.2.2.md)。
 
 插件市场支持[一体化安装与网页管理](docs/managed-plugins.md)，Linux 账号支持同 QQ 安卓授权免扫登录，等级任务“电脑QQ在线”复用同一流程。
 
@@ -54,9 +56,9 @@
 
 当前 SDK 提供 234 个 action、53 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按服务配置投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。当前源码已将 `send_packet` 开放给已认证的正向、反向和托管插件，无需白名单或专属 Key；接入要求见[插件 API 使用说明](docs/plugin-api-authorization.md)。QQ 宠物提供 30 项对象参数接口，API 开源贡献者：**星空花海**。调用参数和当前限制见[接口说明](docs/qq-pet-apis.md)。
 
-v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群名、精华设置和戳一戳，并修复原生申请、成员变化、消息引用、Linux 群图片和事件投递链路。事件字段、权限与实测边界见[官网原生事件](https://mknt.net/events/)，不将 API 成功等同于事件送达。
+v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群名、精华设置和戳一戳，并修复原生申请、成员变化、消息引用、Linux 群图片和事件投递链路。事件字段、权限与实测边界见[官网原生事件](https://mknt.7ml.top/events/)，不将 API 成功等同于事件送达。
 
-插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list()` 读取框架实例全部账号。普通账号 action 通过 `self_id + client_type` 自动路由到账号自身登录节点；只有 `add_account({...})`、`update_account({...})` 等账号/节点管理操作显式使用 `node_id`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
+插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list()` 读取框架实例全部账号。普通账号 action 通过 `self_id + client_type` 自动路由到账号自身登录节点；只有 `add_account({...})`、`update_account({...})` 等账号/节点管理操作显式使用 `node_id`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.7ml.top/api/)。
 
 ## 平台支持
 
@@ -122,7 +124,7 @@ chmod +x ./mengka-nt
 1. 使用浏览器打开终端显示的框架地址；
 2. 阅读并同意萌卡 NT 使用协议；
 3. 填写 Web 服务监听地址和端口；
-4. 前往[萌卡 NT 官网个人令牌页面](https://mknt.net/uc/profile?tab=pat)创建并填写个人令牌；
+4. 前往[萌卡 NT 官网个人令牌页面](https://mknt.7ml.top/uc/profile?tab=pat)创建并填写个人令牌；
 5. 框架验证令牌后，以官网用户信息完成管理员绑定并进入管理后台。
 
 初始化完成后安装入口会锁定，再次访问安装地址会返回 404。管理员身份以萌卡 NT 官网账号为准，不会在框架本地额外生成一套独立管理员密码。
@@ -181,7 +183,7 @@ const api = createAPI({
 await api.connect()
 ```
 
-不要将插件令牌直接写入源码或提交到公开仓库。完整接口和登录流程见 [萌卡 NT 开发文档](https://docs.mknt.net/)。
+不要将插件令牌直接写入源码或提交到公开仓库。完整接口和登录流程见 [萌卡 NT 开发文档](https://mknt.7ml.top/)。
 
 插件提供网页后台时，请参考 [WebUI SDK 接入说明](sdk/plugin-web/README.md) 和可选运行描述示例，使用框架分配的本地端口、挂载路径与令牌文件，不要把管理令牌写入前端代码或 URL。安装包不需要权限清单；API 与事件权限只以官网审核快照为准。
 
@@ -229,7 +231,7 @@ await api.connect()
 - 最新版本：[GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest)
 - 历史版本：[版本记录](https://github.com/Carlor-Official/Mengka-NT/releases)
 - Bug 与建议：[提交 Issue](https://github.com/Carlor-Official/Mengka-NT/issues)
-- 插件开发：[Node.js SDK](sdk/nodejs) · [WebUI SDK](sdk/plugin-web) · [开发文档](https://mknt.net/api/)
+- 插件开发：[Node.js SDK](sdk/nodejs) · [WebUI SDK](sdk/plugin-web) · [开发文档](https://mknt.7ml.top/api/)
 
 本仓库当前不提供框架核心业务源码或开源许可。请仅从本仓库 Release 获取正式外发包。
 
