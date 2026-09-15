@@ -11,7 +11,7 @@ for (const mode of ['forward', 'reverse']) {
   test(`${mode} level management APIs preserve explicit protocol, false, empty selections and full response`, { timeout: 5000 }, async () => {
     const received = []
     const arenaTask = { center_task_id: 80, title: '创建小游戏擂台并取得成绩', available: true,
-      executable: true, can_execute: false, attempted_today: true, status_text: '今日已尝试',
+      executable: true, can_execute: true, status_text: '待完成',
       execution_message: '微信未授权登录', is_done: false, speed_days: 0, finished_accelerate_days: 0 }
     const panelPayload = { marker: 'shared cache', extra_info: { extra_task_list: [arenaTask] } }
     const respond = socket => socket.on('message', raw => {
@@ -78,7 +78,7 @@ for (const mode of ['forward', 'reverse']) {
       const cached = await api.get_level_task_panel({ ...target, refresh: false })
       const fresh = await api.get_level_task_panel({ ...target, refresh: true })
       for (const payload of [rawPanel, cached.payload, fresh.payload]) {
-        assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'daily block must preserve capability and original QQ values')
+        assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'pending failure must preserve capability and original QQ values')
       }
       await assert.rejects(scoped.execute_level_tasks(target.self_id, [arenaTask.title]), error => String(error).includes('微信未授权登录'))
       await new Promise(resolve => setTimeout(resolve, 20))
@@ -86,11 +86,11 @@ for (const mode of ['forward', 'reverse']) {
       assert.equal(attempts.length, 1, 'fixed failure must not trigger an SDK retry')
       assert.deepEqual(attempts[0].params, { self_id: target.self_id, client_type: 'android', tasks: [arenaTask.title] })
       assert.deepEqual(received.at(-4).params, { self_id: target.self_id, client_type: 'android' })
-      Object.assign(arenaTask, { can_execute: true, status_text: '准备失败，可重试', execution_message: '上次准备失败，未发起创建，可重试一次' })
+      Object.assign(arenaTask, { can_execute: true, status_text: '待完成', execution_message: '擂台创建结果未确认' })
       const recoveryRaw = await scoped.get_level_tasks(target.self_id)
       const recoveryPanel = await api.get_level_task_panel({ ...target, refresh: false })
       for (const payload of [recoveryRaw, recoveryPanel.payload]) {
-        assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'SDK must preserve the explicit recovery decision and attempted history together')
+        assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'SDK must preserve pending status and the latest failure reason')
       }
       assert.equal(received.filter(message => message.action === 'execute_level_tasks').length, 1, 'recovery display must not execute automatically')
     } finally {
@@ -126,8 +126,10 @@ test('arena extension keeps positional raw parameters and five minute SDK limits
     assert.doesNotMatch(source, /task80附加安装能力/)
   }
   const docs = await readFile(new URL('../../docs/arena-level-task.md', import.meta.url), 'utf8')
-  for (const field of ['available', 'executable', 'can_execute', 'attempted_today', 'status_text', 'execution_message']) assert.ok(docs.includes('`' + field + '`'), field)
+  for (const field of ['available', 'executable', 'can_execute', 'status_text', 'execution_message']) assert.ok(docs.includes('`' + field + '`'), field)
   assert.match(docs, /服务器本地日期/)
+  assert.match(docs, /取消每日尝试次数限制/)
+  assert.match(docs, /不再返回 `attempted_today`/)
   assert.match(docs, /只有原登录响应确证 `authorization_required` 才显示“微信未授权登录”/)
   assert.match(docs, /4 分 45 秒/)
   assert.match(docs, /不再使用独立 worker 的 4 分 15 秒预算/)

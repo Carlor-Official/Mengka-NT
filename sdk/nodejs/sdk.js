@@ -645,7 +645,7 @@ const apiDefs = {
   get_level_task_panel: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
   get_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   update_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
-  // task80: available controls future plans; can_execute controls today's attempt. Follow can_execute; the server may allow one archived precreation recovery. Never auto-retry.
+  // task80: available controls future plans; can_execute controls today's attempt. Follow can_execute. Failures stay pending and allow explicit retry; never auto-retry.
   execute_level_task_selection: { wait: true, timeout: 5 * 60 * 1000, build: (options = {}) => ({ ...options }) },
   create_account_recovery_qr: { wait: true, timeout: 60 * 1000, build: () => ({}) },
   query_account_recovery_qr_status: { wait: true, build: recovery_token => ({ recovery_token }) },
@@ -856,7 +856,7 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按数组顺序执行指定任务；task80用Go直接协议上报1–99随机整数分数，仅方块冲刺v6，须QQ最终刷新确认；不运行游戏、不增加分数/游戏/计时参数，以can_execute决定本次执行；服务端仅允许一次可证明未创建的失败恢复，SDK不自动重试。
+  // 按数组顺序执行指定任务；task80用Go直接协议上报1–99随机整数分数，仅方块冲刺v6，须QQ最终刷新确认；不运行游戏、不增加分数/游戏/计时参数，以can_execute决定本次执行；失败保持待完成并返回原因，无每日尝试限制，SDK不自动重试。
   execute_level_tasks: {
     wait: true,
     timeout: 5 * 60 * 1000,

@@ -12,10 +12,10 @@
 | client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
 | refresh | boolean | 否 | 默认 true；false 优先使用框架缓存，无有效缓存时尝试实时读取 |
 
-v2.3.0 中，仅 task80“创建小游戏擂台并取得成绩”附加框架执行能力、当天尝试及固定提示，实时和缓存读取均投影。当前 Go 直接协议模式不依赖外部 worker 安装；`available`/`executable` 控制未来自动计划，`can_execute` 控制本次执行。当天尝试后补挂禁用，仍可调整次日计划；查询不触发分数上报。QQ 完成和加速字段保持原值，新模式已在 Linux amd64 测试站通过 2082083 的标准任务验收，见[擂台契约](../arena-level-task.md)。
+v2.3.0 中，仅 task80“创建小游戏擂台并取得成绩”附加框架执行能力、完成状态及失败原因，实时和缓存读取均投影。当前 Go 直接协议模式不依赖外部 worker 安装；`available`/`executable` 控制未来自动计划，`can_execute` 控制本次执行。执行失败后仍可补挂，运行中保留并发互斥；查询不触发分数上报。QQ 完成和加速字段保持原值，新模式已在 Linux amd64 测试站通过 2082083 的标准任务验收，见[擂台契约](../arena-level-task.md)。
 
 
-v2.3.1 起，仅终态为 failed、creation_sent=false、原因为 creation_not_confirmed 或 metadata_failed、且当天未使用过恢复机会的记录，允许一次受控重试。再次执行前重新核验当前 QQ 面板与登录材料，在同一事务内完整归档旧记录并更换 attempt_id；已发出的创建、执行中、中断、未知结果及已恢复一次的记录不重放。attempted_today 仍如实为 true，本次能否执行以 can_execute 为准；客户端不自动重试。
+v2.3.1 起，擂台任务取消每日尝试次数限制。只有 QQ 刷新确认完成才显示“已完成”；执行失败返回错误原因，面板显示“待完成”，允许再次执行。擂台任务不再返回 `attempted_today`，客户端应以 `can_execute` 判断本次能否执行。正在执行时保留账号互斥，禁止并发提交；每次新执行重新核验 QQ 状态、当前登录材料和新建条件，不续传旧房间分数。SDK 和页面刷新不自动重试。
 
 ## 示例
 
