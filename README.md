@@ -35,9 +35,9 @@
 
 官网：[萌卡 NT](https://mknt.rezcwl.com/) · [官网域名迁移与登录说明](docs/official-site-migration.md)
 
-当前版本：**2.3.0**。查看[本版更新说明](release-notes-v2.3.0.md)。
+当前版本：**2.3.1**。查看[本版更新说明](release-notes-v2.3.1.md)。
 
-v2.3.0 将小游戏擂台等级任务接入现有等级 API。框架以 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏或依赖外部 worker。每日尝试不重放，仅 QQ 独立刷新确认完成才算成功。2026-09-15 02:37，2082083 已在 Linux amd64 测试站通过一次标准 API 的 Go 直接模式验收；Windows 仅验证只读认证，未验证 Windows 或 Linux arm64 的完整任务。见[擂台任务说明](docs/arena-level-task.md)与[升级说明](docs/arena-direct-score-upgrade.md)。
+v2.3.1 修复小游戏擂台创建成功后列表或详情短暂不可见时被误判失败的问题，并补充分阶段、脱敏的账号日志。创建请求仍只发送一次，每日记录与 1–99 随机整数分数规则保持不变。见[本版更新说明](release-notes-v2.3.1.md)与[故障诊断说明](docs/arena-create-diagnostics.md)。
 
 插件市场支持[一体化安装与网页管理](docs/managed-plugins.md)，Linux 账号支持同 QQ 安卓授权免扫登录，等级任务“电脑QQ在线”复用同一流程。
 
