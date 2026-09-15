@@ -13,6 +13,9 @@
 
 当前执行由 Go 直接协议上报 1–99 随机整数分数，不运行游戏，不需要 Python、Node、Chrome 或外部 worker 安装。成功还须独立执行 `0x916e → 0x9172` 刷新确认 QQ task80 完成。仅最终 `wx.login` 响应确证 `authorization_required` 才显示“微信未授权登录”。缺少 `ilink_buffer` 是 QQ 提供的小游戏登录凭证缺失，官方按 `FailAuthCommon` 通用失败处理，不能据此推断未授权；普通认证或网络失败同样不能推断。Linux amd64 测试站通过 2082083 的一次标准 API Go 直接模式验收；Windows 与 Linux arm64 的完整任务未实测，见[小游戏擂台等级任务](../arena-level-task.md)。
 
+
+v2.3.1 起，仅终态为 failed、creation_sent=false、原因为 creation_not_confirmed 或 metadata_failed、且当天未使用过恢复机会的记录，允许一次受控重试。再次执行前重新核验当前 QQ 面板与登录材料，在同一事务内完整归档旧记录并更换 attempt_id；已发出的创建、执行中、中断、未知结果及已恢复一次的记录不重放。attempted_today 仍如实为 true，本次能否执行以 can_execute 为准；客户端不自动重试。
+
 ## 返回
 
 全部执行成功时 Promise 解析为 `null`；任一任务失败时拒绝并包含任务标题和固定原因。接口成功不生成 QQ 完成或加速数值；擂台成功须当前会话、新房初始空分、上传成功、同房本人本次随机分数读回、退出协议确认和独立 `0x916e → 0x9172` 等级刷新完成。上传成功不能代替 QQ 最终入账。

@@ -14,6 +14,9 @@
 
 v2.3.0 的擂台扩展中，task80“创建小游戏擂台并取得成绩”由 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏，不依赖外部 worker 安装；没有分数、游戏或计时参数。当天任何持久尝试均不可重放，结果未知也不重试；仅最终 `wx.login` 确证 `authorization_required` 才提示“微信未授权登录”。只有同房本人分数读回、退出协议确认及独立 `0x916e → 0x9172` 确认完成才算成功。SDK 保持 5 分钟，框架等级请求总预算 4 分 45 秒。Linux amd64 测试站通过 2082083 的一次标准任务验收；Windows 与 Linux arm64 的完整任务未实测，见[擂台契约](../arena-level-task.md)。
 
+
+v2.3.1 起，仅终态为 failed、creation_sent=false、原因为 creation_not_confirmed 或 metadata_failed、且当天未使用过恢复机会的记录，允许一次受控重试。再次执行前重新核验当前 QQ 面板与登录材料，在同一事务内完整归档旧记录并更换 attempt_id；已发出的创建、执行中、中断、未知结果及已恢复一次的记录不重放。attempted_today 仍如实为 true，本次能否执行以 can_execute 为准；客户端不自动重试。
+
 ## 示例
 
 ```javascript

@@ -86,6 +86,13 @@ for (const mode of ['forward', 'reverse']) {
       assert.equal(attempts.length, 1, 'fixed failure must not trigger an SDK retry')
       assert.deepEqual(attempts[0].params, { self_id: target.self_id, client_type: 'android', tasks: [arenaTask.title] })
       assert.deepEqual(received.at(-4).params, { self_id: target.self_id, client_type: 'android' })
+      Object.assign(arenaTask, { can_execute: true, status_text: '准备失败，可重试', execution_message: '上次准备失败，未发起创建，可重试一次' })
+      const recoveryRaw = await scoped.get_level_tasks(target.self_id)
+      const recoveryPanel = await api.get_level_task_panel({ ...target, refresh: false })
+      for (const payload of [recoveryRaw, recoveryPanel.payload]) {
+        assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'SDK must preserve the explicit recovery decision and attempted history together')
+      }
+      assert.equal(received.filter(message => message.action === 'execute_level_tasks').length, 1, 'recovery display must not execute automatically')
     } finally {
       socket?.terminate()
       if (mode === 'forward') api?.disconnect()
