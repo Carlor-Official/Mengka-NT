@@ -13,6 +13,8 @@
 
 “来元宝P图一次”继续使用相同 `tasks` 数组，对应 `center_task_id=83`，仅 Phone/Pad 协议可执行。框架使用当前 QQ 登录态申请元宝官方 QQ OpenSDK 授权，交换短期元宝会话，生成一张不含账号与个人信息的合成 PNG，经元宝返回的临时 COS 凭证上传后调用官方智能 P 图能力。请求携带元宝当前的图片原子能力标识，并在 App 原子能力、Web 原子能力和普通多媒体三种官方路由间做有界回退；只有 SSE 明确拒绝时才切换，网络或 HTTP 结果不明确时不会重放。成功必须收到真实图片结果事件，普通文本回复不算完成。QQ access token、元宝 token 和临时 COS 密钥均不写入配置或数据库。目标 QQ 必须已在官方元宝 App 完成登录注册并激活图片能力；未注册或未激活时返回明确引导，不代替用户注册或接受协议。网页端普通对话、PC 端和仅创建聊天会话不算 P图任务。
 
+“去看免费小说”也使用相同 `tasks` 数组，对应 `center_task_id=64`。当前 QQ 协议没有客户端可填写的阅读秒数字段；框架按官方两秒心跳持续上报，直到 QQ 返回当日阅读时长不少于 180 秒，再调用阅读器等级任务结算接口，因此一次执行约需三分钟。调用方不要传入阅读时长、伪造时间或在超时后自动重放，最终仍以刷新后的 `is_done` 为准。
+
 其余 QQ 基础/额外加速项目也沿用本接口按面板标题执行；调用方不应为单个项目另建插件 action。任务是否可执行以面板 executable/can_execute 为准。
 
 当前执行由 Go 直接协议上报 1–99 随机整数分数，不运行游戏，不需要 Python、Node、Chrome 或外部 worker 安装。成功还须独立执行 `0x916e → 0x9172` 刷新确认 QQ task80 完成。仅最终 `wx.login` 响应确证 `authorization_required` 才显示“微信未授权登录”。缺少 `ilink_buffer` 是 QQ 提供的小游戏登录凭证缺失，官方按 `FailAuthCommon` 通用失败处理，不能据此推断未授权；普通认证或网络失败同样不能推断。Linux amd64 测试站通过 2082083 的一次标准 API Go 直接模式验收；Windows 与 Linux arm64 的完整任务未实测，见[小游戏擂台等级任务](../arena-level-task.md)。
@@ -29,6 +31,9 @@ await api.forProtocol('android').execute_level_tasks(123456, ['创建小游戏�
 
 // 元宝P图仍使用原 action 与位置参数，不需要传模型、图片或元宝凭证。
 await api.forProtocol('android').execute_level_tasks(123456, ['来元宝P图一次'])
+
+// 免费小说阅读时长由 QQ 服务端按真实心跳累计。
+await api.forProtocol('android').execute_level_tasks(123456, ['去看免费小说'])
 ```
 
 原始 `execute_level_tasks` 成功只表示元宝返回了本次真实图片结果，不自行合成 QQ 完成状态。随后调用 `get_level_tasks` 执行 `0x916e → 0x9172` 刷新，或改用会自动刷新面板的 `execute_level_task_selection`，以 QQ 返回的 `is_done` 为准。网络中断、COS 上传、HTTP 失败、纯文本回复或 SSE 结果不明确时返回错误且不自动重放；只有 SSE 明确拒绝当前路由时才尝试下一种官方图片路由。

@@ -17,6 +17,8 @@ v2.3.0 的擂台扩展中，task80“创建小游戏擂台并取得成绩”由 
 
 task83“来元宝P图一次”同样不增加公开参数。框架从目标 QQ 当前登录态取得官方 OpenSDK 授权并交换元宝会话，使用元宝临时上传凭证提交一张框架生成的无个人信息合成图。请求使用元宝图片原子能力，并在三种官方图片路由间做有界回退；只有 SSE 明确拒绝时才切换，且必须收到真实图片结果事件才算 P 图成功。目标 QQ 必须已在官方元宝 App 完成登录注册并激活图片能力；框架不会自动注册、保存第三方令牌或把普通文本对话当作任务完成。执行后本接口按原逻辑刷新面板，最终以 QQ 返回的 `is_done` 为准；网络、HTTP、纯文本或 SSE 结果不明确时不自动重试。
 
+task64“去看免费小说”不增加公开参数。QQ 当前阅读协议不接收客户端指定的时长；框架以两秒间隔保持同一阅读 session，等待服务端返回当日阅读时长达到 180 秒后调用阅读器等级任务结算接口，再刷新面板。一次调用约需三分钟，超时、断线或结果未知时不自动重放。
+
 其余 QQ 基础/额外加速项目也沿用本接口按面板标题执行；调用方不应为单个项目另建插件 action。任务是否可执行以面板 executable/can_execute 为准。
 
 
@@ -29,6 +31,9 @@ const result = await api.execute_level_task_selection({ self_id: 123456, client_
 
 const yuanbao = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["来元宝P图一次"] })
 if (!yuanbao.refreshed) console.warn(yuanbao.refreshError)
+
+const novel = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["去看免费小说"] })
+if (!novel.refreshed) console.warn(novel.refreshError)
 ```
 
 ## 返回
