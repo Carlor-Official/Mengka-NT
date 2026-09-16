@@ -11,11 +11,12 @@
 | self_id | number | 是 | QQ 号，必须是框架已配置账号 |
 | client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
 | tasks | string[] | 否 | 显式任务标题数组；省略或 [] 使用框架已选任务，若没有可执行已选项则补挂当前全部可执行未完成任务 |
+| yuanbao_verification_completed | boolean | 否 | 仅当管理员已经完成当前元宝官方验证时传 true；框架会在内存中消费该账号当前短期验证上下文并重试一次。普通执行和定时计划必须省略 |
 
 v2.3.0 的擂台扩展中，task80“创建小游戏擂台并取得成绩”由 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏，不依赖外部 worker 安装；没有分数、游戏或计时参数。失败返回原因并保持待完成，SDK 不自动重试；仅最终 `wx.login` 确证 `authorization_required` 才提示“微信未授权登录”。只有同房本人分数读回、退出协议确认及独立 `0x916e → 0x9172` 确认完成才算成功。SDK 保持 5 分钟，框架等级请求总预算 4 分 45 秒。Linux amd64 测试站通过 2082083 的一次标准任务验收；Windows 与 Linux arm64 的完整任务未实测，见[擂台契约](../arena-level-task.md)。
 
 
-task83“来元宝P图一次”同样不增加公开参数。框架从目标 QQ 当前登录态取得官方 OpenSDK 授权并交换元宝会话，使用元宝临时上传凭证提交一张框架生成的无个人信息合成图。请求使用元宝图片原子能力，并在三种官方图片路由间做有界回退；只有 SSE 明确拒绝时才切换，且必须收到真实图片结果事件才算 P 图成功。目标 QQ 必须已在官方元宝 App 完成登录注册并激活图片能力；框架不会自动注册、把第三方会话写入配置或数据库，或把普通文本对话当作任务完成。安全校验需要管理员打开腾讯元宝官方验证页完成一次人工验证；框架会在等级加速页面展示入口，并把同一入口私聊发送给当前 QQ 自身，收件人不可由调用方修改。`qq_message_sent` 表示私聊是否发送成功，失败不影响前端入口。成功会话只在框架进程内短期复用。执行后本接口按原逻辑刷新面板，最终以 QQ 返回的 `is_done` 为准；网络、HTTP、纯文本或 SSE 结果不明确时不自动重试。
+task83“来元宝P图一次”的普通执行仍不需要额外参数。框架从目标 QQ 当前登录态取得官方 OpenSDK 授权并交换元宝会话，使用元宝临时上传凭证提交一张框架生成的无个人信息合成图。请求使用元宝图片原子能力，并在三种官方图片路由间做有界回退；只有 SSE 明确拒绝时才切换，且必须收到真实图片结果事件才算 P 图成功。目标 QQ 必须已在官方元宝 App 完成登录注册并激活图片能力；框架不会自动注册、把第三方会话写入配置或数据库，或把普通文本对话当作任务完成。安全校验需要管理员打开腾讯元宝官方验证页完成一次人工验证；框架会在等级加速页面展示入口，并把同一入口私聊发送给当前 QQ 自身，收件人不可由调用方修改。同一短期验证入口只私聊一次；验证未确认期间，普通执行和定时计划只返回现有验证状态，不会重复登录元宝或生成新入口。官方页完成后可能关闭或显示空白，此时由用户点击继续按钮，管理页面用 `yuanbao_verification_completed:true` 显式消费当前内存验证上下文并把同一个 `safeVerifyCode` 带回元宝登录一次。`qq_message_sent` 表示私聊是否发送成功，失败不影响前端入口。挑战、QQ access token 和成功会话只在框架进程内短期保存，均不写入配置或数据库。执行后本接口按原逻辑刷新面板，最终以 QQ 返回的 `is_done` 为准；网络、HTTP、纯文本或 SSE 结果不明确时不自动重试。
 
 task64“去看免费小说”不增加公开参数。QQ 当前阅读协议不接收客户端指定的时长；框架以两秒间隔保持同一阅读 session，等待服务端返回当日阅读时长达到 180 秒后调用阅读器等级任务结算接口，再刷新面板。一次调用约需三分钟，超时、断线或结果未知时不自动重放。
 
@@ -31,6 +32,14 @@ const result = await api.execute_level_task_selection({ self_id: 123456, client_
 
 const yuanbao = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["来元宝P图一次"] })
 if (!yuanbao.refreshed) console.warn(yuanbao.refreshError)
+
+// 仅在用户已完成当前官方验证后，由一次明确操作发起；不得后台循环调用。
+const continuedYuanbao = await api.execute_level_task_selection({
+  self_id: 123456,
+  client_type: "android",
+  tasks: ["来元宝P图一次"],
+  yuanbao_verification_completed: true
+})
 
 const novel = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["去看免费小说"] })
 if (!novel.refreshed) console.warn(novel.refreshError)
