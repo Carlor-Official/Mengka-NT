@@ -15,12 +15,20 @@
 v2.3.0 的擂台扩展中，task80“创建小游戏擂台并取得成绩”由 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏，不依赖外部 worker 安装；没有分数、游戏或计时参数。失败返回原因并保持待完成，SDK 不自动重试；仅最终 `wx.login` 确证 `authorization_required` 才提示“微信未授权登录”。只有同房本人分数读回、退出协议确认及独立 `0x916e → 0x9172` 确认完成才算成功。SDK 保持 5 分钟，框架等级请求总预算 4 分 45 秒。Linux amd64 测试站通过 2082083 的一次标准任务验收；Windows 与 Linux arm64 的完整任务未实测，见[擂台契约](../arena-level-task.md)。
 
 
+task83“来元宝P图一次”同样不增加公开参数。框架从目标 QQ 当前登录态取得官方 OpenSDK 授权并交换元宝会话，使用元宝临时上传凭证提交一张框架生成的无个人信息合成图。请求使用元宝图片原子能力，并在三种官方图片路由间做有界回退；只有 SSE 明确拒绝时才切换，且必须收到真实图片结果事件才算 P 图成功。目标 QQ 必须已在官方元宝 App 完成登录注册并激活图片能力；框架不会自动注册、保存第三方令牌或把普通文本对话当作任务完成。执行后本接口按原逻辑刷新面板，最终以 QQ 返回的 `is_done` 为准；网络、HTTP、纯文本或 SSE 结果不明确时不自动重试。
+
+其余 QQ 基础/额外加速项目也沿用本接口按面板标题执行；调用方不应为单个项目另建插件 action。任务是否可执行以面板 executable/can_execute 为准。
+
+
 v2.3.1 起，擂台任务取消每日尝试次数限制。只有 QQ 刷新确认完成才显示“已完成”；执行失败返回错误原因，面板显示“待完成”，允许再次执行。擂台任务不再返回 `attempted_today`，客户端应以 `can_execute` 判断本次能否执行。正在执行时保留账号互斥，禁止并发提交；每次新执行重新核验 QQ 状态、当前登录材料和新建条件，不续传旧房间分数。SDK 和页面刷新不自动重试。
 
 ## 示例
 
 ```javascript
 const result = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["完成视频任务获得加速时长"] })
+
+const yuanbao = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["来元宝P图一次"] })
+if (!yuanbao.refreshed) console.warn(yuanbao.refreshError)
 ```
 
 ## 返回

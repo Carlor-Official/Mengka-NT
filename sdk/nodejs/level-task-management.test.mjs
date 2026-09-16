@@ -57,7 +57,7 @@ for (const mode of ['forward', 'reverse']) {
       await api.get_level_task_settings(target)
       await api.update_level_task_settings(settings)
       await api.get_level_task_panel({ ...target, refresh: false })
-      const result = await api.execute_level_task_selection({ ...target, tasks: ['电脑QQ在线', 'QQ会员公众号签到', 'unsupported'] })
+      const result = await api.execute_level_task_selection({ ...target, tasks: ['电脑QQ在线', '来元宝P图一次', 'QQ会员公众号签到', 'unsupported'] })
       await api.set_friend_remark({ ...target, user_id: 654321, remark: ' 中文备注 ' })
       await api.set_friend_remark({ ...target, user_id: 654321, remark: '' })
       assert.equal(result.payload.marker, 'shared cache')
@@ -69,7 +69,7 @@ for (const mode of ['forward', 'reverse']) {
         { action: 'get_level_task_settings', params: target },
         { action: 'update_level_task_settings', params: settings },
         { action: 'get_level_task_panel', params: { ...target, refresh: false } },
-        { action: 'execute_level_task_selection', params: { ...target, tasks: ['电脑QQ在线', 'QQ会员公众号签到', 'unsupported'] } },
+        { action: 'execute_level_task_selection', params: { ...target, tasks: ['电脑QQ在线', '来元宝P图一次', 'QQ会员公众号签到', 'unsupported'] } },
         { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: ' 中文备注 ' } },
         { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: '' } },
       ])
@@ -113,6 +113,18 @@ test('all four SDK distributions share the six level management contracts', asyn
     })
   }))
   for (const contract of contracts) assert.deepEqual(contract, contracts[0])
+})
+
+test('Yuanbao photo task remains a title-only level API contract', async () => {
+  const docs = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
+  assert.match(docs, /来元宝P图一次/)
+  assert.match(docs, /center_task_id=83/)
+  assert.match(docs, /不写入配置或数据库/)
+  assert.match(docs, /不会自动注册|不代替用户注册/)
+  for (const file of ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']) {
+    const source = await readFile(new URL(file, import.meta.url), 'utf8')
+    assert.match(source, /execute_level_tasks:\s*\{\s*wait: true,\s*timeout: 5 \* 60 \* 1000,\s*build: \(self_id, tasks\) => \(\{ self_id, tasks \}\)/)
+  }
 })
 
 test('arena extension keeps positional raw parameters and five minute SDK limits in every distribution', async () => {
