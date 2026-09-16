@@ -2,6 +2,8 @@
 
 `get_level_tasks` 刷新并返回当前 Android Bot 的 QQ 等级加速面板；调用不执行游戏。
 
+普通任务的 `available` 表示当前框架是否支持该任务，`can_execute` 表示本次是否仍可执行。任务当天已经完成时，`available` 仍为 `true`，而 `can_execute` 为 `false`；客户端应显示“已完成”，不能显示成“暂不支持”。`available=false` 才表示当前框架不支持该任务。
+
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |

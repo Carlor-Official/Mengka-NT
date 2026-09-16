@@ -8,6 +8,8 @@
 
 task83“来元宝P图一次”使用现有 `execute_level_tasks` / `execute_level_task_selection`，SDK 方法、参数和 5 分钟等待上限不变。插件不要采集或传入元宝 token、模型名或图片；框架从目标 QQ 当前登录态完成短期授权、临时上传和官方智能 P 图。仅元宝明确拒绝一种图片路由时才会尝试下一种，且必须收到真实图片结果事件；普通文本或结果不明确时不重放。目标 QQ 需先在官方元宝 App 登录注册并激活图片能力，执行后的完成状态以 QQ 面板刷新结果为准。详见[执行 QQ 等级加速任务](../../docs/api/execute_level_tasks.md)。
 
+等级任务状态中，`available` 表示框架是否支持该任务，`can_execute` 表示本次是否仍可执行。已完成任务应按 `is_done/status` 显示“已完成”，不能因 `can_execute=false` 显示为“暂不支持”。
+
 ## v2.3.1：擂台创建回读与诊断修复
 
 - 公开 action、参数和响应结构没有变化，插件代码无需改动。

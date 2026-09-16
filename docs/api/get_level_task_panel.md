@@ -30,6 +30,8 @@ const result = await api.get_level_task_panel({ self_id: 123456, client_type: "a
 
 返回 `{ payload, settings }`。payload 与框架网页一致，包含 `can_execute` / `is_paid_task` 标记；settings 与 get_level_task_settings 相同。离线可读取已有缓存；实时刷新失败返回 action 错误，不把旧缓存冒充实时结果。
 
+普通任务同时返回 `available`。它表示框架能力，与本次执行状态分离：已完成任务保持 `available=true`、`can_execute=false`，只有 `available=false` 才表示“暂不支持”。
+
 以上返回值是 WebSocket `action_result.data`；失败为 `ok:false` 和 `error`。SDK 自动解包 data 并在失败时拒绝 Promise。
 
 详见[共享等级任务管理接入](../level-task-management.md)。
