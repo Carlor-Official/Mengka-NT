@@ -2,6 +2,8 @@
 
 `execute_level_tasks` 按数组顺序执行指定的 QQ 等级加速任务；各项错误汇总返回。
 
+> **当前状态：**“来元宝P图一次”已暂停自动执行。该任务仍会出现在 QQ 返回的面板中，但框架会返回 `available=false`、`executable=false`、`can_execute=false` 和“暂不支持”；旧客户端直接提交该标题也会在任何元宝网络请求前被拒绝。升级时会清除旧的元宝会话、验证状态和自动计划选择。
+
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |
@@ -30,9 +32,6 @@ v2.3.1 起，擂台任务取消每日尝试次数限制。只有 QQ 刷新确认
 
 ```javascript
 await api.forProtocol('android').execute_level_tasks(123456, ['创建小游戏擂台并取得成绩'])
-
-// 元宝P图仍使用原 action 与位置参数，不需要传模型、图片或元宝凭证。
-await api.forProtocol('android').execute_level_tasks(123456, ['来元宝P图一次'])
 
 // 免费小说阅读时长由 QQ 服务端按真实心跳累计。
 await api.forProtocol('android').execute_level_tasks(123456, ['去看免费小说'])

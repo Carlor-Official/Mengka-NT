@@ -4,6 +4,8 @@
 
 通过完成令牌认证的插件 WebSocket 服务调用 `get_level_task_panel`。
 
+“来元宝P图一次”当前暂停自动执行。任务仍保留 QQ 原始展示和完成字段，但框架固定返回 `available=false`、`executable=false`、`can_execute=false`；未完成时状态为“暂不支持”。查询不会触发任何元宝请求。
+
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |

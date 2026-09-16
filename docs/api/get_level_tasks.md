@@ -2,6 +2,8 @@
 
 `get_level_tasks` 刷新并返回当前 Android Bot 的 QQ 等级加速面板；调用不执行游戏。
 
+“来元宝P图一次”当前暂停自动执行。任务仍保留 QQ 原始展示和完成字段，但框架固定返回 `available=false`、`executable=false`、`can_execute=false`；未完成时状态为“暂不支持”。查询不会触发任何元宝请求。
+
 返回内容只保留免费等级任务。会员推广项目及日常、额外分类中标记为会员或付费、或引导开通/购买权益的任务会在框架源头移除；会员签到属于框架提供的免费领取任务，只出现在完整管理面板的 `member_info.member_task_list` 中。
 
 普通任务的 `available` 表示当前框架是否支持该任务，`can_execute` 表示本次是否仍可执行。任务当天已经完成时，`available` 仍为 `true`，而 `can_execute` 为 `false`；客户端应显示“已完成”，不能显示成“暂不支持”。`available=false` 才表示当前框架不支持该任务。

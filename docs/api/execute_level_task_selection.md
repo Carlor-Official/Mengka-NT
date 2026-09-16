@@ -4,6 +4,8 @@
 
 通过完成令牌认证的插件 WebSocket 服务调用 `execute_level_task_selection`。
 
+> **当前状态：**“来元宝P图一次”已暂停自动执行。显式提交该标题会进入 `skippedTasks`，框架不会登录元宝、发送验证链接、上传图片或创建 P 图请求；升级时会清除旧的元宝会话、验证状态和自动计划选择。
+
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |
@@ -11,7 +13,7 @@
 | self_id | number | 是 | QQ 号，必须是框架已配置账号 |
 | client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
 | tasks | string[] | 否 | 显式任务标题数组；省略或 [] 使用框架已选任务，若没有可执行已选项则补挂当前全部可执行未完成任务 |
-| yuanbao_verification_completed | boolean | 否 | 仅当管理员已经完成当前元宝官方验证时传 true；框架会在内存中消费该账号当前短期验证上下文并重试一次。普通执行和定时计划必须省略 |
+| yuanbao_verification_completed | boolean | 否 | 兼容保留字段；元宝任务暂停期间不会触发登录或重试 |
 
 v2.3.0 的擂台扩展中，task80“创建小游戏擂台并取得成绩”由 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏，不依赖外部 worker 安装；没有分数、游戏或计时参数。失败返回原因并保持待完成，SDK 不自动重试；仅最终 `wx.login` 确证 `authorization_required` 才提示“微信未授权登录”。只有同房本人分数读回、退出协议确认及独立 `0x916e → 0x9172` 确认完成才算成功。SDK 保持 5 分钟，框架等级请求总预算 4 分 45 秒。Linux amd64 测试站通过 2082083 的一次标准任务验收；Windows 与 Linux arm64 的完整任务未实测，见[擂台契约](../arena-level-task.md)。
 
@@ -29,17 +31,6 @@ v2.3.1 起，擂台任务取消每日尝试次数限制。只有 QQ 刷新确认
 
 ```javascript
 const result = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["完成视频任务获得加速时长"] })
-
-const yuanbao = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["来元宝P图一次"] })
-if (!yuanbao.refreshed) console.warn(yuanbao.refreshError)
-
-// 仅在用户已完成当前官方验证后，由一次明确操作发起；不得后台循环调用。
-const continuedYuanbao = await api.execute_level_task_selection({
-  self_id: 123456,
-  client_type: "android",
-  tasks: ["来元宝P图一次"],
-  yuanbao_verification_completed: true
-})
 
 const novel = await api.execute_level_task_selection({ self_id: 123456, client_type: "android", tasks: ["去看免费小说"] })
 if (!novel.refreshed) console.warn(novel.refreshError)
