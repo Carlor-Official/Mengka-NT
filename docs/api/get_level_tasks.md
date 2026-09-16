@@ -2,6 +2,8 @@
 
 `get_level_tasks` 刷新并返回当前 Android Bot 的 QQ 等级加速面板；调用不执行游戏。
 
+返回内容只保留免费等级任务。会员推广项目及日常、额外分类中标记为会员或付费、或引导开通/购买权益的任务会在框架源头移除；会员签到属于框架提供的免费领取任务，只出现在完整管理面板的 `member_info.member_task_list` 中。
+
 普通任务的 `available` 表示当前框架是否支持该任务，`can_execute` 表示本次是否仍可执行。任务当天已经完成时，`available` 仍为 `true`，而 `can_execute` 为 `false`；客户端应显示“已完成”，不能显示成“暂不支持”。`available=false` 才表示当前框架不支持该任务。
 
 ## 参数
@@ -19,7 +21,7 @@ v2.3.1 起，擂台任务取消每日尝试次数限制。只有 QQ 刷新确认
 
 ## 返回
 
-保持原面板对象外壳：`uin`、`overall_info`、`vip_info`、`base_info`、`extra_info`、`is_freeze` 等。QQ 的 `is_done`、成绩及加速数值不由本地记录生成。失败时 SDK 拒绝 Promise。
+保持 `uin`、`overall_info`、`base_info`、`extra_info`、`is_freeze` 等面板字段；不再返回会员推广项目。QQ 的 `is_done`、成绩及加速数值不由本地记录生成。失败时 SDK 拒绝 Promise。
 
 ```javascript
 const panel = await api.forProtocol('android').get_level_tasks(123456)

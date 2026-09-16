@@ -28,7 +28,7 @@ const result = await api.get_level_task_panel({ self_id: 123456, client_type: "a
 
 ## 返回
 
-返回 `{ payload, settings }`。payload 与框架网页一致，包含 `can_execute` / `is_paid_task` 标记；settings 与 get_level_task_settings 相同。离线可读取已有缓存；实时刷新失败返回 action 错误，不把旧缓存冒充实时结果。
+返回 `{ payload, settings }`。payload 与框架网页一致：会员推广项目不返回，日常与额外任务列表不含付费任务；会员签到保留在 `member_info.member_task_list`，属于免费领取任务。settings 与 get_level_task_settings 相同。离线读取旧缓存时也会应用相同过滤；实时刷新失败返回 action 错误，不把旧缓存冒充实时结果。
 
 普通任务同时返回 `available`。它表示框架能力，与本次执行状态分离：已完成任务保持 `available=true`、`can_execute=false`，只有 `available=false` 才表示“暂不支持”。
 

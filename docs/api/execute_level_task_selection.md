@@ -38,7 +38,7 @@ if (!novel.refreshed) console.warn(novel.refreshError)
 
 ## 返回
 
-返回 `{ tasks, skippedTasks, payload, refreshed, refreshError }`。tasks 是实际提交执行的标题，skippedTasks 是显式请求中被过滤的标题，payload 是完成后的面板。已完成、付费、协议不可执行及不支持的任务均过滤。若执行成功但刷新失败，refreshed=false，保留执行前面板并返回 refreshError；请刷新面板，禁止据此自动重新执行。执行本身失败返回原 action 错误，不自动重试。
+返回 `{ tasks, skippedTasks, payload, refreshed, refreshError }`。tasks 是实际提交执行的标题，skippedTasks 是显式请求中被过滤的标题，payload 是完成后的面板。付费任务不会出现在面板中；旧设置或显式请求仍携带其标题时会进入 `skippedTasks`，不会执行。已完成、协议不可执行及不支持的任务同样过滤。若执行成功但刷新失败，refreshed=false，保留执行前面板并返回 refreshError；请刷新面板，禁止据此自动重新执行。执行本身失败返回原 action 错误，不自动重试。
 
 以上返回值是 WebSocket `action_result.data`；失败为 `ok:false` 和 `error`。SDK 自动解包 data 并在失败时拒绝 Promise。
 
