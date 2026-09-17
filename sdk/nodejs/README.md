@@ -23,7 +23,7 @@ task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改�
 
 ## v2.2.2：宠物资料与参数更新
 
-`get_pet_profile` 补充战力、性格属性和职业；互动消息的 limit 不再限制为 1–50，省略默认 20；`get_pet_pk_strangers` 新增可选 mode，省略默认 4。官网地址更新为 https://mknt.rezcwl.com。
+`get_pet_profile` 补充战力、性格属性和职业；互动消息的 limit 不再限制为 1–50，省略默认 20；`get_pet_pk_strangers` 新增可选 mode，省略默认 4。官网地址为 https://mknt.net。
 
 ## v2.2.1：闪照原图地址
 
@@ -91,7 +91,7 @@ v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/
 
 ## v2.0.6：主动申请及群操作
 
-以下能力从 v2.0.6 起提供。完整参数见[官网 API 目录](https://mknt.rezcwl.com/api/)，事件字段见[萌卡原生事件](https://mknt.rezcwl.com/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
+以下能力从 v2.0.6 起提供。完整参数见[官网 API 目录](https://mknt.net/api/)，事件字段见[萌卡原生事件](https://mknt.net/events/)。替换 SDK 不会升级框架服务，调用新增能力前须先升级服务。
 
 v2.0.6 已包含群聊/好友发送引用、私聊接收引用段和 Linux 群图片上传修复。26 类事件已完成列明的双账号、双协议、跨节点和正反向 WS 有限场景验证，不代表所有外部客户端模板或媒体格式均经过实测。
 
