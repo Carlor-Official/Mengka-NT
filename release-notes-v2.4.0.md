@@ -36,3 +36,5 @@
 - Node.js SDK 51 项测试通过。
 - Windows AMD64 的 v2.3.8 升级和 v2.4.0 全新安装流程通过。
 - Windows AMD64、Linux AMD64 与 Linux ARM64 包结构及架构检查通过。
+- GitHub 公开发布的 B站综合插件 1.6.1 已通过浏览器上传、安装、启动和 WebSocket 连接验收。
+- Linux AMD64 已在原生主机启动验证；Linux ARM64 已通过 QEMU 启动验证，尚未在物理 ARM64 设备验证。
