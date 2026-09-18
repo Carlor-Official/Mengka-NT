@@ -55,6 +55,16 @@
 
 原生插件协议从萌卡 NT v2.4.1 开始提供。Schema 3 安装包必须设置 `min_framework` 为 `2.4.1` 或更高版本；v2.4.0 及更早版本不能运行该传输。
 
+### 官方用户系统外发包
+
+已验证的萌卡 NT 用户系统原生包随框架 v2.4.1 Release 发布，版本为 `2.0.17`，最低框架版本为 `2.4.1`：
+
+- [Linux AMD64 外发包](https://github.com/Carlor-Official/Mengka-NT/releases/download/v2.4.1/mengka-user-system-2.0.17-managed-native-linux-amd64.tar.gz)
+- [包清单](https://github.com/Carlor-Official/Mengka-NT/releases/download/v2.4.1/linux-amd64-native.json)
+- [SHA-256 校验文件](https://github.com/Carlor-Official/Mengka-NT/releases/download/v2.4.1/SHA256SUMS.txt)
+
+用户下载后在框架「插件 → 插件导入」上传并确认权限；插件不会从官网清单自动获取，也不需要额外 WebSocket 端口。
+
 上传时框架读取包内名称、ID、版本、最低框架版本、入口和权限。页面中的旧版包信息可以留空。手动填写的 ID 或版本与包内描述不一致时拒绝安装。管理员还必须明确确认安装包来自可信来源；安装完成后框架记录完整程序文件指纹，并在每次启动前复核。任何文件变化都会阻止启动，此时先“卸载并保留数据”，再重新上传安装包。更高版本新增 Action、事件权限、Web 管理端或切换传输方式时，首次上传只展示权限差异，必须由管理员再次确认后才会更新；框架不会自动重试。
 
 ## 协议
