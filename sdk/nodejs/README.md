@@ -4,12 +4,19 @@
 
 等级加速任务面板只返回免费任务：会员推广项目及日常、额外分类中的付费任务会在框架端移除；会员签到作为免费领取任务继续单列。插件应从每次返回的当前面板选择任务，旧配置中的付费任务标题不会执行。
 
-当前 SDK 版本：**v2.3.1**。支持正反向 WS、市场自动部署与托管管理员初始化；小游戏擂台任务继续使用现有等级 API，见下方升级说明。
+当前 SDK 版本：**v2.4.0**。支持原生 IPC、正向 WS 与反向 WS；插件成品由用户在框架「插件导入」中上传，不再依赖官网插件市场。
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
 
 等级任务状态中，`available` 表示框架是否支持该任务，`can_execute` 表示本次是否仍可执行。已完成任务应按 `is_done/status` 显示“已完成”，不能因 `can_execute=false` 显示为“暂不支持”。
+
+## v2.4.0：原生插件运行与本地导入
+
+- 新增原生 IPC 运行时适配，插件可由框架直接启动并调用 action、接收事件；
+- 保留正向与反向 WebSocket，三种运行方式共享同一套 action、事件和权限语义；
+- 插件安装改为本地成品包导入，框架不再读取官网清单、远程下载或在线更新；
+- `get_plugin_context` 继续用于检查管理 API 版本和运行时能力。
 
 ## v2.3.1：擂台创建回读与诊断修复
 
@@ -35,7 +42,7 @@ task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改�
 
 ## 双模式部署与管理员免登 SDK
 
-`plugin-connection.js` 提供统一的 `start/stop` 入口，支持手动正向、手动反向和市场自动部署；`plugin-runtime.js` 提供托管配置、管理员免登校验及生命周期。完整说明见[双模式接入指南](docs/dual-mode-sdk.md)，可运行 Demo 位于 `examples/dual-mode/server.mjs`。示例不含任何实际令牌、插件授权或支付密钥。
+`plugin-connection.js` 提供统一的 `start/stop` 入口，支持手动正向和手动反向连接；本地托管插件由框架通过原生 IPC 注入运行时配置。完整说明见[双模式接入指南](docs/dual-mode-sdk.md)，可运行 Demo 位于 `examples/dual-mode/server.mjs`。示例不含任何实际令牌、插件授权或支付密钥。
 
 
 此目录提供不带版本子目录的萌卡 NT Node.js SDK：
@@ -55,7 +62,7 @@ task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改�
 
 ## v2.1.10：独立低权限插件进程
 
-Linux 托管插件改用各自专属的普通用户运行，不再依赖 bubblewrap 或命名空间。框架自动复制迁移旧默认目录，保留原数据并支持失败恢复；市场审核、安装校验、WS 授权和管理入口继续使用现有流程。框架服务仍需 root，不会自动提权；宿主公共文件仍可能被插件访问。升级备份与回滚要求见[托管插件说明](../../docs/managed-plugins.md)。本版不改变公开 action、参数、返回结构或 SDK 调用方法。
+Linux 托管插件改用各自专属的普通用户运行，不再依赖 bubblewrap 或命名空间。框架自动复制迁移旧默认目录，保留原数据并支持失败恢复；本地导入包的安装校验、IPC 授权和管理入口继续使用现有流程。框架服务仍需 root，不会自动提权；宿主公共文件仍可能被插件访问。升级备份与回滚要求见[托管插件说明](../../docs/managed-plugins.md)。本版不改变公开 action、参数、返回结构或 SDK 调用方法。
 
 ## v2.1.9：隔离环境自动恢复与洗护购买修复
 
@@ -75,7 +82,7 @@ get_pet_pk_status 成功时返回明确的 finished 布尔值；settle_pet_pk �
 
 ## v2.1.0：一体化运行与电脑在线任务
 
-新增独立服务端助手 `managed-connection.js`：`loadManagedConnection()` 读取每次启动分配的 WS 地址及令牌，`loadManagedStorage()` 读取存储与允许目录。详见[一体化插件接入](../../docs/managed-plugins.md)。公开 WS action 数量、名称、参数顺序与 2.0.9 一致，市场发布不再填写指纹或 JSON。
+新增独立服务端助手 `managed-connection.js`：`loadManagedConnection()` 读取独立部署的 WS 地址及令牌，`loadManagedStorage()` 读取存储与允许目录。原生托管插件由框架注入 IPC 连接。详见[一体化插件接入](../../docs/managed-plugins.md)。公开 WS action 数量、名称和参数顺序保持兼容。
 
 等级任务 `电脑QQ在线` 现在可通过原 `execute_level_tasks` / `execute_level_task_selection` 执行：同 QQ 安卓账号在线时免扫登录 Linux；首次执行自动创建独立 Linux 账号及设备，沿用安卓账号的登录节点，已有 Linux 配置不改写。Linux 已在线时不重复登录，QQ 按实际在线时长判定完成，不立即增加任务积分。插件应在自身业务授权允许创建和登录该 Linux 账号时才开放此任务。
 

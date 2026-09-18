@@ -1,6 +1,6 @@
 {
   "name": "mengka-nt-node-sdk",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "private": true,
   "description": "萌卡 NT Node.js 插件 SDK",
   "type": "module",
