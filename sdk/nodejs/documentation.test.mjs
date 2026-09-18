@@ -22,10 +22,13 @@ test('published SDK reference covers the current native event and management con
   const root = await readFile(new URL('../../README.md', import.meta.url), 'utf8')
   const pkg = JSON.parse(await readFile(new URL('./package.json', import.meta.url), 'utf8'))
   assert.ok(readme.includes('v' + pkg.version), 'SDK README must match SDK package version')
-  const frameworkVersion = root.match(/当前版本：\*\*(\d+\.\d+\.\d+)\*\*/)?.[1]
-  assert.ok(frameworkVersion, 'framework README must declare its release version')
-  const notes = await readFile(new URL(`../../release-notes-v${frameworkVersion}.md`, import.meta.url), 'utf8')
+  const releasedVersion = root.match(/最新正式版本：\*\*(\d+\.\d+\.\d+)\*\*/)?.[1]
+  const developmentVersion = root.match(/当前开发版本：\*\*(\d+\.\d+\.\d+)/)?.[1]
+  assert.ok(releasedVersion, 'framework README must declare its latest released version')
+  assert.equal(developmentVersion, pkg.version, 'SDK package must match the framework development version')
+  const notes = await readFile(new URL('../../release-notes-next.md', import.meta.url), 'utf8')
   assert.ok(notes.trim().length > 0, 'declared framework version must have release notes')
+  assert.ok(notes.includes('v' + developmentVersion), 'next release notes must name the development version')
   assert.match(root, /234 个 action、53 个服务管理 API 和 26 个精确原生事件/)
 })
 

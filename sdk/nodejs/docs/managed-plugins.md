@@ -4,25 +4,27 @@
 
 ## 用户使用流程
 
-1. 打开“插件 → 插件导入”，上传 ZIP、TAR.GZ 或 TGZ 成品包。
+1. 打开“插件 → 插件导入”，选择 ZIP、TAR.GZ 或 TGZ 成品包，并确认安装包来自可信来源。
 2. 框架根据插件包声明匹配当前系统与架构，将原始上传包保存到框架预留的插件目录并创建管理卡片。
 3. 卡片展示名称、版本、作者、运行状态和连接摘要；完整安装信息、文件摘要及路径收进“更多”详情。
 4. 卡片保留启动、停止、日志、数据配置、管理后台、卸载和失败重试。
 5. 上传同一插件的更高版本时沿用现有实例、数据目录和回滚流程；相同版本或降级包会被拒绝。
 
-插件导入页面只展示当前实例已经上传的插件。框架不会请求官网目录，也不会自动查找、下载或安装插件。卸载默认保留业务数据；升级前仍应单独备份插件数据。
+插件导入页面只展示当前实例已经上传的插件。框架不会请求官网目录，也不会自动查找、下载或安装插件。上传更高版本时，如新增 Action、事件权限、Web 管理端或切换传输方式，第一次上传会停在权限核对页；管理员确认差异后才可再次提交，框架不会自动批准或自动重试。卸载默认保留业务数据；升级前仍应单独备份插件数据。
 
 ## 安装包要求
 
 - 支持 Windows AMD64、Linux AMD64 和 Linux ARM64 的成品包。
 - 上传上限、解压上限、路径穿越、符号链接和不安全启动入口继续由框架校验。
+- 导入时必须确认安装包来自可信来源；安装后框架记录完整程序文件指纹，每次启动前复核。目录内容变化时先“卸载并保留数据”，再重新上传安装包。
 - 插件本身需要的运行依赖应随包提供。
 - 只上传来源可信、版本明确且与当前系统架构匹配的文件。
 - 插件令牌、管理员密码、签名私钥、Cookie 和生产配置不得打包进成品包。
+- 插件进程以框架进程所属用户的系统权限运行；`data_directory` 和 `allowed_directories` 是框架接口与约定边界，不是操作系统沙箱。
 
 ## 自动连接与数据
 
-导入后的托管插件会收到框架生成的运行配置：
+导入后的托管插件会收到框架生成的运行配置。原生 `native-ipc-v1` 插件使用匿名进程管道，不再创建 WebSocket 地址和服务令牌；旧版托管插件继续使用下列连接文件：
 
 | 环境变量 | 用途 |
 | --- | --- |
@@ -33,7 +35,7 @@
 | `MENGKA_PLUGIN_ADMIN_TOKEN_FILE` | 内部管理认证令牌文件 |
 | `MENGKA_PLUGIN_ADMIN_ORIGIN` | 浏览器访问插件后台的独立来源 |
 
-连接文件包含 `instance_id`、`websocket_url`、`token_file`、`data_directory` 和 `allowed_directories`。插件每次启动重新读取，不得把令牌发给浏览器、写入日志或固定保存。
+连接文件始终包含 `transport`、`instance_id`、`data_directory` 和 `allowed_directories`；旧版 WebSocket 传输另含 `websocket_url` 与 `token_file`。插件每次启动重新读取，不得把令牌发给浏览器、写入日志或固定保存。原生插件格式和 SDK 见[原生插件协议](../../../docs/native-plugins.md)。
 
 Node.js 插件可直接使用 SDK 助手：
 
@@ -67,11 +69,13 @@ Environment="MENGKA_PLUGIN_GATEWAY_LISTEN=127.0.0.1:17879"
 | 方法与路径 | 说明 |
 | --- | --- |
 | GET `/` | 本地导入实例和网关状态 |
-| POST `/import` | 上传并校验本地插件成品包 |
+| POST `/import` | 上传并校验本地插件成品包；multipart 必须包含 `trusted_source_ack=true` |
 | POST `/:id/action` | start、stop、retry、cancel、uninstall |
 | POST `/:id/open` | 获取一次性管理端入口 |
 | GET `/:id/logs` | 读取脱敏运行日志 |
 | POST `/:id/storage` | 停止后提交数据目录配置任务 |
+| GET `/:id/config` | 读取原生插件 Schema、非敏感值、修订号与敏感字段设置状态 |
+| POST `/:id/config` | 按修订号保存加密配置并热更新原生插件 |
 
 旧版 `/api/v1/plugins/market`、`/api/v1/plugins/managed/catalog` 和 `/api/v1/plugins/managed/install` 已移除，不提供兼容回退。
 

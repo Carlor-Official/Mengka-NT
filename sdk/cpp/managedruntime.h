@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QRegularExpression>
 #include <QUrl>
@@ -31,6 +32,25 @@ inline ManagedConnection loadManagedConnection(const QString &path) {
     if (token.size() < 24) return {};
     return {url.host(), url.port(), token, true};
 }
+inline bool validManagedNativeConnection(const QString &path) {
+    const QFileInfo info(path);
+    if (!info.isAbsolute() || info.size() > 98304 || info.canonicalFilePath().isEmpty()) return false;
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) return false;
+    const auto object = QJsonDocument::fromJson(file.readAll()).object();
+    const QFileInfo dataDirectory(object.value(QStringLiteral("data_directory")).toString());
+    if (object.value(QStringLiteral("schema")).toInt() != 1
+        || object.value(QStringLiteral("transport")).toString() != QStringLiteral("native-ipc-v1")
+        || !QRegularExpression(QStringLiteral("^[a-zA-Z0-9._-]+$")).match(object.value(QStringLiteral("instance_id")).toString()).hasMatch()
+        || object.contains(QStringLiteral("websocket_url")) || object.contains(QStringLiteral("token_file"))
+        || !dataDirectory.isAbsolute() || !dataDirectory.isDir() || dataDirectory.canonicalFilePath().isEmpty()
+        || !object.value(QStringLiteral("allowed_directories")).isArray()) return false;
+    for (const auto &value : object.value(QStringLiteral("allowed_directories")).toArray()) {
+        const QFileInfo allowed(value.toString());
+        if (!value.isString() || !allowed.isAbsolute() || !allowed.isDir() || allowed.canonicalFilePath().isEmpty()) return false;
+    }
+    return true;
+}
 inline bool gatewayCredential(const QHash<QByteArray, QByteArray> &headers, const QHostAddress &peer, const QByteArray &token) {
     const auto supplied = headers.value("x-mengka-managed-token");
     if (!peer.isLoopback() || token.size() < 24 || supplied.size() != token.size()) return false;
@@ -46,7 +66,8 @@ inline ManagedAdmin loadManagedAdmin() {
     const QUrl origin(qEnvironmentVariable("MENGKA_PLUGIN_ADMIN_ORIGIN"));
     bool ok = false;
     const int port = qEnvironmentVariable("MENGKA_PLUGIN_ADMIN_PORT").toInt(&ok);
-    if (!loadManagedConnection(connection.filePath()).valid || !tokenInfo.isAbsolute() || tokenInfo.size() > 4096
+    if ((!loadManagedConnection(connection.filePath()).valid && !validManagedNativeConnection(connection.filePath()))
+        || !tokenInfo.isAbsolute() || tokenInfo.size() > 4096
         || tokenInfo.canonicalFilePath().isEmpty() || QFileInfo(tokenInfo.canonicalFilePath()).absolutePath() != QFileInfo(connection.canonicalFilePath()).absolutePath()
         || qgetenv("MENGKA_PLUGIN_ADMIN_HOST") != "127.0.0.1" || !ok || port < 1 || port > 65535
         || !origin.isValid() || origin.host().isEmpty() || (origin.scheme() != QStringLiteral("http") && origin.scheme() != QStringLiteral("https"))

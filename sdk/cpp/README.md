@@ -1,9 +1,10 @@
 # Mengka NT C++ / Qt 接入 SDK
 
-适用框架 2.1.0，Qt 6.2 及以上、C++20。B站综合插件 Windows/Linux 使用相同的两个头文件，没有复制任何插件授权密钥或业务代码。
+WebSocket 接入适用框架 2.1.0 及以上，`native-ipc-v1` 适用框架 2.4.1 及以上；要求 Qt 6.2 及以上、C++20。B站综合插件 Windows/Linux 使用相同的公共 SDK 头文件，没有复制任何插件授权密钥或业务代码。
 
 - `mengkawebsocket.h`：手动正向或反向 WS 传输、反向令牌验证、单框架连接限制。
-- `managedruntime.h`：托管连接文件读取、管理端参数验证、网关令牌与 Origin 验证。
+- `managedruntime.h`：托管 WebSocket/native-ipc-v1 连接文件读取、管理端参数验证、网关令牌与 Origin 验证。
+- `nativeipc.h`：`native-ipc-v1` 的进程级 stdin/stdout JSON 行桥，负责单一读取线程、并发安全写入和输入关闭通知。
 - `demo.cpp`：通过环境变量切换手动/托管，演示 WS 握手。只有 Demo 身份，不附带真实配置。
 
 构建：
@@ -17,13 +18,13 @@ cmake --build build
 
 ```cmake
 set(CMAKE_AUTOMOC ON)
-target_sources(my_plugin PRIVATE mengkawebsocket.h managedruntime.h)
+target_sources(my_plugin PRIVATE mengkawebsocket.h managedruntime.h nativeipc.h)
 target_link_libraries(my_plugin PRIVATE Qt6::Core Qt6::Network Qt6::WebSockets)
 ```
 
 手动模式填写 `DEMO_WS_MODE=forward` 或 `reverse`，`DEMO_WS_HOST`、`DEMO_WS_PORT`、`DEMO_WS_TOKEN`。正向插件发 `auth` 等待 `auth_ok`；反向框架使用 Bearer 服务令牌连接插件，然后发送 `ready`。业务 action/event 格式完全相同。端口冲突直接报错；反向监听端在连接中断后继续等待框架重连。收到控制帧 ping 时 Qt 自动响应 pong。
 
-托管模式通过框架注入的 `MENGKA_MANAGED_V1=1` 识别，调用 `loadManagedConnection()`。只接受 schema=1、loopback WS 和私有目录内的令牌文件；读取失败必须终止，不能使用旧配置。托管目前采用正向 WS。
+托管模式通过框架注入的 `MENGKA_MANAGED_V1=1` 识别。WebSocket 插件调用 `loadManagedConnection()`，只接受 schema=1、loopback WS 和私有目录内的令牌文件；读取失败必须终止，不能使用旧配置。框架 2.4.1 起，原生插件的业务通道使用 `native-ipc-v1` 匿名管道，不再读取 WS 地址或 WS 令牌；`loadManagedAdmin()` 会分别严格校验两种连接文件，原生描述中出现旧 WS 凭据会被拒绝。
 
 ## 管理员免登
 
