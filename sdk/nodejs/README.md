@@ -18,7 +18,7 @@
 
 `native-plugin.js` 提供无需端口、WebSocket 地址和服务令牌的原生插件上下文。框架通过匿名进程管道传递 Action、事件和生命周期，插件日志写入 stderr。安装包 `mengka-plugin.json`、权限声明和打包要求见[原生插件协议](../../docs/native-plugins.md)。现有正向、反向 WebSocket 接口保持兼容。
 
-官方用户系统原生 Linux AMD64 外发包（版本 `2.0.17`，最低框架 `2.4.1`）在[用户系统独立 Release](https://github.com/Carlor-Official/mengka-user-system-source/releases/tag/v2.0.17-native-ipc)发布。下载后在框架「插件 → 插件导入」上传，并使用同一 Release 的 `linux-amd64-native.json` 与 `SHA256SUMS.txt` 完成校验。
+官方用户系统原生 Linux AMD64 外发包（版本 `2.0.17`，最低框架 `2.4.1`）在[用户系统独立 Release](https://github.com/Carlor-Official/Mengka-User-System/releases/tag/v2.0.17-native-ipc)发布。下载后在框架「插件 → 插件导入」上传，并使用同一 Release 的 `linux-amd64-native.json` 与 `SHA256SUMS.txt` 完成校验。
 
 `ctx.config.get()` 返回框架下发的只读配置快照，`ctx.config.revision` 返回修订号，`ctx.config.onChange(handler)` 订阅运行中热更新。敏感配置由框架加密保存，插件不得将配置快照写入日志。
 
