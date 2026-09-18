@@ -57,11 +57,11 @@
 
 ### 官方用户系统外发包
 
-已验证的萌卡 NT 用户系统原生包随框架 v2.4.1 Release 发布，版本为 `2.0.17`，最低框架版本为 `2.4.1`：
+已验证的萌卡 NT 用户系统原生包在[用户系统独立 Release](https://github.com/Carlor-Official/mengka-user-system-source/releases/tag/v2.0.17-native-ipc)发布，版本为 `2.0.17`，最低框架版本为 `2.4.1`：
 
-- [Linux AMD64 外发包](https://github.com/Carlor-Official/Mengka-NT/releases/download/v2.4.1/mengka-user-system-2.0.17-managed-native-linux-amd64.tar.gz)
-- [包清单](https://github.com/Carlor-Official/Mengka-NT/releases/download/v2.4.1/linux-amd64-native.json)
-- [SHA-256 校验文件](https://github.com/Carlor-Official/Mengka-NT/releases/download/v2.4.1/SHA256SUMS.txt)
+- [Linux AMD64 外发包](https://github.com/Carlor-Official/mengka-user-system-source/releases/download/v2.0.17-native-ipc/mengka-user-system-2.0.17-managed-native-linux-amd64.tar.gz)
+- [包清单](https://github.com/Carlor-Official/mengka-user-system-source/releases/download/v2.0.17-native-ipc/linux-amd64-native.json)
+- [SHA-256 校验文件](https://github.com/Carlor-Official/mengka-user-system-source/releases/download/v2.0.17-native-ipc/SHA256SUMS.txt)
 
 用户下载后在框架「插件 → 插件导入」上传并确认权限；插件不会从官网清单自动获取，也不需要额外 WebSocket 端口。
 
