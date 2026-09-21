@@ -74,6 +74,8 @@ if (!result.refreshed) console.warn(result.refreshError)
 | QQ音乐绿钻每日签到 | 使用本账号音乐登录态调用会员接口，实际成长值以音乐会员页面为准 |
 | 黄钻每日打卡 | 完成官网打卡后领取成长值；签到和领取分别校验业务结果 |
 
+“听歌领金币兑换加速”不增加参数。v2.4.4 起，框架不再以 QQ 音乐余额查询字段作为兑换前置条件，而以兑换接口的业务结果判断成功或金币不足；插件仍按任务标题调用本接口，不应依赖 QQ 音乐的内部响应字段。任务是否完成以刷新后的 QQ 等级面板为准。QQ 音乐换码登录会复用短时 Cookie；如上游返回 `100050`，同账号在 10 分钟冷却期内不会重复发起换码。
+
 共享面板新增 `payload.member_info.member_task_list`。每项包含 `title`、`category: 'membership'`、`membership_group`、`available`、`can_execute`、`is_done`、`status_text`、`execution_message` 和 `attempted_today`。不要把会员任务计入 QQ 加速天数。
 
 ```javascript
