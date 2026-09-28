@@ -70,7 +70,7 @@ Environment="MENGKA_PLUGIN_GATEWAY_LISTEN=127.0.0.1:17879"
 | --- | --- |
 | GET `/` | 本地导入实例和网关状态 |
 | POST `/import` | 上传并校验本地插件成品包；multipart 必须包含 `trusted_source_ack=true` |
-| POST `/:id/action` | start、stop、retry、cancel、uninstall |
+| POST `/:id/action` | start、stop、retry、cancel、uninstall；已卸载记录支持 purge，须同时提交 confirmation_id 等于实例 id |
 | POST `/:id/open` | 获取一次性管理端入口 |
 | GET `/:id/logs` | 读取脱敏运行日志 |
 | POST `/:id/storage` | 停止后提交数据目录配置任务 |
@@ -80,5 +80,13 @@ Environment="MENGKA_PLUGIN_GATEWAY_LISTEN=127.0.0.1:17879"
 旧版 `/api/v1/plugins/market`、`/api/v1/plugins/managed/catalog` 和 `/api/v1/plugins/managed/install` 已移除，不提供兼容回退。
 
 ## 备份与升级
+
+### 卸载保留数据与彻底删除
+
+“卸载”停止进程及 WS/IPC 连接、删除程序，但保留业务数据和配置。该记录显示“仅保留数据”，不监听插件专用 HTTP/HTTPS 入口；框架重启也不恢复其监听或自动启动。访问地址配置可以保留供重新上传安装时复用，其他插件和仍被使用的共享网关不受影响。
+
+已卸载记录的“更多操作 → 彻底删除”需要二次确认。管理 API 请求为 `{"action":"purge","confirmation_id":"实例id"}`，成功返回 `{"id":"实例id","deleted":true}`（置于原有管理 API 的 data 中），页面移除对应卡片。运行中或有任务的实例不能直接彻底删除，应先卸载完成。
+
+彻底删除清理该实例的托管目录（包括默认业务数据、日志）、加密配置、当前独占导入包、入口映射和管理记录，不可撤销。自定义外部数据目录及额外授权目录不会删除，管理员须自行备份和清理；旧版升级留下且未被当前记录引用的导入包不做猜测式批量删除。这是本地管理员 API，不是新增插件 Action，Node.js 插件 SDK 接口不变。
 
 备份框架 `data`、预留插件目录、外置业务数据目录及网关配置。升级或回滚前停止框架，不要复制运行中的 SQLite 文件，也不要用空目录覆盖现有数据。
