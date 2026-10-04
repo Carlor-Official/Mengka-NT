@@ -117,14 +117,23 @@ test('all four SDK distributions share the six level management contracts', asyn
   for (const contract of contracts) assert.deepEqual(contract, contracts[0])
 })
 
-test('Yuanbao photo task remains in the level API but is documented as unsupported', async () => {
+test('signer selection is internal, not a public SDK contract', async () => {
+  for (const file of ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']) {
+    const source = await readFile(new URL(file, import.meta.url), 'utf8')
+    assert.doesNotMatch(source, /get_yuanbao_devices|bind_yuanbao_device/)
+  }
+})
+
+test('Yuanbao task reuses level APIs with explicit opt-in and human verification boundary', async () => {
   const docs = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
   const managementDocs = await readFile(new URL('../../docs/api/execute_level_task_selection.md', import.meta.url), 'utf8')
   assert.match(docs, /来元宝P图一次/)
-  assert.match(docs, /暂不支持/)
-  assert.doesNotMatch(docs, /元宝 token|自动注册|安全校验/)
+  assert.match(docs, /v2\.5\.1/)
+  assert.match(docs, /按框架实例自动授权/)
+  assert.match(docs, /官方安全验证/)
+  assert.doesNotMatch(docs, /待发布接入/)
   assert.match(managementDocs, /yuanbao_verification_completed/)
-  assert.match(managementDocs, /当前暂不支持/)
+  assert.match(managementDocs, /不重新申请 QQ 授权/)
   for (const file of ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']) {
     const source = await readFile(new URL(file, import.meta.url), 'utf8')
     assert.match(source, /execute_level_tasks:\s*\{\s*wait: true,\s*timeout: 5 \* 60 \* 1000,\s*build: \(self_id, tasks\) => \(\{ self_id, tasks \}\)/)
