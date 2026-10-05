@@ -13,7 +13,7 @@
 | self_id | number | 是 | QQ 号，必须是框架已配置账号 |
 | client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
 | tasks | string[] | 否 | 显式任务标题数组；省略或 [] 使用框架已选任务，若没有可执行已选项则补挂当前全部可执行未完成任务 |
-| yuanbao_verification_completed | boolean | 否 | 本人完成官方验证后，显式继续原元宝任务一次；不重新申请 QQ 授权，不绕过官方验证，过期或会话变化时拒绝 |
+| yuanbao_verification_completed | boolean | 否 | 旧客户端显式继续参数；v2.5.2 起默认每分钟自动确认官方验证并续接一次，无需发送此参数。手动与自动共用防重锁；不重新申请 QQ 授权，不绕过官方验证，过期或会话变化时拒绝 |
 
 v2.3.0 的擂台扩展中，task80“创建小游戏擂台并取得成绩”由 Go 直接协议上报方块冲刺 v6 的 1–99 随机整数分数，不运行游戏，不依赖外部 worker 安装；没有分数、游戏或计时参数。失败返回原因并保持待完成，SDK 不自动重试；仅最终 `wx.login` 确证 `authorization_required` 才提示“微信未授权登录”。只有同房本人分数读回、退出协议确认及独立 `0x916e → 0x9172` 确认完成才算成功。SDK 保持 5 分钟，框架等级请求总预算 4 分 45 秒。Linux amd64 测试站通过 2082083 的一次标准任务验收；Windows 与 Linux arm64 的完整任务未实测，见[擂台契约](../arena-level-task.md)。
 

@@ -124,13 +124,16 @@ test('signer selection is internal, not a public SDK contract', async () => {
   }
 })
 
-test('Yuanbao task reuses level APIs with explicit opt-in and human verification boundary', async () => {
+test('Yuanbao task keeps existing SDK calls and documents server confirmation after human verification', async () => {
   const docs = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
   const managementDocs = await readFile(new URL('../../docs/api/execute_level_task_selection.md', import.meta.url), 'utf8')
   assert.match(docs, /来元宝P图一次/)
-  assert.match(docs, /v2\.5\.1/)
+  const pkg = JSON.parse(await readFile(new URL('./package.json', import.meta.url), 'utf8'))
+  assert.ok(docs.includes('v' + pkg.version))
   assert.match(docs, /按框架实例自动授权/)
   assert.match(docs, /官方安全验证/)
+  assert.match(docs, /每分钟自动确认/)
+  assert.match(docs, /本人完成后自动续接一次/)
   assert.doesNotMatch(docs, /待发布接入/)
   assert.match(managementDocs, /yuanbao_verification_completed/)
   assert.match(managementDocs, /不重新申请 QQ 授权/)
