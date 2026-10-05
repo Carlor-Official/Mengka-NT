@@ -371,8 +371,9 @@ const apiDefs = {
       ...options, self_id, group_id, file_id, target_parent_directory,
     }),
   },
-  // 发送原生协议包。仅已授权的托管插件会话可调用；data/reserve 为十六进制。
+  // 发送原生协议包；普通已认证服务可调用；data/reserve 为十六进制。
   // Public action on any authenticated service; no plugin whitelist or dedicated Key.
+  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   send_packet: {
     wait: true,
     timeout: 45 * 1000,
@@ -837,11 +838,13 @@ const apiDefs = {
     build: (self_id, target_uin) => ({ self_id, target_uin }),
   },
   // 主动提交好友申请；submitted 不表示已经成为好友，不自动重试。
+  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   send_friend_request: {
     wait: true,
     build: (self_id, user_id, message = '', remark = '') => ({ self_id, client_type: 'android', user_id, message, remark }),
   },
   // 主动申请入群（开发中，仅 Android）；submitted 不代表已入群，禁止自动重试。
+  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   send_group_join_request: {
     wait: true,
     build: (self_id, group_id, message = '') => ({ self_id, client_type: 'android', group_id, message }),
@@ -858,6 +861,7 @@ const apiDefs = {
   },
   // 按数组顺序执行指定任务；task80用Go直接协议上报1–99随机整数分数，仅方块冲刺v6，须QQ最终刷新确认；不运行游戏、不增加分数/游戏/计时参数，以can_execute决定本次执行；失败保持待完成并返回原因，无每日尝试限制，SDK不自动重试。
   // task83 opt-in uses the existing API; QQ confirmation only, never auto-retry. Human resume uses execute_level_task_selection.
+  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   execute_level_tasks: {
     wait: true,
     timeout: 5 * 60 * 1000,

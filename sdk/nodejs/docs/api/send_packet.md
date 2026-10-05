@@ -1,7 +1,9 @@
 # 发送原始协议包
 
 - action：`send_packet`
-- 使用条件：已认证的正向或反向 WebSocket 服务，目标账号在线。托管和外部插件均可调用，无需白名单或专属 Key。
+- 使用条件：已认证的正向或反向 WebSocket 服务，目标账号在线且 QQ 等级至少 16 级。托管和外部插件均可调用，无需白名单或专属 Key。
+
+v2.5.3 起，等级由框架当前账号运行状态核验；低于 16 级或等级尚未同步时会直接失败，不发送协议包。不接受调用方提供等级，也不自动重试。内部登录、心跳和票据维护不受此公共 API 门槛影响。
 
 ```js
 const responseHex = await api.send_packet(selfId, command, packetHex, true, reserveHex)
