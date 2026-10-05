@@ -644,6 +644,7 @@ const apiDefs = {
   get_level_task_accounts: { wait: true, build: () => ({}) },
   get_level_task_account: { wait: true, build: (options = {}) => ({ ...options }) },
   get_level_task_panel: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
+  get_level_task_status: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
   get_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   update_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   // task80: available controls future plans; can_execute controls today's attempt. Follow can_execute. Failures stay pending and allow explicit retry; never auto-retry.

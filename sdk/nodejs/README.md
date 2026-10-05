@@ -66,7 +66,7 @@ task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改�
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前正向与反向 SDK 均提供 234 个 action，包含六个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
+当前正向与反向 SDK 均提供 235 个 action，包含七个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
 
 ## v2.1.12：表情事件权限与名片头像
 
@@ -254,11 +254,11 @@ await api.add_account({
 })
 ```
 
-当前服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 234 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
+当前服务管理接口共 54 个 action：34 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 234 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
 
 33 个管理专用 action 分为：
 
-- 等级任务管理：`get_level_task_accounts`、`get_level_task_account`、`get_level_task_panel`、`get_level_task_settings`、`update_level_task_settings`、`execute_level_task_selection`
+- 等级任务管理：`get_level_task_accounts`、`get_level_task_account`、`get_level_task_panel`、`get_level_task_status`、`get_level_task_settings`、`update_level_task_settings`、`execute_level_task_selection`
 
 - 插件与节点：`get_plugin_context`、`get_node_list`、`create_node`、`update_node`、`delete_node`、`test_node_latency`
 
@@ -399,3 +399,5 @@ v2.1.0 支持由框架管理安装、连接和进程。Node.js 服务端可通�
 - [好友备注](../../docs/api/set_friend_remark.md)：Android、Linux 写入后回读确认；必须显式传字符串，`remark: ''` 表示清空，缺失或非字符串不再误清空。
 - [一体化插件接入](../../docs/managed-plugins.md)：使用 `managed-connection.js` 读取框架提供的连接与存储信息。
 - [原生插件协议](../../docs/native-plugins.md)：使用 `native-plugin.js` 通过匿名进程管道接入，无需 WebSocket。
+
+`get_level_task_status` 仅查询任务状态和等级加速汇总，不执行任务；见[接口说明](docs/api/get_level_task_status.md)。原协议发包、加好友、加群与等级任务执行均由后端校验 QQ 16 级，网页调试请求同样不能绕过。

@@ -16,8 +16,8 @@ test('published SDK reference covers the current native event and management con
     assert.ok(readme.includes('`' + field + '`'), field)
   }
   assert.match(readme, /20 个复用接口/)
-  assert.match(readme, /53 个 action/)
-  assert.match(readme, /234 个 action/)
+  assert.match(readme, /54 个 action/)
+  assert.match(readme, /235 个 action/)
   assert.doesNotMatch(readme, /18 个复用|只返回 `management_api_version`|当前开发分支还不是|后三个方法/)
   const root = await readFile(new URL('../../README.md', import.meta.url), 'utf8')
   const pkg = JSON.parse(await readFile(new URL('./package.json', import.meta.url), 'utf8'))
@@ -35,7 +35,7 @@ test('published SDK reference covers the current native event and management con
     assert.ok(releasedNotes.includes('v' + releasedVersion), 'formal version must have its own release notes')
     assert.doesNotMatch(readme.split('\n').find(line => line.startsWith('当前 SDK 版本：')) ?? '', /待发布/)
   }
-  assert.match(root, /234 个 action、53 个服务管理 API 和 26 个精确原生事件/)
+  assert.match(root, /235 个 action、54 个服务管理 API 和 26 个精确原生事件/)
 })
 
 test('downloadable example SDK files match the canonical current copies', async () => {
@@ -46,4 +46,14 @@ test('downloadable example SDK files match the canonical current copies', async 
     const [a, b] = await Promise.all([canonical, example].map(file => readFile(new URL(file, import.meta.url))))
     assert.deepEqual(a, b, example)
   }
+})
+
+test('status query documents all requested fields and has no execution level gate', async () => {
+  const [doc, copy] = await Promise.all([
+    '../../docs/api/get_level_task_status.md', './docs/api/get_level_task_status.md',
+  ].map(file => readFile(new URL(file, import.meta.url), 'utf8')))
+  assert.equal(doc, copy)
+  for (const field of ['level', 'total_days', 'base_days', 'vip_multiplier', 'extra_days', 'active_days_baseline', 'estimated_upgrade_days', 'pending', 'completed']) assert.ok(doc.includes(field), field)
+  assert.match(doc, /仅查询任务状态不要求 QQ 16 级/)
+  assert.match(doc, /不会把登录天数当成累计活跃天数/)
 })

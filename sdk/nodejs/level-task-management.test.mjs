@@ -14,6 +14,10 @@ for (const mode of ['forward', 'reverse']) {
       executable: true, can_execute: true, status_text: '待完成',
       execution_message: '微信未授权登录', is_done: false, speed_days: 0, finished_accelerate_days: 0 }
     const panelPayload = { marker: 'shared cache', extra_info: { extra_task_list: [arenaTask] } }
+    const statusPayload = { self_id: 123456, client_type: 'android', level: 16, total_days: 13,
+      base_days: 1.5, vip_multiplier: 3.2, extra_days: 8.2, active_days_baseline: 320,
+      estimated_upgrade_days: 37, progress_basis: 'level_baseline', refresh_requested: false,
+      tasks: [{ title: '来元宝P图一次', center_task_id: 83, category: 'extra', status: 'pending', status_text: '待完成', is_done: false, available: true, can_execute: true }] }
     const respond = socket => socket.on('message', raw => {
       const message = JSON.parse(String(raw))
       if (message.type === 'auth') socket.send(JSON.stringify({ type: 'auth_ok' }))
@@ -23,7 +27,7 @@ for (const mode of ['forward', 'reverse']) {
           socket.send(JSON.stringify({ type: 'action_result', id: message.id, ok: false, error: '微信未授权登录' }))
           return
         }
-        const data = message.action === 'get_level_tasks' ? panelPayload : { payload: panelPayload, settings: { scheduleEnabled: false }, tasks: ['签到'], skippedTasks: ['unsupported'], refreshed: true }
+        const data = message.action === 'get_level_task_status' ? statusPayload : message.action === 'get_level_tasks' ? panelPayload : { payload: panelPayload, settings: { scheduleEnabled: false }, tasks: ['签到'], skippedTasks: ['unsupported'], refreshed: true }
         socket.send(JSON.stringify({ type: 'action_result', id: message.id, ok: true, data }))
       }
     })
@@ -57,6 +61,7 @@ for (const mode of ['forward', 'reverse']) {
       await api.get_level_task_settings(target)
       await api.update_level_task_settings(settings)
       await api.get_level_task_panel({ ...target, refresh: false })
+      assert.deepEqual(await api.get_level_task_status({ ...target, refresh: false }), statusPayload)
       const result = await api.execute_level_task_selection({ ...target, tasks: ['电脑QQ在线', '来元宝P图一次', 'QQ会员公众号签到', 'unsupported'] })
       await api.execute_level_task_selection({ ...target, tasks: ['来元宝P图一次'], yuanbao_verification_completed: true })
       await api.set_friend_remark({ ...target, user_id: 654321, remark: ' 中文备注 ' })
@@ -70,6 +75,7 @@ for (const mode of ['forward', 'reverse']) {
         { action: 'get_level_task_settings', params: target },
         { action: 'update_level_task_settings', params: settings },
         { action: 'get_level_task_panel', params: { ...target, refresh: false } },
+        { action: 'get_level_task_status', params: { ...target, refresh: false } },
         { action: 'execute_level_task_selection', params: { ...target, tasks: ['电脑QQ在线', '来元宝P图一次', 'QQ会员公众号签到', 'unsupported'] } },
         { action: 'execute_level_task_selection', params: { ...target, tasks: ['来元宝P图一次'], yuanbao_verification_completed: true } },
         { action: 'set_friend_remark', params: { ...target, user_id: 654321, remark: ' 中文备注 ' } },
@@ -95,6 +101,9 @@ for (const mode of ['forward', 'reverse']) {
         assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'SDK must preserve pending status and the latest failure reason')
       }
       assert.equal(received.filter(message => message.action === 'execute_level_tasks').length, 1, 'recovery display must not execute automatically')
+      Object.assign(statusPayload, { level: 0, active_days_baseline: null, estimated_upgrade_days: null })
+      assert.deepEqual(await api.get_level_task_status({ ...target, refresh: false }), statusPayload, 'SDK must preserve unknown progress, never invent completion')
+      assert.equal(received.filter(message => message.action === 'get_level_task_status').length, 2, 'query SDK must not retry or submit tasks')
     } finally {
       socket?.terminate()
       if (mode === 'forward') api?.disconnect()
@@ -104,11 +113,11 @@ for (const mode of ['forward', 'reverse']) {
   })
 }
 
-test('all four SDK distributions share the six level management contracts', async () => {
+test('all four SDK distributions share the seven level management contracts', async () => {
   const files = ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']
   const contracts = await Promise.all(files.map(async file => {
     const source = await readFile(new URL(file, import.meta.url), 'utf8')
-    return ['get_level_task_accounts', 'get_level_task_account', 'get_level_task_settings', 'update_level_task_settings', 'get_level_task_panel', 'execute_level_task_selection'].map(action => {
+    return ['get_level_task_accounts', 'get_level_task_account', 'get_level_task_settings', 'update_level_task_settings', 'get_level_task_panel', 'get_level_task_status', 'execute_level_task_selection'].map(action => {
       const definition = source.match(new RegExp(`^  ${action}:.*$`, 'm'))?.[0]
       assert.ok(definition, `${file} missing ${action}`)
       return definition

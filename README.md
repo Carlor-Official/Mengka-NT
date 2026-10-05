@@ -60,7 +60,7 @@ v2.4.0 将管理员认证改为本地账号，并用用户手动上传的“插�
 | 插件系统 | 原生 IPC 插件无需端口或令牌，支持 Schema 配置页与热更新；正向、反向 WebSocket 继续供外部服务接入，统一复用 Action、事件权限、Node.js SDK 与可选插件 WebUI |
 | 可视化管理 | 概览、账号、指纹、节点、插件、容器、令牌、日志与消息面板 |
 
-当前 SDK 提供 234 个 action、53 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按服务配置投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。当前源码已将 `send_packet` 开放给已认证的正向、反向和托管插件，无需白名单或专属 Key；接入要求见[插件 API 使用说明](docs/plugin-api-authorization.md)。QQ 宠物提供 30 项对象参数接口，API 开源贡献者：**星空花海**。调用参数和当前限制见[接口说明](docs/qq-pet-apis.md)。
+当前 SDK 提供 235 个 action、54 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按服务配置投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。当前源码已将 `send_packet` 开放给已认证的正向、反向和托管插件，无需白名单或专属 Key；接入要求见[插件 API 使用说明](docs/plugin-api-authorization.md)。QQ 宠物提供 30 项对象参数接口，API 开源贡献者：**星空花海**。调用参数和当前限制见[接口说明](docs/qq-pet-apis.md)。
 
 v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群名、精华设置和戳一戳，并修复原生申请、成员变化、消息引用、Linux 群图片和事件投递链路。事件字段、权限与实测边界见[官网原生事件](https://mknt.net/events/)，不将 API 成功等同于事件送达。
 

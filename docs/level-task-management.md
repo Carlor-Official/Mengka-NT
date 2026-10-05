@@ -8,6 +8,7 @@ v2.3.0 的[小游戏擂台任务扩展](arena-level-task.md)继续使用原等�
 
 - [获取等级加速账号列表](api/get_level_task_accounts.md)：`get_level_task_accounts`
 - [获取账号等级进度](api/get_level_task_account.md)：`get_level_task_account`
+- [查询任务状态与等级加速汇总](api/get_level_task_status.md)：`get_level_task_status`（v2.5.3 新增）
 - [获取完整等级任务面板](api/get_level_task_panel.md)：`get_level_task_panel`
 - [读取等级任务计划](api/get_level_task_settings.md)：`get_level_task_settings`
 - [保存等级任务计划](api/update_level_task_settings.md)：`update_level_task_settings`
@@ -15,7 +16,7 @@ v2.3.0 的[小游戏擂台任务扩展](arena-level-task.md)继续使用原等�
 
 ## 能力与权限
 
-连接插件服务并完成原有令牌认证后，调用 `get_plugin_context`，检查 `level_task_management_api_version === 1` 且 `available_actions` 包含上述六项；原 `management_api_version` 仍为 1。能力不足时明确提示升级，不能静默回退插件自己的任务表。
+连接插件服务并完成原有令牌认证后，调用 `get_plugin_context`，检查 `level_task_management_api_version === 1` 且 `available_actions` 包含上述七项；原 `management_api_version` 仍为 1。能力不足时明确提示升级，不能静默回退插件自己的任务表。
 
 这些接口沿用框架现有可信服务管理权限，不新增已移除的 system_management / allowed_actions 配置。服务令牌只能保存在插件后端；浏览器不得拿到令牌或直接调用任意管理 action。插件仍负责每次请求的账号归属、登录身份、套餐及管理员权限校验。`get_level_task_accounts` 包含框架所有账号，普通用户响应必须由插件后端过滤。
 
