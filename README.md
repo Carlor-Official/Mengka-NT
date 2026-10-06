@@ -35,7 +35,7 @@
 
 官网：[萌卡 NT](https://mknt.net/) · [官网与部署文档](https://mknt.net/guide/)
 
-最新正式版本：**2.5.3**，查看[v2.5.3 更新说明](release-notes-v2.5.3.md)。
+最新正式版本：**2.5.3**，查看[v2.5.3 更新说明](release-notes/release-notes-v2.5.3.md) · [历史更新说明](release-notes/)。
 
 v2.5.3 优化元宝任务、盲盒签到与界面显示；原协议发包、加好友、加群 API 要求账号达到 QQ 16 级。
 

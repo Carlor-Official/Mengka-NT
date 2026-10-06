@@ -16,6 +16,6 @@
 ## 升级注意
 
 - 更新前备份整个 `data` 目录，前后端必须一起更新。已初始化实例无需重新初始化，现有账号和数据保留。
-- 自定义初始化客户端不能再向 `POST /api/v1/agreement` 发送空请求；应先获取当前两份文档，再提交明确同意、阅读声明、版本及内容摘要。详见[初始化协议接口](docs/initialization-agreement.md)。不保留旧空请求兼容入口。
+- 自定义初始化客户端不能再向 `POST /api/v1/agreement` 发送空请求；应先获取当前两份文档，再提交明确同意、阅读声明、版本及内容摘要。详见[初始化协议接口](../docs/initialization-agreement.md)。不保留旧空请求兼容入口。
 - 本版没有再次重置 Key，也没有修改插件 action、事件名称、WS 权限或 SDK 调用参数。不要因审计日志错误而给插件追加 `send_packet` 权限。
 - `data/framework-access-report-outbox` 下的 `not-executed` / `rejected` 归档用于保留历史回报证据，不会自动重放。

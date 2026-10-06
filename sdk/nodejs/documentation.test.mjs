@@ -27,11 +27,11 @@ test('published SDK reference covers the current native event and management con
   assert.ok(releasedVersion, 'framework README must declare its latest released version')
   const currentVersion = developmentVersion ?? releasedVersion
   assert.equal(currentVersion, pkg.version, 'SDK package must match the current framework version')
-  const notes = await readFile(new URL('../../release-notes-next.md', import.meta.url), 'utf8')
+  const notes = await readFile(new URL('../../release-notes/release-notes-next.md', import.meta.url), 'utf8')
   assert.ok(notes.trim().length > 0, 'declared framework version must have release notes')
   assert.ok(notes.includes('v' + currentVersion), 'release notes index must name the current version')
   if (!developmentVersion) {
-    const releasedNotes = await readFile(new URL('../../release-notes-v' + releasedVersion + '.md', import.meta.url), 'utf8')
+    const releasedNotes = await readFile(new URL('../../release-notes/release-notes-v' + releasedVersion + '.md', import.meta.url), 'utf8')
     assert.ok(releasedNotes.includes('v' + releasedVersion), 'formal version must have its own release notes')
     assert.doesNotMatch(readme.split('\n').find(line => line.startsWith('当前 SDK 版本：')) ?? '', /待发布/)
   }

@@ -27,7 +27,7 @@
 1. 停止框架，备份完整程序目录、数据目录及自定义插件存储目录，再更新程序、网页资源与随包协议文件。保留实例配置、数据库、凭据和插件业务数据。
 2. 旧插件市场发布格式停用，旧条目下架保留资料。开发者补齐新版表单后重新提交审核，原审批不能直接恢复上架。安装与配置说明、数据与目录说明均为选填。
 3. 已有外部 WS 插件继续通过“插件对接”管理，不自动迁移到托管实例；避免外部和托管副本同时使用同一份业务数据。
-4. 从 HTTPS 框架打开插件后台前，请按[一体化插件部署说明](docs/managed-plugins.md)配置独立 HTTPS 插件网关；同机进程由框架管理时，systemd 使用 `KillMode=mixed`。
+4. 从 HTTPS 框架打开插件后台前，请按[一体化插件部署说明](../docs/managed-plugins.md)配置独立 HTTPS 插件网关；同机进程由框架管理时，systemd 使用 `KillMode=mixed`。
 5. 声明额外目录需要插件适配读取，不构成操作系统沙箱。当前版本不提供已安装插件的在线升级和自动版本回滚；重新安装前保留业务备份。
 
 [部署教程](https://mknt.net/guide/) · [API 文档](https://mknt.net/api/) · [Node.js SDK](https://github.com/Carlor-Official/Mengka-NT-SDK-Nodejs)
