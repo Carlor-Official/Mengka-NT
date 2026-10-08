@@ -14,6 +14,24 @@
 
 ## 安装包要求
 
+### v2.5.4 导入规范：资料由开发者随包提供
+
+所有通过本地导入安装的原生 IPC 或托管 WebSocket 包，都必须在根目录提供唯一的 `mengka-plugin.json`（`schema: 3`）。用户只选择安装包、确认可信来源；名称、ID、版本、Web 管理端标记和版本说明不再提供手填回退。
+
+| 必填资料 | 包内字段 | 要求 |
+| --- | --- | --- |
+| 插件名称 | `name` | 非空名称，最多160 UTF-8字节 |
+| 插件ID | `plugin_id` | 稳定唯一ID，最长100字符，由字母数字及分隔符组成 |
+| 版本 | `version` | 三段数字版本，如 `3.0.0` |
+| Web管理端 | `runtime.admin` | 必须明确写 `true` 或 `false`；没有管理端也必须写 `false` |
+| 版本说明 | `notes` | 本版本变化说明，非空，最多4000字符；`description` 是插件简介，不能代替它 |
+
+另外保留 `schema`、`min_framework`、`author`、`runtime.entry` 等运行要求；`runtime.transport` 声明 `native-ipc-v1` 或 `websocket-v1`，原生 IPC 还需 `api_version: "1"`。示例见 SDK 的 `mengka-plugin.example.json`，打包前可调用 `validatePluginPackageManifest`（`sdk/nodejs/package-manifest.js`）检查资料。
+
+资料缺失、空白或类型错误会提示“缺少资料”及具体字段，不创建插件实例、不启动安装，不接受 multipart 手动补填。重复/大小写冲突的JSON字段、重复描述文件也会被拒绝。旧版包必须由开发者补齐并重新打包；已经安装的插件和业务数据不会因此被删除。文件接收阶段只能暂存待校验包，拒绝后会清除该次暂存，不是已导入安装。
+
+导入为本地管理员HTTP操作，不新增或改变插件 Action、WS/IPC返回契约；可信来源确认、包绑定的权限变更审批、同ID仅接受更高版本、数据保留和文件完整性检查继续生效。
+
 - 支持 Windows AMD64、Linux AMD64 和 Linux ARM64 的成品包。
 - 上传上限、解压上限、路径穿越、符号链接和不安全启动入口继续由框架校验。
 - 导入时必须确认安装包来自可信来源；安装后框架记录完整程序文件指纹，每次启动前复核。目录内容变化时先“卸载并保留数据”，再重新上传安装包。

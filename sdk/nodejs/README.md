@@ -6,7 +6,7 @@
 
 v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，不恢复白名单或专属 Key。普通 QQ 登录、心跳、换票不受此公共 API 限制。
 
-当前 SDK 版本：**v2.5.3**。支持原生 IPC、正反向 WS、本地插件导入与托管管理员初始化；元宝 P 图接入现有等级任务 Action，现有位置参数调用不变，详见[元宝等级任务](../../docs/yuanbao-level-task.md)。Android 协议仅保留 9.2.70，`get_protocol_list` 返回的 `id` 不保证连续，必须使用实际 ID，不能使用数组下标；旧 9.1.70 账号须人工编辑协议。
+当前 SDK 版本：**v2.5.4**。支持原生 IPC、正反向 WS、本地插件导入与托管管理员初始化；元宝 P 图接入现有等级任务 Action，现有位置参数调用不变，详见[元宝等级任务](../../docs/yuanbao-level-task.md)。Android 协议仅保留 9.2.70，`get_protocol_list` 返回的 `id` 不保证连续，必须使用实际 ID，不能使用数组下标；旧 9.1.70 账号须人工编辑协议。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -16,7 +16,11 @@ v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` �
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
+v2.5.4 起，`grab_red_packet`（领取红包）要求 QQ 16 级及以上，网页调试同样生效，调用参数不变。实例级 `autoUpdate` 默认关闭，开启后自动安装正式更新。离线账号跨协议编辑保留关联设置和未知任务记录，清除旧协议票据后按目标协议登录。
+
 ## 原生 IPC 插件
+
+v2.5.4 起，新导入包必须随包提供 schema 3 `mengka-plugin.json`，包含名称、ID、版本、版本说明 `notes` 和显式布尔值 `runtime.admin`。不再由用户手填，缺少资料则拒绝安装；既有插件及业务数据保留。使用 `package-manifest.js` 的 `validatePluginPackageManifest(manifest)` 打包前校验，参见[安装规范](../../docs/managed-plugins.md)。
 
 `native-plugin.js` 提供无需端口、WebSocket 地址和服务令牌的原生插件上下文。框架通过匿名进程管道传递 Action、事件和生命周期，插件日志写入 stderr。安装包 `mengka-plugin.json`、权限声明和打包要求见[原生插件协议](../../docs/native-plugins.md)。现有正向、反向 WebSocket 接口保持兼容。
 

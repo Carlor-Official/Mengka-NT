@@ -1,20 +1,17 @@
 {
-  "schema_version": 1,
-  "entrypoint": "bin/my-plugin",
-  "arguments": [
-    "--connection",
-    "{{connection_file}}",
-    "--admin-host",
-    "{{admin_host}}",
-    "--admin-port",
-    "{{admin_port}}"
-  ],
-  "working_directory": ".",
-  "web_admin": {
-    "enabled": true,
-    "title": "我的插件后台",
-    "health_path": "/api/status",
-    "auth_type": "header",
-    "auth_header": "X-Mengka-Admin-Token"
+  "schema": 3,
+  "plugin_id": "managed-web-example",
+  "name": "托管网页插件示例",
+  "version": "1.0.0",
+  "min_framework": "2.5.3",
+  "author": "Example Developer",
+  "description": "通过托管 WebSocket 连接框架并提供管理后台",
+  "notes": "首次发布，提供独立管理后台。",
+  "runtime": {
+    "entry": "bin/my-plugin",
+    "args": ["--connection", "{connection}"],
+    "transport": "websocket-v1",
+    "health_path": "/api/managed/health",
+    "admin": true
   }
 }

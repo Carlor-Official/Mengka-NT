@@ -1,0 +1,19 @@
+{
+  "schema": 3,
+  "plugin_id": "native-example",
+  "name": "原生插件示例",
+  "version": "1.0.0",
+  "min_framework": "2.5.3",
+  "author": "Example Developer",
+  "description": "使用原生 IPC 接入萌卡 NT",
+  "notes": "首次发布，提供基础消息功能。",
+  "runtime": {
+    "entry": "bin/native-example",
+    "args": [],
+    "transport": "native-ipc-v1",
+    "api_version": "1",
+    "admin": false,
+    "actions": ["get_bot_list", "send_group_msg"],
+    "events": ["group_message"]
+  }
+}

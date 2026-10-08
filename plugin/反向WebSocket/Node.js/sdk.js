@@ -548,6 +548,7 @@ const apiDefs = {
       buildRedPacketParams(self_id, group_id, sender_uin, red_packet),
   },
   // pre_grap_token 必须传入 get_red_packet_info 返回的同名顶层字段。
+  // QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   grab_red_packet: {
     wait: true,
     timeout: 60 * 1000,

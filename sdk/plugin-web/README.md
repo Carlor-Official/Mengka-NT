@@ -4,17 +4,17 @@
 
 ## 后端接入
 
-插件安装包不要求包含 `mengka-plugin.json`，API 与事件权限以开发者在官网勾选并审核通过的快照为准。只有需要让框架自动托管插件 WebUI 时，才在发布包中放置可选运行描述文件，参考 `mengka-plugin.example.json`。插件进程从以下环境变量或同名占位符读取后台参数：
+本地导入包必须在根目录提供唯一的 `mengka-plugin.json`（schema 3），参考 `mengka-plugin.example.json`。插件名称、ID、版本、`notes` 版本说明以及 `runtime.admin` 必须随包提供，不由用户填写；无Web管理端时必须明确设置 `runtime.admin: false`。缺少资料会拒绝导入。完整规范见[托管插件说明](../../docs/managed-plugins.md)。
 
-- `MENGKA_PLUGIN_ADMIN_HOST` / `{{admin_host}}`
-- `MENGKA_PLUGIN_ADMIN_PORT` / `{{admin_port}}`
-- `MENGKA_PLUGIN_ADMIN_BASE_PATH` / `{{admin_base_path}}`
-- `MENGKA_PLUGIN_ADMIN_TOKEN_FILE` / `{{admin_token_file}}`
-- `MENGKA_PLUGIN_ADMIN_EMBEDDED=1`
+插件进程从以下环境变量读取后台参数：
 
-若 `auth_type` 为 `header`，插件 API 校验 `auth_header` 指定的请求头，令牌从 `MENGKA_PLUGIN_ADMIN_TOKEN_FILE` 读取。不要把令牌写入 HTML、JavaScript、日志或查询参数。
+- `MENGKA_PLUGIN_ADMIN_HOST` / `MENGKA_PLUGIN_ADMIN_PORT`
+- `MENGKA_PLUGIN_ADMIN_TOKEN_FILE`
+- `MENGKA_PLUGIN_ADMIN_ORIGIN`
 
-可选运行描述文件只用于入口、参数和 WebUI 元数据，不得作为 API 或事件授权来源。
+插件管理 API 校验内部 `X-Mengka-Managed-Token`，令牌从 `MENGKA_PLUGIN_ADMIN_TOKEN_FILE` 读取。不要把令牌写入 HTML、JavaScript、日志或查询参数。
+
+原生IPC的Action和事件声明仍须通过框架能力校验；WebUI元数据不授予额外权限。已有旧版程序的运行兼容不等于允许新导入包省略资料。
 
 ## 前端接入
 
