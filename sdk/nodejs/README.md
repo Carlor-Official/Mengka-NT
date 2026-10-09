@@ -6,7 +6,7 @@
 
 v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，不恢复白名单或专属 Key。普通 QQ 登录、心跳、换票不受此公共 API 限制。
 
-当前 SDK 版本：**v2.5.7**。支持原生 IPC、正反向 WS、本地插件导入与托管管理员初始化；元宝 P 图接入现有等级任务 Action，现有位置参数调用不变，详见[元宝等级任务](../../docs/yuanbao-level-task.md)。Android 协议仅保留 9.2.70，`get_protocol_list` 返回的 `id` 不保证连续，必须使用实际 ID，不能使用数组下标；旧 9.1.70 账号须人工编辑协议。
+当前 SDK 版本：**v2.5.8**（发布候选）。支持原生 IPC、正反向 WS、本地插件导入与托管管理员初始化；元宝 P 图接入现有等级任务 Action，现有位置参数调用不变，详见[元宝等级任务](../../docs/yuanbao-level-task.md)。Android 协议仅保留 9.2.70，`get_protocol_list` 返回的 `id` 不保证连续，必须使用实际 ID，不能使用数组下标；旧 9.1.70 账号须人工编辑协议。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -270,6 +270,8 @@ await api.add_account({
 - 账号目录与设置：`get_account_management_context`、`get_account_settings`、`update_account_settings`
 - 离线通知与缓存：`get_account_offline_notification`、`update_account_offline_notification`、`clear_account_cache`、`stop_account_login`
 - 身份与安全验证：`submit_account_identity_captcha`、`submit_account_identity_phone`、`confirm_account_identity_sms`、`retry_account_identity_verify`、`open_account_security_access`、`retry_account_security_verify`
+
+身份短信确认与 QQ 续登是独立步骤；续登以 `code: 0` 确认上线，并处理响应中的新验证入口。参见[身份验证续登契约](./docs/account-identity-verification.md)。
 - 授权租约与诊断：`get_account_access_list`、`set_account_access`、`clear_account_access`、`get_account_recent_logs`
 - 账号归属验证：`create_account_recovery_qr`、`query_account_recovery_qr_status`。二维码由 Linux 原生链路生成，仅在手机 QQ 确认后返回账号，不执行登录、不保存登录票据。
 
