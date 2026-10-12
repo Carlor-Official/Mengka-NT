@@ -9,7 +9,7 @@
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | self_id | number | 是 | QQ 号，必须是框架已配置账号 |
-| client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
+| client_type | string | 是 | 明确填写 android 或 linuxqq；支持 Android 9.1.70 与 Linux 3.2.32 |
 
 ## 示例
 

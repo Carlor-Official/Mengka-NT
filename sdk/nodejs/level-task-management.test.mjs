@@ -133,19 +133,14 @@ test('signer selection is internal, not a public SDK contract', async () => {
   }
 })
 
-test('Yuanbao task keeps existing SDK calls and documents server confirmation after human verification', async () => {
+test('replacement task engine retains SDK parameters and documents retired executors', async () => {
   const docs = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
   const managementDocs = await readFile(new URL('../../docs/api/execute_level_task_selection.md', import.meta.url), 'utf8')
   assert.match(docs, /来元宝P图一次/)
-  const pkg = JSON.parse(await readFile(new URL('./package.json', import.meta.url), 'utf8'))
-  assert.ok(docs.includes('v' + pkg.version))
-  assert.match(docs, /按框架实例自动授权/)
-  assert.match(docs, /官方安全验证/)
-  assert.match(docs, /每分钟自动确认/)
-  assert.match(docs, /本人完成后自动续接一次/)
-  assert.doesNotMatch(docs, /待发布接入/)
-  assert.match(managementDocs, /yuanbao_verification_completed/)
-  assert.match(managementDocs, /不重新申请 QQ 授权/)
+  assert.match(docs, /执行器已停用/)
+  assert.match(docs, /Android 9.1.70 和 Linux 3.2.32/)
+  assert.match(managementDocs, /旧计划与记录保留/)
+  assert.match(managementDocs, /can_execute/)
   for (const file of ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']) {
     const source = await readFile(new URL(file, import.meta.url), 'utf8')
     assert.match(source, /execute_level_tasks:\s*\{\s*wait: true,\s*timeout: 5 \* 60 \* 1000,\s*build: \(self_id, tasks\) => \(\{ self_id, tasks \}\)/)
@@ -159,7 +154,7 @@ test('arena extension keeps positional raw parameters and five minute SDK limits
     assert.match(source, /get_level_tasks:\s*\{\s*wait: true,\s*build: \(self_id\) => \(\{ self_id \}\)/)
     assert.match(source, /execute_level_tasks:\s*\{\s*wait: true,\s*timeout: 5 \* 60 \* 1000,\s*build: \(self_id, tasks\) => \(\{ self_id, tasks \}\)/)
     assert.match(source, /execute_level_task_selection: \{ wait: true, timeout: 5 \* 60 \* 1000,/)
-    assert.match(source, /Go直接协议上报1–99随机整数分数/)
+    assert.match(source, /旧擂台、元宝等执行器已停用/)
     assert.doesNotMatch(source, /task80附加安装能力/)
   }
   const docs = await readFile(new URL('../../docs/arena-level-task.md', import.meta.url), 'utf8')

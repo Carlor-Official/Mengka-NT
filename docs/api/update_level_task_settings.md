@@ -9,7 +9,7 @@
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | self_id | number | 是 | QQ 号，必须是框架已配置账号 |
-| client_type | string | 是 | 明确填写 android 或 linuxqq；等级加速目前只支持 android，linuxqq 返回不支持 |
+| client_type | string | 是 | 明确填写 android 或 linuxqq；支持 Android 9.1.70 与 Linux 3.2.32 |
 | selected_tasks | string[] | 是 | 选择的任务标题；可传 [] 清空，去空白、去重，最多 100 项 |
 | schedule_enabled | boolean | 是 | 是否启用框架定时执行；false 必须原样保留 |
 | schedule_time | string | 是 | 框架主机本地时间，严格 HH:mm，例如 04:00 |

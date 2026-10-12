@@ -1,12 +1,12 @@
 # Node.js SDK
 
-> 已支持“来元宝P图一次”，复用等级任务 API。v2.5.2 起安全验证由框架每分钟自动确认，最长十分钟，本人完成官方验证后无需显式继续；旧显式继续参数仍受同一防重锁保护。设备由框架内部处理，用户无需选择设备，以 QQ 任务中心确认完成为准。详见[元宝等级任务](../../docs/yuanbao-level-task.md)。
+v2.5.9 的等级任务支持 Android 9.1.70 与 Linux 3.2.32。只执行当前面板标记为可执行的任务，旧擂台、元宝、电脑在线及独立会员签到执行器已停用；历史记录与计划保留。
 
-等级加速任务面板只返回免费任务：会员推广项目及日常、额外分类中的付费任务会在框架端移除；会员签到作为免费领取任务继续单列。插件应从每次返回的当前面板选择任务，旧配置中的付费任务标题不会执行。
+等级加速面板继续过滤付费推广任务，客户端应按 `can_execute` 判断本次可执行状态。
 
 v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，不恢复白名单或专属 Key。普通 QQ 登录、心跳、换票不受此公共 API 限制。
 
-当前 SDK 版本：**v2.5.8**。支持原生 IPC、正反向 WS、本地插件导入与托管管理员初始化；元宝 P 图接入现有等级任务 Action，现有位置参数调用不变，详见[元宝等级任务](../../docs/yuanbao-level-task.md)。Android 协议仅保留 9.2.70，`get_protocol_list` 返回的 `id` 不保证连续，必须使用实际 ID，不能使用数组下标；旧 9.1.70 账号须人工编辑协议。
+当前 SDK 版本：**v2.5.9**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.5.9 更新说明](../../release-notes/release-notes-v2.5.9.md)。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -407,3 +407,14 @@ v2.1.0 支持由框架管理安装、连接和进程。Node.js 服务端可通�
 - [原生插件协议](../../docs/native-plugins.md)：使用 `native-plugin.js` 通过匿名进程管道接入，无需 WebSocket。
 
 `get_level_task_status` 仅查询任务状态和等级加速汇总，不执行任务；见[接口说明](docs/api/get_level_task_status.md)。原协议发包、加好友、加群与等级任务执行均由后端校验 QQ 16 级，网页调试请求同样不能绕过。
+
+## 双协议凭据接口
+
+```js
+const { skey } = await api.get_skey(self_id, 'linux')
+const { clientkey } = await api.get_clientkey(self_id, 'linux')
+```
+
+两个方法的第二参数选择 `android` 或 `linux`，省略时保留 Android 行为；也支持 `api.forProtocol('linux')`。原始 action 使用已有 `client_type` 字段（`android` / `linuxqq`），不使用 `platform`。Linux skey 来自已校验账号的网页 Cookie；clientkey 支持到期刷新，继续返回十六进制。输出仍为 `{ skey }` / `{ clientkey }`。
+
+本次等级执行器以 1011 附件支持的任务为准。附件未实现的旧擂台、元宝、电脑在线及会员签到执行项不再开放执行，已有记录保留，API 的 `available/can_execute` 是当前能力的依据。此前版本的执行说明不能作为本开发分支的可用性判断。

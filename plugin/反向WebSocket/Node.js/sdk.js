@@ -170,7 +170,8 @@ const apiDefs = {
   // 获取 skey
   get_skey: {
     wait: true,
-    build: (self_id) => ({ self_id }),
+    timeout: 65000,
+    build: (self_id, protocol) => protocol === undefined ? { self_id } : withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)),
   },
   // 获取当前 Bot 协议和设备指纹对应的 User-Agent
   get_user_agent: {
@@ -405,7 +406,8 @@ const apiDefs = {
   // 获取 clientkey (hex 编码)
   get_clientkey: {
     wait: true,
-    build: (self_id) => ({ self_id }),
+    timeout: 65000,
+    build: (self_id, protocol) => protocol === undefined ? { self_id } : withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)),
   },
   // 发送群消息: message 为 [{type, data}] 数组, 支持 text/reply/at/image/voice/video/face。
   // 原生引用回复: [{type:'reply',data:{message_id}}, {type:'text',data:{text:'回复正文'}}]；兼容 data.id。
@@ -863,7 +865,7 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按数组顺序执行指定任务；task80用Go直接协议上报1–99随机整数分数，仅方块冲刺v6，须QQ最终刷新确认；不运行游戏、不增加分数/游戏/计时参数，以can_execute决定本次执行；失败保持待完成并返回原因，无每日尝试限制，SDK不自动重试。
+  // 按数组顺序执行指定任务；Android 9.1.70 与 Linux 3.2.32 共用接口，以 can_execute 决定本次执行；旧擂台、元宝等执行器已停用，失败不自动重试。
   // task83 opt-in uses the existing API; QQ confirmation only, never auto-retry. Human resume uses execute_level_task_selection.
   // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   execute_level_tasks: {

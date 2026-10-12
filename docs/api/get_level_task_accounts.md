@@ -16,7 +16,7 @@ const result = await api.get_level_task_accounts({})
 
 ## 返回
 
-返回数组，每项包含 `selfId`、`platform`、`nickname`、`status`、`level`、`levelTaskSupported`。Linux 账号仍列出，但 `levelTaskSupported=false`。此接口不查询 QQ 在线协议。
+返回数组，每项包含 `selfId`、`platform`、`nickname`、`status`、`level`、`levelTaskSupported`。Android 与 Linux 账号均列出，`levelTaskSupported=true`。此接口不查询 QQ 在线协议。
 
 以上返回值是 WebSocket `action_result.data`；失败为 `ok:false` 和 `error`。SDK 自动解包 data 并在失败时拒绝 Promise。
 

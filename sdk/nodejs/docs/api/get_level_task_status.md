@@ -7,7 +7,7 @@ v2.5.3 新增。通过已完成服务令牌认证的插件 WebSocket 调用 `get
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | self_id | number | 是 | 框架已配置的 QQ 账号 |
-| client_type | string | 是 | android；等级加速暂不支持 linuxqq |
+| client_type | string | 是 | android 或 linuxqq；支持 Android 9.1.70 与 Linux 3.2.32 |
 | refresh | boolean | 否 | 默认 true，实时查询；false 优先读取缓存，无有效缓存时尝试实时查询 |
 
 ```javascript
