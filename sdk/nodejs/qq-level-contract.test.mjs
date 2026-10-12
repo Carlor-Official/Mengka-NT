@@ -6,6 +6,7 @@ test('all public SDK copies document server-owned level gates without adding cal
   const actions = ['send_packet', 'send_friend_request', 'send_group_join_request', 'execute_level_tasks', 'grab_red_packet']
   for (const file of ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']) {
     const source = (await readFile(new URL(file, import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
+    assert.match(source, /is_vip_task 不等于付费/)
     for (const action of actions) {
       const prefix = action === 'grab_red_packet' ? '' : 'v2.5.3: '
       assert.ok(source.includes(`// ${prefix}QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.\n  ${action}: {`), `${file}:${action}`)

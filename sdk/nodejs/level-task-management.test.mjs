@@ -13,7 +13,8 @@ for (const mode of ['forward', 'reverse']) {
     const arenaTask = { center_task_id: 80, title: '创建小游戏擂台并取得成绩', available: true,
       executable: true, can_execute: true, status_text: '待完成',
       execution_message: '微信未授权登录', is_done: false, speed_days: 0, finished_accelerate_days: 0 }
-    const panelPayload = { marker: 'shared cache', extra_info: { extra_task_list: [arenaTask] } }
+    const memberTask = { title: '黄钻每日打卡', category: 'membership', available: true, can_execute: true, is_paid_task: false }
+    const panelPayload = { marker: 'shared cache', extra_info: { extra_task_list: [arenaTask] }, member_info: { member_task_list: [memberTask] } }
     const statusPayload = { self_id: 123456, client_type: 'android', level: 16, total_days: 13,
       base_days: 1.5, vip_multiplier: 3.2, extra_days: 8.2, active_days_baseline: 320,
       estimated_upgrade_days: 37, progress_basis: 'level_baseline', refresh_requested: false,
@@ -87,6 +88,7 @@ for (const mode of ['forward', 'reverse']) {
       const fresh = await api.get_level_task_panel({ ...target, refresh: true })
       for (const payload of [rawPanel, cached.payload, fresh.payload]) {
         assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'pending failure must preserve capability and original QQ values')
+        assert.deepEqual(payload.member_info.member_task_list, [memberTask], 'membership check-ins must survive SDK round trips')
       }
       await assert.rejects(scoped.execute_level_tasks(target.self_id, [arenaTask.title]), error => String(error).includes('微信未授权登录'))
       await new Promise(resolve => setTimeout(resolve, 20))
@@ -133,11 +135,11 @@ test('signer selection is internal, not a public SDK contract', async () => {
   }
 })
 
-test('replacement task engine retains SDK parameters and documents retired executors', async () => {
+test('restored task engine retains SDK parameters and documents protocol boundaries', async () => {
   const docs = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
   const managementDocs = await readFile(new URL('../../docs/api/execute_level_task_selection.md', import.meta.url), 'utf8')
   assert.match(docs, /来元宝P图一次/)
-  assert.match(docs, /执行器已停用/)
+  assert.match(docs, /恢复电脑在线、直接擂台执行及 8 项会员签到/)
   assert.match(docs, /Android 9.1.70 和 Linux 3.2.32/)
   assert.match(managementDocs, /旧计划与记录保留/)
   assert.match(managementDocs, /can_execute/)
@@ -154,7 +156,7 @@ test('arena extension keeps positional raw parameters and five minute SDK limits
     assert.match(source, /get_level_tasks:\s*\{\s*wait: true,\s*build: \(self_id\) => \(\{ self_id \}\)/)
     assert.match(source, /execute_level_tasks:\s*\{\s*wait: true,\s*timeout: 5 \* 60 \* 1000,\s*build: \(self_id, tasks\) => \(\{ self_id, tasks \}\)/)
     assert.match(source, /execute_level_task_selection: \{ wait: true, timeout: 5 \* 60 \* 1000,/)
-    assert.match(source, /旧擂台、元宝等执行器已停用/)
+    assert.match(source, /Android 恢复电脑在线、直接擂台及会员签到/)
     assert.doesNotMatch(source, /task80附加安装能力/)
   }
   const docs = await readFile(new URL('../../docs/arena-level-task.md', import.meta.url), 'utf8')

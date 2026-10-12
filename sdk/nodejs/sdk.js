@@ -860,12 +860,12 @@ const apiDefs = {
     wait: true,
     build: (self_id, flag, approve = true, remark = '') => ({ self_id, flag, approve, remark }),
   },
-  // 获取QQ等级加速面板；task80附加框架能力/当日尝试提示，查询不上报分数，QQ完成与加速数值保持原样。
+  // QQ 原始等级面板；is_vip_task 不等于付费。完整面板与会员签到使用 get_level_task_panel；查询不提交任务。
   get_level_tasks: {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按数组顺序执行指定任务；Android 9.1.70 与 Linux 3.2.32 共用接口，以 can_execute 决定本次执行；旧擂台、元宝等执行器已停用，失败不自动重试。
+  // 按数组顺序执行；以 can_execute 判断能力。Android 恢复电脑在线、直接擂台及会员签到；失败不自动重试。
   // task83 opt-in uses the existing API; QQ confirmation only, never auto-retry. Human resume uses execute_level_task_selection.
   // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   execute_level_tasks: {
