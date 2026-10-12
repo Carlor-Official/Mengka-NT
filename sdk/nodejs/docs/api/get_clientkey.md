@@ -4,7 +4,7 @@
 
 读取当前账号的 clientkey；为空或进入到期前刷新窗口时，使用该账号对应协议请求刷新并保存到期时间。返回十六进制字符串。
 
-## 调用
+## 调用方式
 
 ```js
 const androidResult = await api.get_clientkey(self_id, 'android')
@@ -27,4 +27,4 @@ const linuxResult = await api.get_clientkey(self_id, 'linux')
 { clientkey: 'HEX_ENCODED_CLIENTKEY' }
 ```
 
-返回字段与旧接口一致，获取失败返回错误，不以空值伪装成功。
+获取失败时抛出错误。

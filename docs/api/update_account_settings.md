@@ -1,12 +1,34 @@
-# 更新框架设置
+# update_account_settings
 
-调用既有 `update_account_settings`，仅提交需修改的字段，返回保存后的完整设置。通过已认证的插件管理连接调用。
+更新框架级账号运行设置。只提交需要修改的字段即可。
 
-```javascript
-await api.update_account_settings({ autoUpdate: true })
-await api.update_account_settings({ autoUpdate: false })
+## 调用方式
+
+```js
+const settings = await api.update_account_settings({
+  cacheLogin: true,
+  autoLogin: true,
+  privacyMode: false,
+  silentMode: false,
+  autoDeleteOffline: true,
+  autoDeleteOfflineMinutes: 60
+})
 ```
 
-下一版本增加实例级 `autoUpdate: boolean`，默认关闭；省略保留原值，非布尔值拒绝。开启后后台每10分钟检查最新正式版并按现有校验流程安装，更新会短暂重启框架。它不会改变缓存登录和自动登录开关；详情及失败恢复见[框架自动更新](../automatic-update.md)。
+`autoDeleteOfflineMinutes` 范围为 1–10080。开启 `autoLogin` 前必须开启 `cacheLogin`；关闭缓存登录会同时关闭自动登录。成功返回保存后的完整设置。
 
-原有字段仍有效：`cacheLogin`、`autoLogin`、`privacyMode`、`silentMode`、`autoDeleteOffline`、`autoDeleteOfflineMinutes`。开启自动登录前必须开启缓存登录；关闭缓存登录同时关闭自动登录；自动删除间隔范围1–10080分钟。SDK返回 `action_result.data`。
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `cacheLogin` | boolean | 否 | 是否保存登录缓存 |
+| `autoLogin` | boolean | 否 | 是否自动登录；要求 cacheLogin=true |
+| `autoUpdate` | boolean | 否 | 是否自动更新 |
+| `privacyMode` | boolean | 否 | 是否开启隐私模式 |
+| `silentMode` | boolean | 否 | 是否开启静默模式 |
+| `autoDeleteOffline` | boolean | 否 | 是否定时删除离线账号 |
+| `autoDeleteOfflineMinutes` | number | 否 | 离线清理间隔，单位分钟，范围 1–10080 |
+
+## 返回值
+
+返回保存后的完整设置，字段见 [get_account_settings](get_account_settings.md#返回值)。

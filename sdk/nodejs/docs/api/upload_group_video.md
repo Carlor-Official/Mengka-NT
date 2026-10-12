@@ -2,7 +2,7 @@
 
 上传群聊 MP4 视频，并返回可直接发送的视频消息段。
 
-## 调用
+## 调用方式
 
 ```js
 const video = await api.upload_group_video(self_id, group_id, file_path)

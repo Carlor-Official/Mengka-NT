@@ -138,10 +138,10 @@ test('signer selection is internal, not a public SDK contract', async () => {
 test('restored task engine retains SDK parameters and documents protocol boundaries', async () => {
   const docs = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
   const managementDocs = await readFile(new URL('../../docs/api/execute_level_task_selection.md', import.meta.url), 'utf8')
-  assert.match(docs, /来元宝P图一次/)
-  assert.match(docs, /恢复电脑在线、直接擂台执行及 8 项会员签到/)
-  assert.match(docs, /Android 9.1.70 和 Linux 3.2.32/)
-  assert.match(managementDocs, /旧计划与记录保留/)
+  assert.match(docs, /单项失败后继续下一项/)
+  assert.match(docs, /can_execute=true/)
+  assert.match(docs, /android.*linuxqq/)
+  assert.match(managementDocs, /skippedTasks/)
   assert.match(managementDocs, /can_execute/)
   for (const file of ['./sdk.js', './reverse-sdk.js', '../../plugin/正向WebSocket/Node.js/sdk.js', '../../plugin/反向WebSocket/Node.js/sdk.js']) {
     const source = await readFile(new URL(file, import.meta.url), 'utf8')

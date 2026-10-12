@@ -1,4 +1,4 @@
-# 给自身宠物喂食
+# feed_pet
 
 **API 开源贡献者：星空花海**
 
@@ -8,17 +8,7 @@
 - 支持协议：Android。
 - 调用方式：普通插件 API；仅接受对象参数。
 
-## 请求参数
-
-| 参数 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `self_id` | number | 是 | 在线机器人 QQ 号 |
-| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
-| `pet_id` | string | 是 | 宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替 |
-| `food_id` | string | 否 | 指定食物 ID；不传或空串使用默认食物 |
-| `feed_type` | number | 否 | 喂食类型：0（默认）、1001、9990032、9990033、9990034 |
-
-## 调用示例
+## 调用方式
 
 ```js
 const result = await api.feed_pet({
@@ -28,7 +18,17 @@ const result = await api.feed_pet({
 })
 ```
 
-## 返回结果
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `self_id` | number | 是 | 在线机器人 QQ 号 |
+| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
+| `pet_id` | string | 是 | 宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替 |
+| `food_id` | string | 否 | 指定食物 ID；不传或空串使用默认食物 |
+| `feed_type` | number | 否 | 喂食类型：0（默认）、1001、9990032、9990033、9990034 |
+
+## 返回值
 
 submitted、effect_verified、pet_id。submitted=true 表示请求已提交；请读取 get_pet_vitals 确认饱食度。
 

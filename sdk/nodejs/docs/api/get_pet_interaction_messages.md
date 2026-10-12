@@ -1,4 +1,4 @@
-# 获取宠物互动消息
+# get_pet_interaction_messages
 
 **API 开源贡献者：星空花海**
 
@@ -8,17 +8,7 @@
 - 支持协议：Android。
 - 调用方式：普通插件 API；仅接受对象参数。
 
-> 待下一版本发布：本页包含 v2.2.1 之后的参数或返回字段调整。
-
-## 请求参数
-
-| 参数 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `self_id` | number | 是 | 在线机器人 QQ 号 |
-| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
-| `limit` | number | 否 | 消息条数，非负安全整数，默认 20；不限制 1–50，显式传值原样发送 |
-
-## 调用示例
+## 调用方式
 
 ```js
 const result = await api.get_pet_interaction_messages({
@@ -27,9 +17,17 @@ const result = await api.get_pet_interaction_messages({
 })
 ```
 
-省略 `limit` 使用 20；显式传入 0、51 或更大数值均原样发送，框架不再执行 1–50 范围限制。实际返回条数由上游决定。
+`limit` 默认 20；显式值直接传递给服务端。实际返回条数由服务端决定。
 
-## 返回结果
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `self_id` | number | 是 | 在线机器人 QQ 号 |
+| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
+| `limit` | number | 否 | 消息条数，非负安全整数，默认 20；不限制 1–50，显式传值原样发送 |
+
+## 返回值
 
 messages[]：user_id、text、segments、timestamp、message_id、pet_name、event_type。纯文本消息的 segments 为空数组。
 

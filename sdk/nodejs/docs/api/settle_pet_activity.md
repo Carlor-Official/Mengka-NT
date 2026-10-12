@@ -1,4 +1,4 @@
-# 结算宠物活动
+# settle_pet_activity
 
 **API 开源贡献者：星空花海**
 
@@ -8,16 +8,7 @@
 - 支持协议：Android。
 - 调用方式：普通插件 API；仅接受对象参数。
 
-## 请求参数
-
-| 参数 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `self_id` | number | 是 | 在线机器人 QQ 号 |
-| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
-| `pet_id` | string | 是 | 宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替 |
-| `story_id` | string | 是 | 状态接口返回的当前任务 ID；必须与目标活动类型匹配 |
-
-## 调用示例
+## 调用方式
 
 ```js
 const result = await api.settle_pet_activity({
@@ -28,7 +19,16 @@ const result = await api.settle_pet_activity({
 })
 ```
 
-## 返回结果
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `self_id` | number | 是 | 在线机器人 QQ 号 |
+| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
+| `pet_id` | string | 是 | 宠物 ID，须按接口说明区分本人或目标；不能用 QQ 号代替 |
+| `story_id` | string | 是 | 状态接口返回的当前任务 ID；必须与目标活动类型匹配 |
+
+## 返回值
 
 submitted、pet_id、story_id、effect_verified。冒险包含 reward_gold 与 gold_rewards；需核对任务状态和余额。
 

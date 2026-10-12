@@ -1,4 +1,4 @@
-# 获取宠物活动选项
+# get_pet_activity_options
 
 **API 开源贡献者：星空花海**
 
@@ -8,7 +8,18 @@
 - 支持协议：Android。
 - 调用方式：普通插件 API；仅接受对象参数。
 
-## 请求参数
+## 调用方式
+
+```js
+const result = await api.get_pet_activity_options({
+  "self_id": 123456,
+  "client_type": "android",
+  "pet_id": "MTIzNDU2LXBldA==",
+  "activity": "work"
+})
+```
+
+## 参数
 
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
@@ -20,18 +31,7 @@
 | `stage` | number | 否 | 学习阶段 0–4；不传则读取总览 |
 | `friend_pet_id` | string | 否 | work / adventure 可选雇佣好友宠物 ID；school 不接受 |
 
-## 调用示例
-
-```js
-const result = await api.get_pet_activity_options({
-  "self_id": 123456,
-  "client_type": "android",
-  "pet_id": "MTIzNDU2LXBldA==",
-  "activity": "work"
-})
-```
-
-## 返回结果
+## 返回值
 
 activity、career_name、options[]。选项含 name、sub_event_type、cost、duration_seconds、duration_text、duration_known、reward、description、can_do、unavailable_reason、warning、icon_url、reward_icon_url。duration_known=false 时不要将 duration_seconds=0 视为实际时长。
 

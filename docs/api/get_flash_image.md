@@ -1,9 +1,10 @@
-# 获取闪照原图地址
+# get_flash_image
 
 - action：`get_flash_image`
-- 最低版本：框架与 Node.js SDK v2.2.1。
 
-读取当前账号实时收到的闪照原图地址及图片信息。当前识别 CommonElem service 3 的群聊和私聊闪照。私聊消息未携带 origUrl 时，使用 QQ 明确提供的 downloadPath 按私聊原图路由解析；不会只凭 resId、文件名或 MD5 构造地址。私聊已使用 Android 与 Linux QQ 接收真实闪照验证，接口返回地址可下载且大小、MD5 一致；群聊原图地址路径尚未实测。
+获取当前账号收到的闪照原图 URL 和图片信息。
+
+## 调用方式
 
 ```js
 const image = await api.forProtocol('android').get_flash_image(selfId, messageId)
@@ -19,7 +20,7 @@ const image = await api.forProtocol('android').get_flash_image(selfId, messageId
 | message_id | number | 是 | 框架消息事件中的 message_id，不能使用 msg_seq 或文件 ID |
 | index | number | 否 | 同一消息中闪照的下标，从 0 开始，默认 0 |
 
-## 返回
+## 返回值
 
 ```json
 {
@@ -38,7 +39,7 @@ const image = await api.forProtocol('android').get_flash_image(selfId, messageId
 
 `size` 单位为字节。上游未提供的数值为 0、文本为空字符串；URL 缺失会报错。示例地址为占位，不能直接访问。
 
-框架返回消息明确提供的原图地址，或由 QQ 提供的私聊 downloadPath 按原图路由解析的地址，不自动下载、不保存图片、不报告已查看、不修改 QQ 的有效期。成功返回表示找到地址，不代表已验证图片仍可访问；QQ 拒绝访问时不能用此接口恢复。收到消息、调试参数预览都不会触发图片请求。
+返回临时原图 URL，不下载图片或标记已查看。URL 可能因 QQ 的有效期或访问限制失效。
 
 ## 消息识别与缓存
 
@@ -50,11 +51,9 @@ const image = await api.forProtocol('android').get_flash_image(selfId, messageId
 
 将外层消息事件的 `message_id` 交给本接口。消息段不自动携带 URL，普通 `image` 不会被当作闪照。不从历史查询补缓存，不查询其他账号或其他协议的消息。元数据仅存内存，最多保留 2 分钟、256 条消息；重复投递不延长已有缓存，重登或框架重启后失效。这个期限是本地元数据保留上限，不是 QQ 闪照的有效期承诺。
 
-## 错误
+## 错误说明
 
 - `flash_image_unavailable`：当前账号协议没有收到此闪照、元数据已过期或登录会话变更。
 - `flash_image_url_unavailable`：消息没有提供可用原图地址或受支持的私聊下载路径；不会根据 MD5、文件 ID 或缩略图猜测原图地址。
 - `flash_image_index_out_of_range`：下标超出此消息的闪照数量。
 - 参数、服务 Token 和账号权限检查失败时按现有 action 错误契约返回。
-
-协议字段参考：[MiraiGo 消息结构](https://github.com/Mrs4s/MiraiGo/blob/master/client/pb/msg/msg.proto)。这仅证明结构定义，不代表 QQ 当前所有客户端均返回可下载地址。

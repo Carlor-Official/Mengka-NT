@@ -1,27 +1,48 @@
-# 获取完整等级任务面板
+# get_level_task_panel
 
-`get_level_task_panel` 沿用原 action 与响应契约。
+获取等级任务、执行状态及自动执行设置。
+
+## 调用方式
+
+```js
+const result = await api.get_level_task_panel({
+  self_id, client_type: 'android', refresh: true,
+})
+```
 
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| self_id | number | 是 | 框架已配置的 QQ 账号 |
-| client_type | string | 是 | android 或 linuxqq，原始接口省略时选择 Android |
-| refresh | boolean | 否 | 默认 true；false 优先读取缓存 |
+| `self_id` | number | 是 | 目标 QQ 账号 |
+| `client_type` | string | 是 | 目标协议：`android` 或 `linuxqq` |
+| `refresh` | boolean | 否 | 默认 true；false 时优先使用缓存 |
 
-v2.5.9支持 Android 9.1.70 和 Linux 3.2.32，协议通过 `client_type` 区分。只读查询不提交任务；实际执行结果以 QQ 面板为准，不伪造完成或加速数值。
+## 返回值
 
-Android 9.1.70 保留 QQ 返回的非付费任务，并恢复电脑在线、直接擂台执行及 8 项会员签到。免费小说支持 QQ 当前返回的 `去看免费小说` 和附件中的 `去免费小说看任一本书`。`is_vip_task` 是 QQ 的任务标记，不能用于判定任务收费；管理面板按 `is_paid_task` 和明确的购买项目过滤。来元宝P图一次仍展示，但现有执行器仅适配 9.2.70，9.1.70 不标记为可执行。旧计划与记录保留。以 `can_execute` 为准，失败不自动重放。
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `payload` | object | 面板数据，基础字段见 [get_level_tasks](get_level_tasks.md#返回值) |
+| `payload.member_info.member_task_list` | object[] | Android 会员签到任务 |
+| `settings` | object | 自动执行设置，字段见 [get_level_task_settings](get_level_task_settings.md#返回值) |
 
-## 示例
+### 管理任务字段
 
-```javascript
-const result = await api.get_level_task_panel({ self_id: 123456, client_type: 'linuxqq', refresh: false })
-```
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `title` | string | 任务标题，可用于执行接口 |
+| `sub_title` | string | 任务说明 |
+| `is_done` | boolean | 是否已完成 |
+| `executable` | boolean | 是否具备执行器 |
+| `speed_days` | number | 加速值，单位为十分之一天 |
+| `center_task_id` | number | 任务中心 ID |
+| `is_vip_task` | boolean | QQ 的会员任务标记 |
+| `available` | boolean | 当前协议是否支持该任务 |
+| `can_execute` | boolean | 当前是否允许执行 |
+| `is_paid_task` | boolean | 是否为付费任务 |
+| `status_text` | string | 任务状态说明 |
+| `execution_message` | string | 最近一次执行结果或错误说明 |
 
-## 返回
+## 错误说明
 
-返回 `{ payload, settings }`。不返回旧版本合成的 `member_info`；旧执行记录仍保留。实时刷新失败返回错误，不将缓存冒充实时结果。
-
-`available` 表示框架能力，`can_execute` 表示本次是否可执行；已完成任务不应被显示为不支持。
+账号不存在、协议不支持或实时刷新失败时抛出错误。

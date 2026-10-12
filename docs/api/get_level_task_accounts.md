@@ -1,23 +1,29 @@
-# 获取等级加速账号列表
+# get_level_task_accounts
 
-从 v2.0.9 起提供；v2.0.8 及更早版本不包含此接口。
+列出支持等级任务管理的账号。
 
-通过完成令牌认证的插件 WebSocket 服务调用 `get_level_task_accounts`。
-
-## 参数
-
-无参数，发送空对象 `{}`。
-
-## 示例
+## 调用方式
 
 ```javascript
 const result = await api.get_level_task_accounts({})
 ```
 
-## 返回
+## 参数
 
-返回数组，每项包含 `selfId`、`platform`、`nickname`、`status`、`level`、`levelTaskSupported`。Android 与 Linux 账号均列出，`levelTaskSupported=true`。此接口不查询 QQ 在线协议。
+无。
 
-以上返回值是 WebSocket `action_result.data`；失败为 `ok:false` 和 `error`。SDK 自动解包 data 并在失败时拒绝 Promise。
+## 返回值
 
-详见[共享等级任务管理接入](../level-task-management.md)。
+返回账号数组，每项包含：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `selfId` | number | QQ 号 |
+| `platform` | string | android 或 linux |
+| `nickname` | string | 昵称 |
+| `status` | number | 0 离线、1 在线、2 登录中 |
+| `level` | number | QQ 等级 |
+| `levelTaskSupported` | boolean | 是否支持等级任务 |
+
+
+详见[共享等级任务管理接入](https://mknt.net/reference/level-task-management.html)。

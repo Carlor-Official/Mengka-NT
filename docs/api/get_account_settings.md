@@ -1,9 +1,28 @@
-# 读取框架设置
+# get_account_settings
 
-调用既有 `get_account_settings`，不传账号参数，返回框架实例级运行设置。通过已认证的插件管理连接调用，不新增权限或action别名。
+读取框架级账号运行设置。
 
-```javascript
+## 调用方式
+
+```js
 const settings = await api.get_account_settings()
 ```
 
-返回字段：`cacheLogin`、`autoLogin`、`privacyMode`、`silentMode`、`autoDeleteOffline`、`autoDeleteOfflineMinutes`，下一版本增加 `autoUpdate` 布尔字段，旧配置默认 `false`。具体自动更新行为见[框架自动更新](../automatic-update.md)。SDK返回 `action_result.data`。
+## 参数
+
+无。
+
+## 返回值
+
+```js
+{
+  cacheLogin: true,
+  autoLogin: true,
+  privacyMode: false,
+  silentMode: false,
+  autoDeleteOffline: false,
+  autoDeleteOfflineMinutes: 60
+}
+```
+
+这些设置作用于整个框架，不是当前插件的本地偏好。

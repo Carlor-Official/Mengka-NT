@@ -1,26 +1,44 @@
-# 获取 QQ 等级加速面板
+# get_level_tasks
 
-`get_level_tasks` 沿用原 action 与响应契约。
+获取 QQ 等级加速面板。
+
+## 调用方式
+
+```js
+const panel = await api.forProtocol('android').get_level_tasks(self_id)
+```
 
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| self_id | number | 是 | 框架已配置的 QQ 账号 |
-| client_type | string | 否 | android 或 linuxqq，原始接口省略时选择 Android |
+| `self_id` | number | 是 | 目标 QQ 账号 |
+| `client_type` | string | 否 | `android` 或 `linuxqq`，默认 `android` |
 
-v2.5.9支持 Android 9.1.70 和 Linux 3.2.32，协议通过 `client_type` 区分。原始查询保留 QQ 面板分类与标记，完整管理面板请使用 `get_level_task_panel`。只读查询不提交任务；实际执行结果以 QQ 面板为准，不伪造完成或加速数值。
+## 返回值
 
-Android 9.1.70 保留 QQ 返回的非付费任务，并恢复电脑在线、直接擂台执行及 8 项会员签到。免费小说支持 QQ 当前返回的 `去看免费小说` 和附件中的 `去免费小说看任一本书`。`is_vip_task` 是 QQ 的任务标记，不能用于判定任务收费；管理面板按 `is_paid_task` 和明确的购买项目过滤。来元宝P图一次仍展示，但现有执行器仅适配 9.2.70，9.1.70 不标记为可执行。旧计划与记录保留。以 `can_execute` 为准，失败不自动重放。
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `uin` | string | QQ 号 |
+| `overall_info.total_days` | number | 当日总加速值，单位为十分之一天 |
+| `overall_info.base_days` | number | 日常加速值，单位为十分之一天 |
+| `overall_info.extra_days` | number | 额外加速值，单位为十分之一天 |
+| `overall_info.vip_speed` | number | 会员加速倍数的十倍值 |
+| `base_info.base_task_list` | object[] | 日常任务 |
+| `extra_info.extra_task_list` | object[] | 额外任务 |
+| `vip_info.vip_list` | object[] | 会员权益项目 |
+| `is_freeze` | boolean | 是否冻结加速 |
 
-## 示例
+### 任务字段
 
-```javascript
-const result = await api.forProtocol('linux').get_level_tasks(123456)
-```
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `title` | string | 任务标题，可用于执行接口 |
+| `sub_title` | string | 任务说明 |
+| `is_done` | boolean | 是否已完成 |
+| `executable` | boolean | 是否具备执行器 |
+| `speed_days` | number | 加速值，单位为十分之一天 |
+| `center_task_id` | number | 任务中心 ID |
+| `is_vip_task` | boolean | QQ 的会员任务标记 |
 
-## 返回
-
-保持 `uin`、`overall_info`、`base_info`、`extra_info`、`is_freeze` 等原面板字段。失败时 SDK 拒绝 Promise。
-
-`available` 表示框架能力，`can_execute` 表示本次是否可执行；已完成任务不应被显示为不支持。
+完整任务管理面板见 [get_level_task_panel](get_level_task_panel.md)。

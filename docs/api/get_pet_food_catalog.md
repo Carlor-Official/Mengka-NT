@@ -1,4 +1,4 @@
-# 获取宠物食物库存
+# get_pet_food_catalog
 
 **API 开源贡献者：星空花海**
 
@@ -8,14 +8,7 @@
 - 支持协议：Android。
 - 调用方式：普通插件 API；仅接受对象参数。
 
-## 请求参数
-
-| 参数 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `self_id` | number | 是 | 在线机器人 QQ 号 |
-| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
-
-## 调用示例
+## 调用方式
 
 ```js
 const result = await api.get_pet_food_catalog({
@@ -24,7 +17,14 @@ const result = await api.get_pet_food_catalog({
 })
 ```
 
-## 返回结果
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `self_id` | number | 是 | 在线机器人 QQ 号 |
+| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
+
+## 返回值
 
 foods[] 包含 food_id、name、balance、resource_id。biscuit_count 与 shrimp_count 未知时为 null；inventory_known 表示是否收到食物目录。
 

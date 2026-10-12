@@ -1,29 +1,28 @@
-# 执行 QQ 等级任务
+# execute_level_tasks
 
-`execute_level_tasks` 沿用原 action 与响应契约。
+按数组顺序执行等级任务。
+
+## 调用方式
+
+```js
+const result = await api.forProtocol('android').execute_level_tasks(self_id, ['去看免费小说'])
+```
 
 ## 参数
 
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| self_id | number | 是 | 框架已配置的 QQ 账号 |
-| client_type | string | 否 | android 或 linuxqq，原始接口省略时选择 Android |
-| tasks | string[] | 是 | 非空任务标题数组；重试前先刷新核对 |
+| `self_id` | number | 是 | 目标 QQ 账号 |
+| `client_type` | string | 否 | `android` 或 `linuxqq`，默认 `android` |
+| `tasks` | string[] | 是 | 从 `get_level_task_panel` 中选择 `can_execute=true` 的任务标题，不可为空 |
 
-v2.5.9支持 Android 9.1.70 和 Linux 3.2.32，协议通过 `client_type` 区分。只读查询不提交任务；实际执行结果以 QQ 面板为准，不伪造完成或加速数值。
+## 返回值
 
-Android 9.1.70 保留 QQ 返回的非付费任务，并恢复电脑在线、直接擂台执行及 8 项会员签到。免费小说支持 QQ 当前返回的 `去看免费小说` 和附件中的 `去免费小说看任一本书`。`is_vip_task` 是 QQ 的任务标记，不能用于判定任务收费；管理面板按 `is_paid_task` 和明确的购买项目过滤。来元宝P图一次仍展示，但现有执行器仅适配 9.2.70，9.1.70 不标记为可执行。旧计划与记录保留。以 `can_execute` 为准，失败不自动重放。
+全部执行成功时返回 `null`。
 
-单项失败或无法完成时继续后续任务，保留该项错误，不自动重试。整个请求被取消或总预算到期时停止。批量调用仍沿用原错误契约：任一项失败时最终返回错误，不代表后续任务没有执行；重试前必须刷新核对，不能重放整个数组。免费小说使用真实阅读心跳，QQ 返回当日阅读时长满三分钟后再结算；倒计时结束不等于任务已完成。
+## 错误说明
 
-## 示例
-
-```javascript
-const result = await api.forProtocol('linux').execute_level_tasks(123456, ['去免费小说看任一本书'])
-```
-
-## 返回
-
-全部执行成功时 Promise 解析为 `null`；任一任务失败时拒绝。后端校验 QQ 16 级门槛，等级未知或不足时拒绝，不接受客户端指定等级。SDK 保持五分钟等待，框架请求总预算四分四十五秒。完整管理流程及执行后刷新使用 `execute_level_task_selection`。
-
-`available` 表示框架能力，`can_execute` 表示本次是否可执行；已完成任务不应被显示为不支持。
+- 目标账号需在线且 QQ 等级至少为 16 级。
+- 单项失败后继续下一项，批次结束后汇总返回错误；整体取消或请求超时会停止后续执行。
+- 批次报错时，其他任务可能已经完成；重试前查询任务面板。
+- SDK 等待上限为五分钟；服务端整次请求预算为四分四十五秒。

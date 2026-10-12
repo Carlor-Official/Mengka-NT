@@ -1,9 +1,11 @@
-# 发送原始协议包
+# send_packet
 
 - action：`send_packet`
-- 使用条件：已认证的正向或反向 WebSocket 服务，目标账号在线且 QQ 等级至少 16 级。托管和外部插件均可调用，无需白名单或专属 Key。
+- 使用条件：已认证的正向或反向 WebSocket 服务，目标账号在线。托管和外部插件均可调用，无需白名单或专属 Key。
 
-v2.5.3 起，等级由框架当前账号运行状态核验；低于 16 级或等级尚未同步时会直接失败，不发送协议包。不接受调用方提供等级，也不自动重试。内部登录、心跳和票据维护不受此公共 API 门槛影响。
+使用条件：账号在线且 QQ 等级至少 16 级。等级由服务端账号状态核验；未知或不足时返回错误。
+
+## 调用方式
 
 ```js
 const responseHex = await api.send_packet(selfId, command, packetHex, true, reserveHex)
@@ -34,10 +36,10 @@ const responseHex = await api.call('send_packet', {
 
 `command` 和 `packetHex` 使用插件业务实际需要的协议与内容。
 
-## 返回与错误
+## 返回值
 
 `rsp=true` 返回响应体的小写十六进制字符串；`rsp=false` 提交后返回 null。响应仍需按对应协议解析。
 
-无效参数、账号离线、协议错误或超时会使调用失败。结果未知时先核对业务状态，不要自动重发。接口不再申请插件授权、读取专属 Key 或请求算法白名单服务；服务令牌认证、参数校验和账号路由继续生效。
+无效参数、账号离线、协议错误或超时会使调用失败。结果未知时先核对业务状态，不要自动重发。
 
-基础连接见[SDK 快速开始](../sdk-quickstart.md)。
+基础连接见[SDK 快速开始](https://mknt.net/development/nodejs-sdk.html)。

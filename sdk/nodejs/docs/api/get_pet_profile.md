@@ -1,4 +1,4 @@
-# 获取自身宠物档案
+# get_pet_profile
 
 **API 开源贡献者：星空花海**
 
@@ -8,16 +8,7 @@
 - 支持协议：Android。
 - 调用方式：普通插件 API；仅接受对象参数。
 
-> 待下一版本发布：本页包含 v2.2.1 之后的参数或返回字段调整。
-
-## 请求参数
-
-| 参数 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `self_id` | number | 是 | 在线机器人 QQ 号 |
-| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
-
-## 调用示例
+## 调用方式
 
 ```js
 const result = await api.get_pet_profile({
@@ -26,7 +17,14 @@ const result = await api.get_pet_profile({
 })
 ```
 
-## 返回结果
+## 参数
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `self_id` | number | 是 | 在线机器人 QQ 号 |
+| `client_type` | string | 是 | 当前实现支持 android；须使用 Android 账号 |
+
+## 返回值
 
 完整档案 `source="profile"` 的返回字段如下。OIDB `0x99f2_1` 请求 body 为空，下表字段号相对于 Pet 对象。
 
@@ -63,6 +61,6 @@ const result = await api.get_pet_profile({
 }
 ```
 
-数值字段缺失按 0 返回，字符串缺失为空字符串，性格属性列表缺失为空数组。两处战力分别读取各自协议字段，不用某处战力覆盖另一处。缓存降级仍只包含 `pet_id`、`user_id`、`pet_name`、`avatar_url`、`source="cache"`、`partial=true`，不伪造完整档案字段。
+数值字段缺失按 0 返回，字符串缺失为空字符串，性格属性列表缺失为空数组。两处战力分别读取各自协议字段，不用某处战力覆盖另一处。缓存降级仍只包含 `pet_id`、`user_id`、`pet_name`、`avatar_url`、`source="cache"`、`partial=true`。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。

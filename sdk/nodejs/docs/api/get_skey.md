@@ -4,7 +4,7 @@
 
 Android 读取当前登录票据中的 skey；Linux 使用当前账号的 clientkey 获取并校验网页 Cookie，返回其中的 skey，不覆盖 Android 票据缓存。
 
-## 调用
+## 调用方式
 
 ```js
 const androidResult = await api.get_skey(self_id, 'android')
@@ -27,4 +27,4 @@ const linuxResult = await api.get_skey(self_id, 'linux')
 { skey: 'CURRENT_PROTOCOL_SKEY' }
 ```
 
-返回字段与旧接口一致，获取失败返回错误，不以空值伪装成功。
+获取失败时返回错误。

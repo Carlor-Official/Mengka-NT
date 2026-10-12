@@ -54,6 +54,6 @@ test('status query documents all requested fields and has no execution level gat
   ].map(file => readFile(new URL(file, import.meta.url), 'utf8')))
   assert.equal(doc, copy)
   for (const field of ['level', 'total_days', 'base_days', 'vip_multiplier', 'extra_days', 'active_days_baseline', 'estimated_upgrade_days', 'pending', 'completed']) assert.ok(doc.includes(field), field)
-  assert.match(doc, /仅查询任务状态不要求 QQ 16 级/)
-  assert.match(doc, /不会把登录天数当成累计活跃天数/)
+  assert.match(doc, /查询无等级限制/)
+  assert.match(doc, /level² \+ 4 × level/)
 })
