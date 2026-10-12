@@ -35,9 +35,9 @@
 
 官网：[萌卡 NT](https://mknt.net/) · [官网与部署文档](https://mknt.net/guide/)
 
-最新正式版本：**2.5.10**，查看[v2.5.10 更新说明](release-notes/release-notes-v2.5.10.md) · [历史更新说明](release-notes/)。
+最新正式版本：**2.5.11**，查看[v2.5.11 更新说明](release-notes/release-notes-v2.5.11.md) · [历史更新说明](release-notes/)。
 
-v2.5.10 修复账号登录异常后无法取消、编辑或删除的问题。v2.5.9 新增 Linux 账号密码登录，更新双协议等级任务与原生媒体处理，并完善登录凭证 API。Android 仅保留 9.1.70，Linux 保留 3.2.32；[升级说明](docs/upgrade-v2.5.9.md)。
+v2.5.11 修复 Android 9.1.70 登录签名异常，并包含此前账号无法取消、编辑或删除问题的修复。v2.5.9 新增 Linux 账号密码登录，更新双协议等级任务与原生媒体处理，并完善登录凭证 API。Android 仅保留 9.1.70，Linux 保留 3.2.32；[升级说明](docs/upgrade-v2.5.9.md)。
 
 v2.4.0 将管理员认证改为本地账号，并用用户手动上传的“插件导入”替代官网插件市场。
 
