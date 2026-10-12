@@ -90,11 +90,11 @@ for (const mode of ['forward', 'reverse']) {
         assert.deepEqual(payload.extra_info.extra_task_list, [arenaTask], 'pending failure must preserve capability and original QQ values')
         assert.deepEqual(payload.member_info.member_task_list, [memberTask], 'membership check-ins must survive SDK round trips')
       }
-      await assert.rejects(scoped.execute_level_tasks(target.self_id, [arenaTask.title]), error => String(error).includes('微信未授权登录'))
+      await assert.rejects(scoped.execute_level_tasks(target.self_id, [arenaTask.title, '去看免费小说']), error => String(error).includes('微信未授权登录'))
       await new Promise(resolve => setTimeout(resolve, 20))
       const attempts = received.filter(message => message.action === 'execute_level_tasks')
       assert.equal(attempts.length, 1, 'fixed failure must not trigger an SDK retry')
-      assert.deepEqual(attempts[0].params, { self_id: target.self_id, client_type: 'android', tasks: [arenaTask.title] })
+      assert.deepEqual(attempts[0].params, { self_id: target.self_id, client_type: 'android', tasks: [arenaTask.title, '去看免费小说'] })
       assert.deepEqual(received.at(-4).params, { self_id: target.self_id, client_type: 'android' })
       Object.assign(arenaTask, { can_execute: true, status_text: '待完成', execution_message: '擂台创建结果未确认' })
       const recoveryRaw = await scoped.get_level_tasks(target.self_id)

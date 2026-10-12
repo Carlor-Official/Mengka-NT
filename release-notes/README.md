@@ -1,10 +1,18 @@
 # 更新说明
 
-最新正式版本：[v2.5.7](release-notes-v2.5.7.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
+最新正式版本：[v2.5.14](release-notes-v2.5.14.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
 
 后续版本更新说明统一放在本目录。
 
 ## 历史版本
+
+- [v2.5.14](release-notes-v2.5.14.md)
+- [v2.5.13](release-notes-v2.5.13.md)
+- [v2.5.12](release-notes-v2.5.12.md)
+- [v2.5.11](release-notes-v2.5.11.md)
+- [v2.5.10](release-notes-v2.5.10.md)
+- [v2.5.9](release-notes-v2.5.9.md)
+- [v2.5.8](release-notes-v2.5.8.md)
 
 - [v2.5.7](release-notes-v2.5.7.md)
 - [v2.5.6](release-notes-v2.5.6.md)

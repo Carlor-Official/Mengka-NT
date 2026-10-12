@@ -865,7 +865,7 @@ const apiDefs = {
     wait: true,
     build: (self_id) => ({ self_id }),
   },
-  // 按数组顺序执行；以 can_execute 判断能力。Android 恢复电脑在线、直接擂台及会员签到；失败不自动重试。
+  // 按数组顺序执行；单项失败继续下一项，最后汇总错误；请求取消或总超时停止。以 can_execute 判断能力。Android 恢复电脑在线、直接擂台及会员签到；失败不自动重试。
   // task83 opt-in uses the existing API; QQ confirmation only, never auto-retry. Human resume uses execute_level_task_selection.
   // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
   execute_level_tasks: {
