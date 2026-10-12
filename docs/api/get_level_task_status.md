@@ -26,17 +26,21 @@ const status = await api.get_level_task_status({
 | --- | --- | --- |
 | self_id / client_type | number / string | 账号与协议 |
 | level | number | 当前 QQ 等级，未同步时为 0 |
-| total_days | number | 今日总加速天数 |
-| base_days | number | 日常任务天数 |
-| vip_multiplier | number | 会员加速倍数 |
-| extra_days | number | 额外任务天数，不包含独立会员成长任务 |
+| source | string | 可选；Linux 独立任务查询为 `linux_web` |
+| daily_totals_available | boolean | 可选；false 表示下列四项今日汇总为 null，任务状态仍有效 |
+| total_days | number 或 null | 今日总加速天数 |
+| base_days | number 或 null | 日常任务天数 |
+| vip_multiplier | number 或 null | 会员加速倍数 |
+| extra_days | number 或 null | 额外任务天数，不包含独立会员成长任务 |
 | active_days_baseline | number 或 null | 当前等级基线的活跃天数：level² + 4 × level |
-| estimated_upgrade_days | number 或 null | 从当前等级基线至下一级的加速活跃天数差：2 × level + 5 |
-| progress_basis | string | 固定 level_baseline，明确是等级基线估算 |
+| estimated_upgrade_days | number 或 null | 距离下一级的加速活跃天数；计算口径见 progress_basis |
+| progress_basis | string | level_baseline 为等级最低基线估算；linux_current_level_progress 为 Linux 返回的实际等级进度 |
 | refresh_requested | boolean | 本次是否请求实时查询 |
 | tasks | array | 日常、额外、会员免费任务的状态列表 |
 
-天数和会员倍数均已从 QQ 面板的十分位数值换算，无需调用方再次除以 10。总加速天数直接取 QQ 面板汇总，不由任务列表自行相加。未知等级的两项进度返回 null；预计升级口径与页面一致，是已含加速的活跃天数差，单位为活跃天数。
+汇总为 null 表示未知，不是 0；不能从任务列表自行推算。Linux 查询只使用对应 Linux 会话，不要求同号 Android 在线。
+
+天数和会员倍数均已从 QQ 面板的十分位数值换算，无需调用方再次除以 10。总加速天数直接取 QQ 面板汇总，不由任务列表自行相加。未知等级的两项进度返回 null；预计升级是已含加速的活跃天数差，单位为活跃天数。
 
 ### tasks 列表项
 

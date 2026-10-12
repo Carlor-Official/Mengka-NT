@@ -647,6 +647,7 @@ const apiDefs = {
   get_level_task_accounts: { wait: true, build: () => ({}) },
   get_level_task_account: { wait: true, build: (options = {}) => ({ ...options }) },
   get_level_task_panel: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
+  // daily_totals_available=false means daily total fields are null; preserve unknown values.
   get_level_task_status: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
   get_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   update_level_task_settings: { wait: true, build: (options = {}) => ({ ...options }) },
@@ -860,7 +861,7 @@ const apiDefs = {
     wait: true,
     build: (self_id, flag, approve = true, remark = '') => ({ self_id, flag, approve, remark }),
   },
-  // QQ 原始等级面板；is_vip_task 不等于付费。完整面板与会员签到使用 get_level_task_panel；查询不提交任务。
+  // QQ 等级面板；is_vip_task 不等于付费。Linux 独立读取任务；daily_totals_available=false 时汇总为 null。查询不提交任务。
   get_level_tasks: {
     wait: true,
     build: (self_id) => ({ self_id }),

@@ -106,6 +106,14 @@ for (const mode of ['forward', 'reverse']) {
       Object.assign(statusPayload, { level: 0, active_days_baseline: null, estimated_upgrade_days: null })
       assert.deepEqual(await api.get_level_task_status({ ...target, refresh: false }), statusPayload, 'SDK must preserve unknown progress, never invent completion')
       assert.equal(received.filter(message => message.action === 'get_level_task_status').length, 2, 'query SDK must not retry or submit tasks')
+      Object.assign(statusPayload, { client_type: 'linuxqq', source: 'linux_web', daily_totals_available: false,
+        total_days: null, base_days: null, vip_multiplier: null, extra_days: null })
+      const linuxStatus = await api.get_level_task_status({ self_id:123456, client_type:'linuxqq', refresh:true })
+      assert.deepEqual(linuxStatus, statusPayload, 'native Linux unknown totals must remain null')
+      Object.assign(panelPayload, { source:'linux_web', daily_totals_available:false, overall_info:{total_days:null,base_days:null,extra_days:null,vip_speed:null} })
+      const linuxPanel = await api.forProtocol('linuxqq').get_level_tasks(123456)
+      assert.equal(linuxPanel.overall_info.total_days,null)
+      assert.deepEqual(received.at(-1).params,{self_id:123456,client_type:'linuxqq'})
     } finally {
       socket?.terminate()
       if (mode === 'forward') api?.disconnect()

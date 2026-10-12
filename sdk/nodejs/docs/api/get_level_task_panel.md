@@ -23,8 +23,11 @@ const result = await api.get_level_task_panel({
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `payload` | object | 面板数据，基础字段见 [get_level_tasks](get_level_tasks.md#返回值) |
+| `payload.daily_totals_available` | boolean | 可选；false 表示汇总未知，`overall_info` 数值为 null，任务列表仍可用 |
 | `payload.member_info.member_task_list` | object[] | Android 会员签到任务 |
 | `settings` | object | 自动执行设置，字段见 [get_level_task_settings](get_level_task_settings.md#返回值) |
+
+Linux 只使用当前 Linux 账号会话。任务数量及执行能力按当前协议返回；执行前检查 `can_execute`。
 
 ### 管理任务字段
 
