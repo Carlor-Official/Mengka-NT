@@ -588,7 +588,7 @@ const apiDefs = {
     timeout: 60 * 1000,
     build: (self_id, user_id, file_path) => ({ self_id, user_id, file_path }),
   },
-  // 上传群语音，接受 FFmpeg 可解码的常见格式，后端负责转码和生成波形。
+  // 上传群语音，接受 MP3 或 SILK_V3 路径/URL；Silk 不重复编码。
   upload_group_voice: {
     wait: true,
     timeout: 5 * 60 * 1000,
