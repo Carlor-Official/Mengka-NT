@@ -64,3 +64,5 @@ const result = await api.get_pet_profile({
 数值字段缺失按 0 返回，字符串缺失为空字符串，性格属性列表缺失为空数组。两处战力分别读取各自协议字段，不用某处战力覆盖另一处。缓存降级仍只包含 `pet_id`、`user_id`、`pet_name`、`avatar_url`、`source="cache"`、`partial=true`。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。
+
+自身宠物功能可直接通过 `get_pet_profile` 获取实际 `pet_id`，再读取数值或活动；无需把好友／陌生人目录作为前置查询。

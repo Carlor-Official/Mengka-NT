@@ -34,3 +34,7 @@ const result = await api.get_pet_pk_strangers({
 friends[]、next_cursor、has_more。条目包含 pet_id、pet_name、user_id、nickname、pet_status、dominant_type、displayed_pk_power。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。
+
+## 版本限制
+
+服务返回 `1000120` 时，本次目录查询失败，不会用普通 QQ 好友或空列表冒充宠物目录。已有真实 `pet_id` 时，可直接调用 `get_pet_vitals`、`get_pet_pk_power` 或传入 `pet_id` 调用 `get_friend_pet_profile`，无需先查目录。

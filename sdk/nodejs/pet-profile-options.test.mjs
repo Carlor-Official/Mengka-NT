@@ -20,6 +20,7 @@ test('pet directory contract exposes optional numeric mode only for strangers', 
 for (const mode of ['forward', 'reverse']) {
   test(`${mode} pet options and extended profile survive transport unchanged`, { timeout: 10000 }, async () => {
     const requests = []
+    const friend = {pet_id:'67890-known',friend_uin:'67890',source:'cached_pet_id',partial:true,vitals:{hunger:73}}
     const profile = {power:120, personality_attributes:[{name:'聪明', value:12.5}], personality_attribute_count:4,
       career:{name:'学生', open_url:'https://example.com/career', icon_url:''}, pk_power:{dominant_type:2, power:121}, source:'profile'}
     let api, server, socket
@@ -28,7 +29,7 @@ for (const mode of ['forward', 'reverse']) {
       if (msg.type === 'auth') ws.send(JSON.stringify({type:'auth_ok'}))
       if (msg.type !== 'action') return
       requests.push(msg)
-      ws.send(JSON.stringify({type:'action_result', id:msg.id, ok:true, data:msg.action === 'get_pet_profile' ? profile : {}}))
+      ws.send(JSON.stringify({type:'action_result', id:msg.id, ok:true, data:msg.action === 'get_pet_profile' ? profile : msg.action === 'get_friend_pet_profile' ? friend : {}}))
     }
     try {
       if (mode === 'forward') {
@@ -54,12 +55,14 @@ for (const mode of ['forward', 'reverse']) {
         ['get_pet_pk_strangers', {}], ['get_pet_pk_strangers', {mode:0}], ['get_pet_pk_strangers', {mode:6, cursor:'next'}],
         ['get_pet_interaction_messages', {}], ['get_pet_interaction_messages', {limit:0}], ['get_pet_interaction_messages', {limit:1000}],
         ['get_pet_profile', {}],
+        ['get_friend_pet_profile', {friend_uin:'67890'}],
       ]
       for (const [action, extras] of cases) {
         const result = await scoped[action]({self_id:12345, ...extras})
         assert.deepEqual(requests.at(-1).params, {self_id:12345, ...extras, client_type:'android'})
         assert.equal(requests.at(-1).action, action)
         if (action === 'get_pet_profile') assert.deepEqual(result, profile)
+        if (action === 'get_friend_pet_profile') assert.deepEqual(result, friend)
       }
       assert.equal(requests.length, cases.length)
     } finally {

@@ -593,7 +593,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "pkFriendList",
-    "description": "模式 6；只返回服务端好友条目，不使用普通 QQ 好友兜底。",
+    "description": "读取宠物好友目录；目录受版本限制时返回错误，已有真实 pet_id 可直接查询数值。",
     "fields": [
       {
         "name": "self_id",
@@ -621,7 +621,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "pkFriendList",
-    "description": "可选 mode，默认 4；模式 4 过滤无效条目，单页最多 100 条。",
+    "description": "读取宠物陌生人目录；目录受版本限制时返回错误，不生成替代条目。",
     "fields": [
       {
         "name": "self_id",
@@ -739,7 +739,7 @@
     "group": "QQ 宠物",
     "contributor": "星空花海",
     "commands": "otherPet / display",
-    "description": "查询好友档案与基础数值；已知目标宠物 ID 时可直接查询基础数值。",
+    "description": "查询好友档案或实时数值；支持显式 pet_id，并在低版本错误时复用当前账号 15 分钟内已验证的好友 ID。",
     "fields": [
       {
         "name": "self_id",

@@ -31,3 +31,5 @@ const result = await api.get_pet_vitals({
 pet_id、mood、hunger、cleanliness、total、gold。成功 OIDB 响应中，缺失的 `mood`、`hunger`、`cleanliness`、`total`、`gold` 数值字段均按 `0` 返回；服务端错误、超时或无效协议响应仍返回失败。
 
 参数或业务错误会使调用失败。写入请求结果未知时，请先读取当前状态确认，勿直接重复提交。
+
+自身宠物功能可直接通过 `get_pet_profile` 获取实际 `pet_id`，再读取数值或活动；无需把好友／陌生人目录作为前置查询。

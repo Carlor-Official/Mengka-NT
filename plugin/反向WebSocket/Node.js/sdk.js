@@ -109,6 +109,7 @@ const apiDefs = {
   get_pet_interaction_messages: { wait: true, timeout: 65000, build: (options) => { if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('宠物 API 仅接受对象参数'); return { ...options }; } },
   get_pet_pk_power: { wait: true, timeout: 65000, build: (options) => { if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('宠物 API 仅接受对象参数'); return { ...options }; } },
   poke_friend_pet: { wait: true, timeout: 65000, build: (options) => { if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('宠物 API 仅接受对象参数'); return { ...options }; } },
+  // source=cached_pet_id is a partial live read using an account-scoped verified ID.
   get_friend_pet_profile: { wait: true, timeout: 65000, build: (options) => { if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('宠物 API 仅接受对象参数'); return { ...options }; } },
   feed_friend_pet: { wait: true, timeout: 65000, build: (options) => { if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('宠物 API 仅接受对象参数'); return { ...options }; } },
   bathe_friend_pet: { wait: true, timeout: 65000, build: (options) => { if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('宠物 API 仅接受对象参数'); return { ...options }; } },

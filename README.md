@@ -35,7 +35,7 @@
 
 官网：[萌卡 NT](https://mknt.net/) · [官网与部署文档](https://mknt.net/guide/)
 
-最新正式版本：**2.5.21**，查看[v2.5.21 更新说明](release-notes/release-notes-v2.5.21.md) · [历史更新说明](release-notes/)。
+最新正式版本：**2.5.22**，查看[v2.5.22 更新说明](release-notes/release-notes-v2.5.22.md) · [历史更新说明](release-notes/)。
 
 v2.5.13 修复安卓任务误过滤，恢复会员签到、电脑在线任务及在线进度显示，并包含此前登录与账号管理修复。v2.5.9 新增 Linux 账号密码登录，更新双协议等级任务与原生媒体处理，并完善登录凭证 API。Android 仅保留 9.1.70，Linux 保留 3.2.32；[升级说明](docs/upgrade-v2.5.9.md)。
 
