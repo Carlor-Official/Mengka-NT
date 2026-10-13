@@ -1,6 +1,6 @@
 # 更新说明
 
-最新正式版本：[v2.5.22](release-notes-v2.5.22.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
+最新正式版本：[v2.6.0](release-notes-v2.6.0.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
 
 后续版本更新说明统一放在本目录。
 

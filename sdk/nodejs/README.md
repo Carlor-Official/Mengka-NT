@@ -8,7 +8,7 @@
 
 v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，保持服务令牌认证。普通 QQ 登录、心跳、换票不受此公共 API 限制。
 
-当前 SDK 版本：**v2.5.22**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.5.22 更新说明](../../release-notes/release-notes-v2.5.22.md)。
+当前 SDK 版本：**v2.6.0**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.6.0 更新说明](../../release-notes/release-notes-v2.6.0.md)。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -420,3 +420,7 @@ const { clientkey } = await api.get_clientkey(self_id, 'linux')
 两个方法的第二参数选择 `android` 或 `linux`，省略时保留 Android 行为；也支持 `api.forProtocol('linux')`。原始 action 使用已有 `client_type` 字段（`android` / `linuxqq`），不使用 `platform`。Linux skey 来自已校验账号的网页 Cookie；clientkey 支持到期刷新，继续返回十六进制。输出仍为 `{ skey }` / `{ clientkey }`。
 
 本次等级执行器以 1011 附件支持的任务为准。附件未实现的旧擂台、元宝、电脑在线及会员签到执行项不再开放执行，已有记录保留，API 的 `available/can_execute` 是当前能力的依据。此前版本的执行说明不能作为本开发分支的可用性判断。
+
+## 升级说明
+
+安卓手机和平板协议可以同时提供多个版本，调用 get_protocol_list 后同时匹配 type 与 ver，并使用返回项的 id 作为 protocol_id。不要依赖数组位置或只匹配设备类型。框架算法授权在初始化或升级后自动登记，无需通过 SDK 配置独立算法账号。
