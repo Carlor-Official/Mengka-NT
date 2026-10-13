@@ -50,3 +50,20 @@ test('native plugin rejects undeclared actions before sending', async () => {
   await assert.rejects(plugin.ctx.actions.call('send_msg', {}), /not declared/)
   plugin.close()
 })
+
+test('native IPC rejects old ready frames rather than supplying compatibility defaults', async () => {
+  for (const frame of [
+    { type: 'ready', transport: 'native-ipc-v0', api_version: '0' },
+    { type: 'ready', transport: 'native-ipc-v1', api_version: '1' },
+    { type: 'ready', transport: 'native-ipc-v1', api_version: '1', config_revision: '0', config: {} },
+  ]) {
+    const input = new PassThrough()
+    const plugin = createNativePlugin({ pluginId: 'native-fixture', version: '1.0.0', actions: [], events: [], input, output: new PassThrough(), allowMissingManagedStorage: true })
+    const started = plugin.start()
+    const rejected = assert.rejects(started, /version mismatch|contract is incomplete/)
+    input.write(JSON.stringify(frame) + '\n')
+    await rejected
+    assert.equal(plugin.ctx.ready, false)
+    plugin.close()
+  }
+})

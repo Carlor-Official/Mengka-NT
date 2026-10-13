@@ -35,3 +35,13 @@ test('both SDK documentation copies require package data rather than legacy edit
     for (const field of ['mengka-plugin.json', 'notes', 'runtime.admin', '缺少资料']) assert.ok(doc.includes(field), `${file}: ${field}`)
   }
 })
+
+test('only current explicit package and IPC versions are accepted', () => {
+  for (const schema of [0, 1, 2, 4]) assert.throws(() => validatePluginPackageManifest({ ...example, schema }))
+  for (const transport of ['', undefined, 'native-ipc-v0', 'websocket-v0']) {
+    assert.throws(() => validatePluginPackageManifest({ ...example, runtime: { ...example.runtime, transport } }))
+  }
+  for (const api_version of ['', undefined, '0', '2']) {
+    assert.throws(() => validatePluginPackageManifest({ ...example, runtime: { ...example.runtime, api_version } }))
+  }
+})

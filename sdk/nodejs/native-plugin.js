@@ -106,7 +106,8 @@ export function createNativePlugin(options = {}) {
     try { message = JSON.parse(line) } catch { throw new Error('framework sent invalid native IPC JSON') }
     if (message.type === 'ready') {
       if (message.transport !== 'native-ipc-v1' || message.api_version !== API_VERSION) throw new Error('framework native IPC version mismatch')
-      configRevision = Number(message.config_revision) || 0
+      if (!Number.isSafeInteger(message.config_revision) || message.config_revision < 0 || !message.config || typeof message.config !== 'object' || Array.isArray(message.config)) throw new Error('framework native IPC ready contract is incomplete')
+      configRevision = message.config_revision
       configSnapshot = immutableConfig(message.config)
       ready = true
       readyResolve?.(ctx)
@@ -137,7 +138,7 @@ export function createNativePlugin(options = {}) {
       return
     }
     if (message.type === 'config') {
-      const revision = Number(message.revision)
+      const revision = message.revision
       if (!Number.isSafeInteger(revision) || revision <= configRevision || !message.data || typeof message.data !== 'object' || Array.isArray(message.data)) return
       configRevision = revision
       configSnapshot = immutableConfig(message.data)

@@ -4,14 +4,16 @@
 
 等级加速面板继续过滤付费推广任务。`is_vip_task` 不能等同于需要付费，客户端应按 `is_paid_task` 区分价格分类、按 `can_execute` 判断本次可执行状态。
 
-v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，不恢复白名单或专属 Key。普通 QQ 登录、心跳、换票不受此公共 API 限制。
+当前仅支持 Schema 3 安装包、显式 `websocket-v1` 和 `native-ipc-v1`（API 1）。旧清单、隐式传输及启动文件自动发现已移除；请同步升级框架和 SDK。
 
-当前 SDK 版本：**v2.5.20**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.5.20 更新说明](../../release-notes/release-notes-v2.5.20.md)。
+v2.5.3 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，保持服务令牌认证。普通 QQ 登录、心跳、换票不受此公共 API 限制。
+
+当前 SDK 版本：**v2.5.21**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.5.21 更新说明](../../release-notes/release-notes-v2.5.21.md)。
 
 ## v2.4.1：原生插件协议 v1
 
 - 新增 `native-plugin.js`，使用 stdin/stdout JSON 行协议接收生命周期、配置和事件并调用框架 Action。
-- 原生安装包最低框架版本为 v2.4.1；已有正向、反向 WebSocket 插件保持兼容。
+- 原生安装包最低框架版本为 v2.4.1；保留当前正向、反向 WebSocket 协议。
 - 敏感配置由框架加密保存，SDK 仅接收运行时快照，禁止写入日志。
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
@@ -22,7 +24,7 @@ v2.5.4 起，`grab_red_packet`（领取红包）要求 QQ 16 级及以上，网�
 
 v2.5.4 起，新导入包必须随包提供 schema 3 `mengka-plugin.json`，包含名称、ID、版本、版本说明 `notes` 和显式布尔值 `runtime.admin`。不再由用户手填，缺少资料则拒绝安装；既有插件及业务数据保留。使用 `package-manifest.js` 的 `validatePluginPackageManifest(manifest)` 打包前校验，参见[安装规范](../../docs/managed-plugins.md)。
 
-`native-plugin.js` 提供无需端口、WebSocket 地址和服务令牌的原生插件上下文。框架通过匿名进程管道传递 Action、事件和生命周期，插件日志写入 stderr。安装包 `mengka-plugin.json`、权限声明和打包要求见[原生插件协议](../../docs/native-plugins.md)。现有正向、反向 WebSocket 接口保持兼容。
+`native-plugin.js` 提供无需端口、WebSocket 地址和服务令牌的原生插件上下文。框架通过匿名进程管道传递 Action、事件和生命周期，插件日志写入 stderr。安装包 `mengka-plugin.json`、权限声明和打包要求见[原生插件协议](../../docs/native-plugins.md)。保留当前正向、反向 WebSocket 接口。
 
 官方用户系统原生 Linux AMD64 外发包（版本 `2.0.17`，最低框架 `2.4.1`）在[用户系统独立 Release](https://github.com/Carlor-Official/Mengka-User-System/releases/tag/v2.0.17-native-ipc)发布。下载后在框架「插件 → 插件导入」上传，并使用同一 Release 的 `linux-amd64-native.json` 与 `SHA256SUMS.txt` 完成校验。
 
@@ -58,7 +60,7 @@ task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改�
 
 ## v2.2.0：普通插件进程与公开原始发包
 
-`send_packet` 不再要求插件白名单或专属 Key，普通已认证 WS 连接即可调用。托管插件继承框架运行用户，移除独立低权限进程和隔离 IPC；请同步更新框架与 SDK。旧版运行方式仅作为下方对应版本的历史记录。
+`send_packet` 普通已认证 WS 连接即可调用。托管插件继承框架运行用户，移除独立低权限进程和隔离 IPC；请同步更新框架与 SDK。旧版运行方式仅作为下方对应版本的历史记录。
 
 ## 双模式部署与管理员免登 SDK
 
@@ -108,7 +110,7 @@ get_pet_pk_status 成功时返回明确的 finished 布尔值；settle_pet_pk �
 
 ## v2.0.8：在线 API 调试
 
-v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/api-debugger.md)，支持 227 个 API 的参数填写、JSON / Python / JavaScript / cURL 预览、复制和手动发送。调试使用已启动的正向 WS 服务，沿用服务令牌、账号协议、专属 Key 与审计链路。
+v2.0.8 引入在线调试功能。控制台新增[在线 API 调试](../../docs/api-debugger.md)，支持 227 个 API 的参数填写、JSON / Python / JavaScript / cURL 预览、复制和手动发送。调试使用已启动的正向 WS 服务，沿用服务令牌和账号协议。
 
 本版没有新增或更名公开 action、事件或 SDK 方法。输入变化只刷新代码；发送失败、超时、断线及 401 均不会自动重放。前后端须同时升级到 v2.0.8，SDK 无需为了调试功能改变调用参数。
 
@@ -149,7 +151,7 @@ const result = await api.forProtocol('android').send_friend_request(
 ```
 
 `self_id` 为发起账号，`user_id` 为目标 QQ。`message` 和 `remark` 可省略，分别限制为 UTF-8 127 字节。
-SDK 默认发送明确的 `client_type: 'android'`，Linux 作用域发送 `linuxqq`。底层调用必须提供 `client_type`，不允许自行携带签名、专属 Key 或节点绑定字段。
+SDK 默认发送明确的 `client_type: 'android'`，Linux 作用域发送 `linuxqq`。底层调用必须提供 `client_type`，不允许自行携带签名或节点绑定字段。
 
 v2.0.6 后端的 Linux 主动好友申请已通过两个测试账号、跨节点、双协议接收和双正向 WS 验证，覆盖待审批及无需验证的直接添加。Linux 使用当前会话的原生 UID 请求，当前仍需已解析的目标 UID；无 UID 缓存的陌生账号尚未验收，解析失败明确报错。不借用 Android 会话、不自动降级重发；SDK 方法和参数不变。
 
@@ -295,7 +297,7 @@ await api.forProtocol('linuxqq').call('action_name', { self_id, ...params }, { t
 
 `api.callAction` 与 `api.call` 等价。可用接口以框架返回的能力列表为准。
 
-send_packet 是普通公开 API，已认证的正向、反向及托管插件都可使用 `api.send_packet(self_id, cmd, data, true, reserve)`，无需白名单或专属 Key。参数无效、账号离线和协议错误会返回失败，失败请求不会自动重放。QQ 宠物接口继续使用普通插件 API。
+send_packet 是普通公开 API，已认证的正向、反向及托管插件都可使用 `api.send_packet(self_id, cmd, data, true, reserve)`，使用服务令牌认证。参数无效、账号离线和协议错误会返回失败，失败请求不会自动重放。QQ 宠物接口继续使用普通插件 API。
 
 接入方式见[插件 API 使用说明](docs/plugin-api-authorization.md)，基础参数见[send_packet](docs/api/send_packet.md)。
 

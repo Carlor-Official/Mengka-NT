@@ -16,7 +16,7 @@ function fixture(t) {
   const data = join(root, 'data'), priv = join(root, 'private'); mkdirSync(data); mkdirSync(priv)
   const ws = join(priv, 'ws.token'), admin = join(priv, 'admin.token'), file = join(priv, 'connection.json')
   writeFileSync(ws, randomBytes(32).toString('hex')); writeFileSync(admin, randomBytes(32).toString('hex'))
-  const metadata = { schema: 1, instance_id: 'demo-instance', websocket_url: 'ws://127.0.0.1:3001/', token_file: ws, data_directory: data, allowed_directories: [] }
+  const metadata = { schema: 1, transport: 'websocket-v1', instance_id: 'demo-instance', websocket_url: 'ws://127.0.0.1:3001/', token_file: ws, data_directory: data, allowed_directories: [] }
   writeFileSync(file, JSON.stringify(metadata))
   const env = { MENGKA_MANAGED_V1: '1', MENGKA_PLUGIN_CONNECTION_FILE: file, MENGKA_PLUGIN_DATA_DIR: data, MENGKA_PLUGIN_ADMIN_HOST: '127.0.0.1', MENGKA_PLUGIN_ADMIN_PORT: '3003', MENGKA_PLUGIN_ADMIN_ORIGIN: 'http://127.0.0.1:18443', MENGKA_PLUGIN_ADMIN_TOKEN_FILE: admin }
   return { env, root, file, metadata }

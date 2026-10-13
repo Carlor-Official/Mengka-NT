@@ -28,7 +28,7 @@
 
 另外保留 `schema`、`min_framework`、`author`、`runtime.entry` 等运行要求；`runtime.transport` 声明 `native-ipc-v1` 或 `websocket-v1`，原生 IPC 还需 `api_version: "1"`。示例见 SDK 的 `mengka-plugin.example.json`，打包前可调用 `validatePluginPackageManifest`（`sdk/nodejs/package-manifest.js`）检查资料。
 
-资料缺失、空白或类型错误会提示“缺少资料”及具体字段，不创建插件实例、不启动安装，不接受 multipart 手动补填。重复/大小写冲突的JSON字段、重复描述文件也会被拒绝。旧版包必须由开发者补齐并重新打包；已经安装的插件和业务数据不会因此被删除。文件接收阶段只能暂存待校验包，拒绝后会清除该次暂存，不是已导入安装。
+资料缺失、空白或类型错误会提示“缺少资料”及具体字段，不创建插件实例、不启动安装，不接受 multipart 手动补填。重复/大小写冲突的JSON字段、重复描述文件也会被拒绝。旧版包必须由开发者补齐并重新打包；不符合当前格式的已安装插件不会继续启动，业务数据保留。文件接收阶段只能暂存待校验包，拒绝后会清除该次暂存，不是已导入安装。
 
 导入为本地管理员HTTP操作，不新增或改变插件 Action、WS/IPC返回契约；可信来源确认、包绑定的权限变更审批、同ID仅接受更高版本、数据保留和文件完整性检查继续生效。
 
@@ -42,7 +42,7 @@
 
 ## 自动连接与数据
 
-导入后的托管插件会收到框架生成的运行配置。原生 `native-ipc-v1` 插件使用匿名进程管道，不再创建 WebSocket 地址和服务令牌；旧版托管插件继续使用下列连接文件：
+导入后的托管插件会收到框架生成的运行配置。原生 `native-ipc-v1` 插件使用匿名进程管道，不再创建 WebSocket 地址和服务令牌；当前 `websocket-v1` 托管插件使用下列连接文件：
 
 | 环境变量 | 用途 |
 | --- | --- |
@@ -53,7 +53,7 @@
 | `MENGKA_PLUGIN_ADMIN_TOKEN_FILE` | 内部管理认证令牌文件 |
 | `MENGKA_PLUGIN_ADMIN_ORIGIN` | 浏览器访问插件后台的独立来源 |
 
-连接文件始终包含 `transport`、`instance_id`、`data_directory` 和 `allowed_directories`；旧版 WebSocket 传输另含 `websocket_url` 与 `token_file`。插件每次启动重新读取，不得把令牌发给浏览器、写入日志或固定保存。原生插件格式和 SDK 见[原生插件协议](../../../docs/native-plugins.md)。
+连接文件始终包含 `transport`、`instance_id`、`data_directory` 和 `allowed_directories`；`websocket-v1` 传输另含 `websocket_url` 与 `token_file`。插件每次启动重新读取，不得把令牌发给浏览器、写入日志或固定保存。原生插件格式、Schema 配置和 SDK 见[原生插件协议](native-plugins.md)。
 
 Node.js 插件可直接使用 SDK 助手：
 
@@ -108,3 +108,9 @@ Environment="MENGKA_PLUGIN_GATEWAY_LISTEN=127.0.0.1:17879"
 彻底删除清理该实例的托管目录（包括默认业务数据、日志）、加密配置、当前独占导入包、入口映射和管理记录，不可撤销。自定义外部数据目录及额外授权目录不会删除，管理员须自行备份和清理；旧版升级留下且未被当前记录引用的导入包不做猜测式批量删除。这是本地管理员 API，不是新增插件 Action，Node.js 插件 SDK 接口不变。
 
 备份框架 `data`、预留插件目录、外置业务数据目录及网关配置。升级或回滚前停止框架，不要复制运行中的 SQLite 文件，也不要用空目录覆盖现有数据。
+
+## 当前接入边界
+
+仅支持显式声明的 `websocket-v1`（正向、反向 WS）和 `native-ipc-v1`（`api_version: "1"`）。安装包根目录必须包含完整的 `schema: 3` `mengka-plugin.json`，必须声明 `runtime.transport`、`runtime.entry`、`notes` 和 `runtime.admin`。不再读取 `mengka-managed.json`、猜测启动程序、把缺失 transport 当成 WS，或跳过历史安装记录缺失的文件校验。
+
+每次启动和更新都复核清单、运行契约及完整文件记录。旧包需由开发者按当前 SDK 重新打包并上传；原有业务数据可以保留，框架不会替旧协议补默认字段。WS 必须建立已认证连接才视为就绪。连接文件 `schema` 固定为 `1` 且必须显式声明 transport；它与安装包的 `schema: 3` 是不同的结构。

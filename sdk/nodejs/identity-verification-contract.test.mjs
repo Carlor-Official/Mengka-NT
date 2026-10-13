@@ -10,7 +10,7 @@ test('verification responses preserve explicit completion and new challenges thr
   let result
   output.on('data', raw => {
     const request = JSON.parse(raw.toString())
-    if (request.type === 'hello') input.write(JSON.stringify({ type: 'ready', transport: 'native-ipc-v1', api_version: '1' }) + '\n')
+    if (request.type === 'hello') input.write(JSON.stringify({ type: 'ready', transport: 'native-ipc-v1', api_version: '1', config_revision: 0, config: {} }) + '\n')
     if (request.type === 'action') input.write(JSON.stringify({ type: 'action_result', id: request.id, ok: true, data: result }) + '\n')
   })
   try {

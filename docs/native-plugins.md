@@ -1,6 +1,6 @@
 # 萌卡 NT 原生插件协议 v1
 
-原生插件由框架安装、启动和停止，通过匿名进程管道接收事件并调用框架 Action。它不监听端口、不连接 WebSocket，也不需要用户填写框架地址或服务令牌。现有正向、反向 WebSocket 插件继续兼容。
+原生插件由框架安装、启动和停止，通过匿名进程管道接收事件并调用框架 Action。它不监听端口、不连接 WebSocket，也不需要用户填写框架地址或服务令牌。另支持当前正向、反向 WebSocket 接入。
 
 ## 安装包
 
@@ -56,17 +56,7 @@
 
 原生插件协议从萌卡 NT v2.4.1 开始提供。Schema 3 安装包必须设置 `min_framework` 为 `2.4.1` 或更高版本；v2.4.0 及更早版本不能运行该传输。
 
-### 官方用户系统外发包
-
-已验证的萌卡 NT 用户系统原生包在[用户系统独立 Release](https://github.com/Carlor-Official/Mengka-User-System/releases/tag/v2.0.17-native-ipc)发布，版本为 `2.0.17`，最低框架版本为 `2.4.1`：
-
-- [Linux AMD64 外发包](https://github.com/Carlor-Official/Mengka-User-System/releases/download/v2.0.17-native-ipc/mengka-user-system-2.0.17-managed-native-linux-amd64.tar.gz)
-- [包清单](https://github.com/Carlor-Official/Mengka-User-System/releases/download/v2.0.17-native-ipc/linux-amd64-native.json)
-- [SHA-256 校验文件](https://github.com/Carlor-Official/Mengka-User-System/releases/download/v2.0.17-native-ipc/SHA256SUMS.txt)
-
-用户下载后在框架「插件 → 插件导入」上传并确认权限；插件不会从官网清单自动获取，也不需要额外 WebSocket 端口。
-
-下一版导入规范要求包内名称、ID、版本、`notes` 版本说明和 `runtime.admin` Web管理端标记完整；无Web管理端也必须明确写 `false`。用户不再补填这些资料。缺少资料时拒绝导入，开发者应重新打包，不用简介 `description` 替代版本说明。完整规范和打包前校验见[托管插件说明](managed-plugins.md)。
+安装包的 `name`、`plugin_id`、`version`、`notes` 和 `runtime.admin` 必须完整，缺少资料时拒绝导入。导入与每次启动只接受 `schema: 3`、显式 `native-ipc-v1` 和 `api_version: "1"`；不识别旧清单、不猜测入口、不接受旧 IPC 版本。完整规范见[托管插件说明](managed-plugins.md)。
 
 管理员还必须明确确认安装包来自可信来源；安装完成后框架记录完整程序文件指纹，并在每次启动前复核。任何文件变化都会阻止启动，此时先“卸载并保留数据”，再重新上传安装包。更高版本新增 Action、事件权限、Web 管理端或切换传输方式时，首次上传只展示权限差异，必须由管理员再次确认后才会更新；框架不会自动重试。
 
@@ -80,7 +70,7 @@
 {"type":"hello","api_version":"1","plugin_id":"native-example","version":"1.0.0"}
 ```
 
-框架核对包内身份后返回 `ready`。Action 请求、`action_result`、`action_stream` 和事件数据沿用现有插件契约；具有副作用的失败或超时请求不会自动重放。
+框架核对包内身份后返回 `ready`，必须包含 `transport: "native-ipc-v1"`、`api_version: "1"`、非负整数 `config_revision` 和对象 `config`。无配置时也返回 `config: {}`；SDK 不为旧版缺失字段补默认值。Action 请求、`action_result`、`action_stream` 和事件数据沿用现有插件契约；具有副作用的失败或超时请求不会自动重放。
 
 只有 `runtime.actions` 中声明且框架实际支持的 Action 可以调用。`runtime.events` 当前使用七类事件权限：`group_message`、`friend_message`、`request`、`group_event`、`friend_event`、`system_event`、`bot_offline`。
 

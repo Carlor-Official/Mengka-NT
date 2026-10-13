@@ -6,7 +6,7 @@ export function loadManagedConnection(connectionFile = process.env.MENGKA_PLUGIN
   if (!connectionFile || !isAbsolute(connectionFile)) throw new Error('Missing absolute managed connection file')
   if (statSync(connectionFile).size > 98304) throw new Error('Managed connection file is too large')
   const connection = JSON.parse(readFileSync(connectionFile, 'utf8'))
-  if (connection.schema !== 1 || !/^[a-zA-Z0-9._-]+$/.test(connection.instance_id || '')) throw new Error('Unsupported managed connection')
+  if (connection.schema !== 1 || connection.transport !== 'websocket-v1' || !/^[a-zA-Z0-9._-]+$/.test(connection.instance_id || '')) throw new Error('Unsupported managed connection')
   const url = new URL(connection.websocket_url)
   if (url.protocol !== 'ws:' || url.hostname !== '127.0.0.1' || !url.port || url.username || url.password || url.search || url.hash || !['', '/'].includes(url.pathname)) throw new Error('Managed WebSocket must use loopback')
   if (!isAbsolute(connection.token_file || '') || dirname(resolve(connection.token_file)) !== dirname(resolve(connectionFile))) throw new Error('Token file must remain in the private connection directory')
@@ -21,7 +21,7 @@ export function loadManagedConnection(connectionFile = process.env.MENGKA_PLUGIN
 export function loadManagedStorage(connectionFile = process.env.MENGKA_PLUGIN_CONNECTION_FILE) {
   if (!connectionFile || !isAbsolute(connectionFile) || statSync(connectionFile).size > 98304) throw new Error('Invalid managed connection file')
   const value = JSON.parse(readFileSync(connectionFile, 'utf8'))
-  if (value.schema !== 1 || !isAbsolute(value.data_directory || '')) throw new Error('Invalid managed data directory')
+  if (value.schema !== 1 || !['websocket-v1', 'native-ipc-v1'].includes(value.transport) || !isAbsolute(value.data_directory || '')) throw new Error('Invalid managed data directory')
   const extra = value.allowed_directories || []
   if (!Array.isArray(extra) || extra.length > 32 || extra.some(path => typeof path !== 'string' || !isAbsolute(path))) throw new Error('Invalid managed allowed directories')
   const roots = [...new Set([value.data_directory, ...extra].map(path => {

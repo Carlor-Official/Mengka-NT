@@ -1,6 +1,6 @@
 # 插件 API 使用说明
 
-从 v2.2.0 起，框架已将 `send_packet` 开放为普通 API。通过服务令牌认证的正向、反向 WebSocket 插件均可调用，不要求托管运行、平台白名单、插件版本审批、框架实例绑定或用户专属 Key。
+从 v2.2.0 起，框架已将 `send_packet` 开放为普通 API。通过服务令牌认证的正向、反向 WebSocket 插件均可调用，调用前需通过服务令牌认证并满足接口的账号条件。
 
 ```js
 const responseHex = await connection.api.send_packet(selfId, command, packetHex, true)
