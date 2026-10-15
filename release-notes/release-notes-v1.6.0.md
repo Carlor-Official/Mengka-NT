@@ -1,10 +1,14 @@
 # 萌卡 NT v1.6.0
 
+## 更新
+
 v1.6.0 集中扩展了框架的消息、群聊、红包、账号资料与媒体能力。插件可以直接调用更多 QQ 原生功能，官网 API 目录与 Node.js SDK 已同步更新。
 
-## 新增 API
+## 新增
 
-### 消息与会话
+### 新增 API
+
+#### 消息与会话
 
 - `send_group_temp_msg`：通过共同群聊向非好友群成员发起临时会话，并保留来源群上下文。
 - `get_mini_app_ark`：生成可直接发送的小程序卡片数据。
@@ -14,12 +18,12 @@ v1.6.0 集中扩展了框架的消息、群聊、红包、账号资料与媒体�
 - `set_msg_emoji_like`、`fetch_emoji_like`、`get_emoji_likes`：添加、取消或查询群消息表情回应。
 - `set_input_status`：向好友同步正在输入或结束输入状态。
 
-### 群红包
+#### 群红包
 
 - `send_group_red_packet`：发送拼手气、普通、专属、语音和口令五种群红包。
 - 红包发送支持金额、份数、祝福语、专属领取人以及发送前链路检查。
 
-### 好友、空间与账号资料
+#### 好友、空间与账号资料
 
 - `get_doubt_friends_add_request`、`set_doubt_friends_add_request`：查询并处理可疑好友申请。
 - `set_friend_add_request`：同意或拒绝好友申请，并可设置好友备注。
@@ -28,17 +32,26 @@ v1.6.0 集中扩展了框架的消息、群聊、红包、账号资料与媒体�
 - `nc_get_user_status`：查询指定 QQ 的在线状态与扩展状态。
 - `set_online_status`、`set_diy_online_status`：设置普通在线状态或自定义状态。
 
-### 群文件与群资料
+#### 群文件与群资料
 
 - `rename_group_file`、`move_group_file`：重命名群文件或在群目录之间移动文件。
 - `set_group_portrait`：设置群头像。
 
-### 媒体与底层能力
+#### 媒体与底层能力
 
 - `get_rkey`、`nc_get_rkey`、`get_rkey_server`：获取私聊、群聊等媒体资源的访问凭据与过期信息。
 - `send_packet`：使用当前账号会话发送已组装的原生协议包。
 
-## API 优化
+### SDK 与能力目录
+
+- 官网 API 目录更新为 186 个公开 API、6 类事件，并按当前框架真实 action 展示和授权。
+- Node.js SDK 增至 117 个便捷方法，正向与反向连接的参数顺序保持一致。
+- 新增 `api.call` / `api.callAction` 通用入口；目录中没有便捷方法时，也可以按 action 和参数对象直接调用。
+- 官网授权快照仍决定插件实际可用的 API 与事件，SDK 方法不会绕过服务权限。
+
+## 优化
+
+### API 优化
 
 - `send_group_msg`、`send_friend_msg`：支持在消息段中直接传入 `reply` 实现原生引用回复，并统一兼容 QQ 自带表情与 Unicode Emoji。
 - `send_group_temp_msg`：发送前会校验共同群关系和成员身份；群聊禁止普通成员临时会话时，群主与管理员仍可按权限发送。
@@ -46,13 +59,6 @@ v1.6.0 集中扩展了框架的消息、群聊、红包、账号资料与媒体�
 - `get_group_red_packets`、`get_up_for_grabs`：统一返回当前群聊仍可领取的红包列表，便于自动发现和领取。
 - 群消息、好友消息和插件 action 的结果关联进一步收紧，降低并发调用时的超时、串包和重复处理风险。
 - API 超时信息会显示实际等待时长，长耗时的媒体、红包和文件接口不再统一显示为 30 秒。
-
-## SDK 与能力目录
-
-- 官网 API 目录更新为 186 个公开 API、6 类事件，并按当前框架真实 action 展示和授权。
-- Node.js SDK 增至 117 个便捷方法，正向与反向连接的参数顺序保持一致。
-- 新增 `api.call` / `api.callAction` 通用入口；目录中没有便捷方法时，也可以按 action 和参数对象直接调用。
-- 官网授权快照仍决定插件实际可用的 API 与事件，SDK 方法不会绕过服务权限。
 
 ## 升级说明
 

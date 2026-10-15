@@ -1,5 +1,7 @@
 # 萌卡 NT v2.1.6
 
+## 修复
+
 - 修复 QQ 宠物 API 请求缺少必要请求头，导致调试及插件调用返回 `msf logged-in request requires a custom reserve` 的问题。
 - 修复覆盖 30 项 QQ 宠物接口共用的请求发送入口，包括宠物档案查询及缓存回退。接口名称、参数和返回格式保持不变。
 
