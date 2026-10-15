@@ -8,8 +8,7 @@ test('all public SDK copies document server-owned level gates without adding cal
     const source = (await readFile(new URL(file, import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
     assert.match(source, /is_vip_task 不等于付费/)
     for (const action of actions) {
-      const prefix = action === 'grab_red_packet' ? '' : 'v2.6.5: '
-      assert.ok(source.includes(`// ${prefix}QQ >= 48; server-owned runtime level, unknown fails closed; no automatic retry.\n  ${action}: {`), `${file}:${action}`)
+      assert.ok(source.includes(`// QQ >= 48 (free) / >= 16 (plus); server-owned runtime level, unknown fails closed; no automatic retry.\n  ${action}: {`), `${file}:${action}`)
       const block = source.slice(source.indexOf(`  ${action}: {`)).split('\n  },')[0]
       assert.doesNotMatch(block, /qq_level|minimum_level|access_key/)
     }
@@ -19,5 +18,6 @@ test('all public SDK copies document server-owned level gates without adding cal
     const b = await readFile(new URL(`./docs/api/${action}.md`, import.meta.url), 'utf8')
     assert.equal(a, b)
     assert.match(a, /48 级/)
+    assert.match(a, /16 级/)
   }
 })

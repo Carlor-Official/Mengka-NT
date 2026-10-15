@@ -19,21 +19,7 @@ const result = await api.send_group_forward_msg(
 | `self_id` | number | 是 | 在线 Bot QQ 号 |
 | `group_id` | number | 是 | 目标群聊 ID |
 | `messages` | object[] | 是 | 合并转发节点数组 |
-NapCat 标准节点结构：
-
-```js
-{
-  type: 'node',
-  data: {
-    user_id: 123456789,
-    nickname: '示例用户',
-    time: 1710000000,
-    content: [{ type: 'text', data: { text: '内容' } }],
-  },
-}
-```
-
-也支持以下扁平节点格式：
+节点使用以下扁平结构：
 
 ```js
 {
@@ -46,8 +32,7 @@ NapCat 标准节点结构：
 
 `time` 使用 Unix 秒。非 `text` 消息段会被忽略。
 
-节点也可以填写 `data.id`，引用框架近 7 天消息缓存中的
-`message_id`。对应消息必须仍在缓存且包含可转发的消息段。
+此接口不接受 `{ type: 'node', data: ... }` 或 `data.id` 引用节点；这两种输入由 `send_forward_msg` 接口处理。
 
 ## 返回值
 

@@ -1,14 +1,14 @@
 # Node.js SDK
 
-等级任务支持 Android 9.1.70 与 Linux 3.2.32。Android 恢复电脑在线、直接擂台与 8 项会员签到；元宝任务保留展示，但其执行器尚未适配 9.1.70。历史记录与计划保留，执行以 `can_execute` 为准。
+等级任务支持 Android 9.2.70 与 Linux 3.2.32。Android 恢复电脑在线、直接擂台与 8 项会员签到；元宝任务需要先完成初始化与授权。历史记录与计划保留，执行以 `can_execute` 为准。
 
 等级加速面板继续过滤付费推广任务。`is_vip_task` 不能等同于需要付费，客户端应按 `is_paid_task` 区分价格分类、按 `can_execute` 判断本次可执行状态。
 
 当前仅支持 Schema 3 安装包、显式 `websocket-v1` 和 `native-ipc-v1`（API 1）。旧清单、隐式传输及启动文件自动发现已移除；请同步升级框架和 SDK。
 
-v2.6.5 起，`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行统一要求 QQ 至少 48 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，保持服务令牌认证。普通 QQ 登录、心跳、换票不受此公共 API 限制。
+`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行要求 free 框架账号的 QQ 至少 48 级、plus 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，保持服务令牌认证。普通 QQ 登录、心跳、换票不受此公共 API 限制。
 
-当前 SDK 版本：**v2.6.6**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.6.6 更新说明](../../release-notes/release-notes-v2.6.6.md)。
+当前 SDK 版本：**v2.6.7**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.6.7 更新说明](../../release-notes/release-notes-v2.6.7.md)。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -18,7 +18,7 @@ v2.6.5 起，`send_packet`、`send_friend_request`、`send_group_join_request` �
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
-v2.6.5 起，`grab_red_packet`（领取红包）要求 QQ 48 级及以上，网页调试同样生效，调用参数不变。实例级 `autoUpdate` 默认关闭，开启后自动安装正式更新。离线账号跨协议编辑保留关联设置和未知任务记录，清除旧协议票据后按目标协议登录。
+`grab_red_packet`（领取红包）要求 free 框架账号的 QQ 至少 48 级、plus 至少 16 级，网页调试同样生效，调用参数不变。实例级 `autoUpdate` 默认关闭，开启后自动安装正式更新。离线账号跨协议编辑保留关联设置和未知任务记录，清除旧协议票据后按目标协议登录。
 
 ## 原生 IPC 插件
 
@@ -408,7 +408,7 @@ v2.1.0 支持由框架管理安装、连接和进程。Node.js 服务端可通�
 - [一体化插件接入](../../docs/managed-plugins.md)：使用 `managed-connection.js` 读取框架提供的连接与存储信息。
 - [原生插件协议](../../docs/native-plugins.md)：使用 `native-plugin.js` 通过匿名进程管道接入，无需 WebSocket。
 
-`get_level_task_status` 仅查询任务状态和等级加速汇总，不执行任务；见[接口说明](docs/api/get_level_task_status.md)。原协议发包、加好友、加群与等级任务执行均由后端校验 QQ 48 级，网页调试请求同样不能绕过。
+`get_level_task_status` 仅查询任务状态和等级加速汇总，不执行任务；见[接口说明](docs/api/get_level_task_status.md)。原协议发包、加好友、加群与等级任务执行均由后端按框架账号类型校验 QQ 等级：free 至少 48 级，plus 至少 16 级，网页调试请求同样不能绕过。
 
 ## 双协议凭据接口
 

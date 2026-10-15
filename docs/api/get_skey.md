@@ -1,6 +1,6 @@
 # get_skey
 
-获取指定协议下当前 Bot 的 skey。支持 Android 9.1.70 和 Linux 3.2.32。
+获取指定协议下当前 Bot 的 skey。支持 Android 9.2.70 和 Linux 3.2.32。
 
 Android 读取当前登录票据中的 skey；Linux 使用当前账号的 clientkey 获取并校验网页 Cookie，返回其中的 skey，不覆盖 Android 票据缓存。
 

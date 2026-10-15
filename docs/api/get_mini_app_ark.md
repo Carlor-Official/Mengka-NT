@@ -9,6 +9,7 @@ const result = await api.get_mini_app_ark(self_id, {
   type: 'bili',
   title: '视频标题',
   desc: '视频简介',
+  picUrl: 'https://example.com/cover.jpg',
   jumpUrl: 'https://www.bilibili.com/video/BV...',
 })
 ```
@@ -21,8 +22,8 @@ const result = await api.get_mini_app_ark(self_id, {
 | `type` | string | 否 | 内置模板：`bili` 或 `weibo` |
 | `title` | string | 是 | 卡片标题 |
 | `desc` | string | 否 | 卡片说明 |
-| `picUrl` | string | 否 | 封面地址 |
-| `jumpUrl` | string | 否 | 小程序跳转地址 |
+| `picUrl` | string | 是 | 封面地址 |
+| `jumpUrl` | string | 是 | 小程序跳转地址 |
 | `webUrl` | string | 否 | Web 备用地址 |
 | `rawArkData` | boolean | 否 | 返回 QQ 原始结构 |
 

@@ -20,7 +20,7 @@ for (const mode of ['forward', 'reverse']) {
         return
       }
       const ok = msg.params.cmd !== 'Test.Failure'
-      ws.send(JSON.stringify({ type: 'action_result', id: msg.id, ok, ...(ok ? { data: msg.params.rsp ? 'deadbeef' : null } : { error: 'protocol failed', error_code: 'MSF_ERROR' }) }))
+      ws.send(JSON.stringify({ type: 'action_result', id: msg.id, ok, ...(ok ? { data: msg.action === 'get_qq_farm_code' ? { code: 'a'.repeat(32) } : msg.params.rsp ? 'deadbeef' : null } : { error: 'protocol failed', error_code: 'MSF_ERROR' }) }))
     }
     try {
       if (mode === 'forward') {
@@ -48,12 +48,20 @@ for (const mode of ['forward', 'reverse']) {
       await assert.rejects(api.send_packet(12344, 'Test.Public', '00'), /需要至少 48 级/)
       await assert.rejects(api.send_friend_request(12344, 22222, 'hello'), /需要至少 48 级/)
       await assert.rejects(api.send_group_join_request(12344, 33333, 'hello'), /需要至少 48 级/)
+      assert.deepEqual(await api.forProtocol('android').get_qq_farm_code({ self_id: 12345 }), { code: 'a'.repeat(32) })
+      assert.deepEqual(received[6].params, { self_id: 12345, client_type: 'android' })
+      const mini = { type: 'bili', title: 'test', picUrl: 'https://example.com/cover.jpg', jumpUrl: 'https://www.bilibili.com/' }
+      await api.forProtocol('android').get_mini_app_ark(12345, mini)
+      assert.deepEqual(received[7].params, { ...mini, self_id: 12345, client_type: 'android' })
+      const messages = [{ user_id: 12345, nickname: 'test', time: 1700000000, message: [{ type: 'text', data: { text: 'fixture' } }] }]
+      await api.forProtocol('android').send_group_forward_msg(12345, 33333, messages)
+      assert.deepEqual(received[8].params, { self_id: 12345, group_id: 33333, messages, client_type: 'android' })
       await new Promise(resolve => setTimeout(resolve, 25))
-      assert.equal(received.length, 6, 'side-effecting calls and level-denied calls must not be replayed')
+      assert.equal(received.length, 9, 'side-effecting calls and level-denied calls must not be replayed')
       assert.deepEqual(received[0].params, { self_id: 12345, cmd: 'Test.Public', data: '00', rsp: true, reserve: 'aabb' })
       assert.equal(received[1].params.client_type, 'linuxqq')
       for (const msg of received) {
-        assert.ok(['send_packet', 'send_friend_request', 'send_group_join_request'].includes(msg.action))
+        assert.ok(['send_packet', 'send_friend_request', 'send_group_join_request', 'get_qq_farm_code', 'get_mini_app_ark', 'send_group_forward_msg'].includes(msg.action))
         assert.equal('access_key' in msg || 'access_key' in msg.params, false)
       }
     } finally {

@@ -15,7 +15,7 @@ const status = await api.get_level_task_status({
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | self_id | number | 是 | 框架已配置的 QQ 账号 |
-| client_type | string | 是 | android 或 linuxqq；支持 Android 9.1.70 与 Linux 3.2.32 |
+| client_type | string | 是 | android 或 linuxqq；支持 Android 9.2.70 与 Linux 3.2.32 |
 | refresh | boolean | 否 | 默认 true，实时查询；false 优先读取缓存，无有效缓存时尝试实时查询 |
 
 ## 返回值

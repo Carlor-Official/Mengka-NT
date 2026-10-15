@@ -35,9 +35,9 @@
 
 官网：[萌卡 NT](https://mknt.net/) · [官网与部署文档](https://mknt.net/guide/)
 
-最新正式版本：**2.6.6**，查看[v2.6.6 更新说明](release-notes/release-notes-v2.6.6.md) · [历史更新说明](release-notes/)。
+最新正式版本：**2.6.7**，查看[v2.6.7 更新说明](release-notes/release-notes-v2.6.7.md) · [历史更新说明](release-notes/)。
 
-当前支持 Android 9.1.70、9.2.70 与 Linux；[v2.6.6 升级说明](docs/upgrade-v2.6.6.md)。
+当前支持 Android 9.2.70 与 Linux；[v2.6.7 升级说明](docs/upgrade-v2.6.7.md)。
 
 v2.5.13 修复安卓任务误过滤，恢复会员签到、电脑在线任务及在线进度显示，并包含此前登录与账号管理修复。v2.5.9 新增 Linux 账号密码登录，更新双协议等级任务与原生媒体处理，并完善登录凭证 API。该历史版本当时仅保留 Android 9.1.70 与 Linux 3.2.32；[升级说明](docs/upgrade-v2.5.9.md)。
 
@@ -249,3 +249,5 @@ v2.0.9 新增六个共享等级任务管理接口，插件与框架网页共用�
 ## 闪照 API
 
 v2.2.1 新增 [get_flash_image](docs/api/get_flash_image.md)，插件可通过消息 ID 获取闪照原图地址和图片信息。
+
+Android 9.1.70 已下线，现有账号迁移方法见 [Android 协议调整](docs/android-protocol-policy.md)。

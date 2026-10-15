@@ -13,7 +13,7 @@ const result = await api.get_level_task_settings({ self_id: 123456, client_type:
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | self_id | number | 是 | QQ 号，必须是框架已配置账号 |
-| client_type | string | 是 | 明确填写 android 或 linuxqq；支持 Android 9.1.70 与 Linux 3.2.32 |
+| client_type | string | 是 | 明确填写 android 或 linuxqq；支持 Android 9.2.70 与 Linux 3.2.32 |
 
 ## 返回值
 

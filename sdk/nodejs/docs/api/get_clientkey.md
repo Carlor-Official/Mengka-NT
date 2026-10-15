@@ -1,6 +1,6 @@
 # get_clientkey
 
-获取指定协议下当前 Bot 的 clientkey。支持 Android 9.1.70 和 Linux 3.2.32。
+获取指定协议下当前 Bot 的 clientkey。支持 Android 9.2.70 和 Linux 3.2.32。
 
 读取当前账号的 clientkey；为空或进入到期前刷新窗口时，使用该账号对应协议请求刷新并保存到期时间。返回十六进制字符串。
 

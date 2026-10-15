@@ -5,7 +5,7 @@
 ## 调用方式
 
 ```js
-const result = await api.get_qq_farm_code(self_id)
+const result = await api.get_qq_farm_code({ self_id, client_type: 'android' })
 ```
 
 ## 参数
@@ -13,6 +13,7 @@ const result = await api.get_qq_farm_code(self_id)
 | 参数 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | `self_id` | number | 是 | 在线 Android Bot QQ 号 |
+| `client_type` | string | 否 | 仅支持 android；省略时选择 Android |
 
 不支持传入 `cmd`、`data` 或其他原始协议参数。
 
