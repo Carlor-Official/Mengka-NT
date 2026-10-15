@@ -16,7 +16,7 @@ for (const mode of ['forward', 'reverse']) {
       if (msg.type !== 'action') return
       received.push(msg)
       if (msg.params.self_id === 12344) {
-        ws.send(JSON.stringify({ type: 'action_result', id: msg.id, ok: false, error: 'QQ 等级不足，当前 15 级；需要至少 16 级' }))
+        ws.send(JSON.stringify({ type: 'action_result', id: msg.id, ok: false, error: 'QQ 等级不足，当前 15 级；需要至少 48 级' }))
         return
       }
       const ok = msg.params.cmd !== 'Test.Failure'
@@ -45,9 +45,9 @@ for (const mode of ['forward', 'reverse']) {
       assert.equal(await api.send_packet(12345, 'Test.Public', '00', true, 'aabb'), 'deadbeef')
       assert.equal(await api.forProtocol('linuxqq').send_packet(12345, 'Test.Public', '00', false), null)
       await assert.rejects(api.send_packet(12345, 'Test.Failure', '00'), err => err.code === 'MSF_ERROR')
-      await assert.rejects(api.send_packet(12344, 'Test.Public', '00'), /需要至少 16 级/)
-      await assert.rejects(api.send_friend_request(12344, 22222, 'hello'), /需要至少 16 级/)
-      await assert.rejects(api.send_group_join_request(12344, 33333, 'hello'), /需要至少 16 级/)
+      await assert.rejects(api.send_packet(12344, 'Test.Public', '00'), /需要至少 48 级/)
+      await assert.rejects(api.send_friend_request(12344, 22222, 'hello'), /需要至少 48 级/)
+      await assert.rejects(api.send_group_join_request(12344, 33333, 'hello'), /需要至少 48 级/)
       await new Promise(resolve => setTimeout(resolve, 25))
       assert.equal(received.length, 6, 'side-effecting calls and level-denied calls must not be replayed')
       assert.deepEqual(received[0].params, { self_id: 12345, cmd: 'Test.Public', data: '00', rsp: true, reserve: 'aabb' })

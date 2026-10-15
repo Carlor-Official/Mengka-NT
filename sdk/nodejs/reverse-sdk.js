@@ -375,7 +375,7 @@ const apiDefs = {
   },
   // 发送原生协议包；普通已认证服务可调用；data/reserve 为十六进制。
   // Public action on any authenticated service; no plugin whitelist or dedicated Key.
-  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
+  // v2.6.5: QQ >= 48; server-owned runtime level, unknown fails closed; no automatic retry.
   send_packet: {
     wait: true,
     timeout: 45 * 1000,
@@ -551,7 +551,7 @@ const apiDefs = {
       buildRedPacketParams(self_id, group_id, sender_uin, red_packet),
   },
   // pre_grap_token 必须传入 get_red_packet_info 返回的同名顶层字段。
-  // QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
+  // QQ >= 48; server-owned runtime level, unknown fails closed; no automatic retry.
   grab_red_packet: {
     wait: true,
     timeout: 60 * 1000,
@@ -846,13 +846,13 @@ const apiDefs = {
     build: (self_id, target_uin) => ({ self_id, target_uin }),
   },
   // 主动提交好友申请；submitted 不表示已经成为好友，不自动重试。
-  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
+  // v2.6.5: QQ >= 48; server-owned runtime level, unknown fails closed; no automatic retry.
   send_friend_request: {
     wait: true,
     build: (self_id, user_id, message = '', remark = '') => ({ self_id, client_type: 'android', user_id, message, remark }),
   },
   // 主动申请入群（开发中，仅 Android）；submitted 不代表已入群，禁止自动重试。
-  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
+  // v2.6.5: QQ >= 48; server-owned runtime level, unknown fails closed; no automatic retry.
   send_group_join_request: {
     wait: true,
     build: (self_id, group_id, message = '') => ({ self_id, client_type: 'android', group_id, message }),
@@ -869,7 +869,7 @@ const apiDefs = {
   },
   // 按数组顺序执行；单项失败继续下一项，最后汇总错误；请求取消或总超时停止。以 can_execute 判断能力。Android 恢复电脑在线、直接擂台及会员签到；失败不自动重试。
   // task83 opt-in uses the existing API; QQ confirmation only, never auto-retry. Human resume uses execute_level_task_selection.
-  // v2.5.3: QQ >= 16; server-owned runtime level, unknown fails closed; no automatic retry.
+  // v2.6.5: QQ >= 48; server-owned runtime level, unknown fails closed; no automatic retry.
   execute_level_tasks: {
     wait: true,
     timeout: 5 * 60 * 1000,
