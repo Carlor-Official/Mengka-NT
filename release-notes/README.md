@@ -1,9 +1,10 @@
 # 更新说明
 
-最新正式版本：[v2.7.1](release-notes-v2.7.1.md) · [日志模板](TEMPLATE.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
+最新正式版本：[v2.7.2](release-notes-v2.7.2.md) · [日志模板](TEMPLATE.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
 
 ## 历史版本
 
+- [v2.7.1](release-notes-v2.7.1.md)
 - [v2.7.0](release-notes-v2.7.0.md)
 
 - [v2.6.9](release-notes-v2.6.9.md)
