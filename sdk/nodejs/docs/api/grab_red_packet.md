@@ -1,7 +1,7 @@
 # grab_red_packet
 
 - action：`grab_red_packet`
-- 使用条件：服务已认证，目标账号在线且 QQ 等级满足框架账号类型要求（free 至少 48 级，plus 至少 16 级）。
+- 使用条件：服务已认证，目标账号在线且 QQ 等级满足框架账号类型要求（free 至少 48 级，plus 至少 16 级，pro 无框架等级限制）。
 
 ## 调用方式
 

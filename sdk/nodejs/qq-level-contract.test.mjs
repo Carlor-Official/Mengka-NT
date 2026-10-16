@@ -8,7 +8,7 @@ test('all public SDK copies document server-owned level gates without adding cal
     const source = (await readFile(new URL(file, import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
     assert.match(source, /is_vip_task 不等于付费/)
     for (const action of actions) {
-      assert.ok(source.includes(`// QQ >= 48 (free) / >= 16 (plus); server-owned runtime level, unknown fails closed; no automatic retry.\n  ${action}: {`), `${file}:${action}`)
+      assert.ok(source.includes(`// QQ >= 48 (free) / >= 16 (plus); Pro has no framework level gate; server-verified tier, no automatic retry.\n  ${action}: {`), `${file}:${action}`)
       const block = source.slice(source.indexOf(`  ${action}: {`)).split('\n  },')[0]
       assert.doesNotMatch(block, /qq_level|minimum_level|access_key/)
     }

@@ -6,9 +6,11 @@
 
 当前仅支持 Schema 3 安装包、显式 `websocket-v1` 和 `native-ipc-v1`（API 1）。旧清单、隐式传输及启动文件自动发现已移除；请同步升级框架和 SDK。
 
-`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行要求 free 框架账号的 QQ 至少 48 级、plus 至少 16 级。等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，保持服务令牌认证。普通 QQ 登录、心跳、换票不受此公共 API 限制。
+`send_packet`、`send_friend_request`、`send_group_join_request` 与等级任务执行要求 free 框架账号的 QQ 至少 48 级、plus 至少 16 级；pro 无框架等级限制。Free/Plus 等级未知或不足时后端拒绝，不发包、不自动重试；调用参数和认证流程不变，保持服务令牌认证。普通 QQ 登录、心跳、换票不受此公共 API 限制。
 
-当前 SDK 版本：**v2.6.8**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.6.8 更新说明](../../release-notes/release-notes-v2.6.8.md)。
+Pro 支持需使用包含该功能的新框架构建；2.6.8 及更早版本将 Pro 按 Plus 处理。
+
+当前 SDK 版本：**v2.6.9**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.6.9 更新说明](../../release-notes/release-notes-v2.6.9.md)。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -18,7 +20,7 @@
 
 先从[SDK 快速开始](docs/sdk-quickstart.md)建立连接，再查阅下方完整接口与事件参考。
 
-`grab_red_packet`（领取红包）要求 free 框架账号的 QQ 至少 48 级、plus 至少 16 级，网页调试同样生效，调用参数不变。实例级 `autoUpdate` 默认关闭，开启后自动安装正式更新。离线账号跨协议编辑保留关联设置和未知任务记录，清除旧协议票据后按目标协议登录。
+`grab_red_packet`（领取红包）要求 free 框架账号的 QQ 至少 48 级、plus 至少 16 级；pro 无框架等级限制，网页调试同样生效，调用参数不变。实例级 `autoUpdate` 默认关闭，开启后自动安装正式更新。离线账号跨协议编辑保留关联设置和未知任务记录，清除旧协议票据后按目标协议登录。
 
 ## 原生 IPC 插件
 
@@ -408,7 +410,7 @@ v2.1.0 支持由框架管理安装、连接和进程。Node.js 服务端可通�
 - [一体化插件接入](../../docs/managed-plugins.md)：使用 `managed-connection.js` 读取框架提供的连接与存储信息。
 - [原生插件协议](../../docs/native-plugins.md)：使用 `native-plugin.js` 通过匿名进程管道接入，无需 WebSocket。
 
-`get_level_task_status` 仅查询任务状态和等级加速汇总，不执行任务；见[接口说明](docs/api/get_level_task_status.md)。原协议发包、加好友、加群与等级任务执行均由后端按框架账号类型校验 QQ 等级：free 至少 48 级，plus 至少 16 级，网页调试请求同样不能绕过。
+`get_level_task_status` 仅查询任务状态和等级加速汇总，不执行任务；见[接口说明](docs/api/get_level_task_status.md)。原协议发包、加好友、加群与等级任务执行均由后端按框架账号类型校验 QQ 等级：free 至少 48 级，plus 至少 16 级，pro 无框架等级限制，网页调试请求同样不能绕过。
 
 ## 双协议凭据接口
 
