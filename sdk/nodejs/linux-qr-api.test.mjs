@@ -23,7 +23,7 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
   const nativeManagementActions = [
     'get_level_task_accounts', 'get_level_task_account', 'get_level_task_panel', 'get_level_task_status', 'get_level_task_settings', 'update_level_task_settings', 'execute_level_task_selection',
     'get_plugin_context', 'get_node_list', 'create_node', 'update_node', 'delete_node', 'test_node_latency',
-    'create_device_profile', 'delete_device_profile', 'get_account_settings', 'update_account_settings',
+    'refresh_account_fingerprint', 'get_account_settings', 'update_account_settings',
     'clear_account_cache', 'stop_account_login', 'submit_account_identity_captcha',
     'submit_account_identity_phone', 'confirm_account_identity_sms', 'retry_account_identity_verify',
     'open_account_security_access', 'retry_account_security_verify', 'get_account_access_list',
@@ -39,12 +39,12 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
     'execute_level_tasks', 'get_summary_card', 'get_user_agent',
   ]
   const managementActions = [...nativeManagementActions, ...delegatedManagementActions]
-  assert.equal(new Set(managementActions).size, 54)
+  assert.equal(new Set(managementActions).size, 53)
   let expectedActions = null
   for (const file of files) {
     const source = await readFile(file, 'utf8')
     const actions = actionNames(source)
-    assert.equal(actions.length, 235, `${file.pathname} must expose exactly 235 actions`)
+    assert.equal(actions.length, 234, `${file.pathname} must expose exactly 234 actions`)
     for (const action of ['set_group_name', 'set_group_essence', 'send_poke', 'send_group_join_request', 'leave_group']) {
       assert.ok(actions.includes(action), `${file.pathname} missing ${action}`)
     }
@@ -59,7 +59,7 @@ test('正反向 SDK 保持 Linux 原生链路并同步 2.0 服务管理 API', as
     assert.match(source, /get_bot_list:\s*\{[\s\S]*?build:\s*\(\.\.\.args\)[\s\S]*?args\.length !== 0[\s\S]*?return \{\}/, `${file.pathname} must enforce the instance-wide no-argument contract`)
     assert.match(source, /add_account:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must use object-only account parameters`)
     assert.match(source, /update_account:\s*\{[\s\S]*?build:\s*\(options = \{\}\)\s*=>\s*\(\{ \.\.\.options \}\)/, `${file.pathname} must use object-only account parameters`)
-    assert.doesNotMatch(source, /^  (generate_device_profile|offline_account):/gm, `${file.pathname} must not expose removed aliases`)
+    assert.doesNotMatch(source, /^  (create_device_profile|delete_device_profile|generate_device_profile|offline_account):/gm, `${file.pathname} must not expose removed aliases`)
     assert.match(source, /api\.forProtocol\s*=\s*value\s*=>/, `${file.pathname} missing protocol-scoped API`)
     assert.match(source, /client_type:\s*'linuxqq'/, `${file.pathname} missing Linux client selector`)
     assert.doesNotMatch(source, /create_linux_login_qr\s*:/, `${file.pathname} must not expose a parallel Linux login API`)

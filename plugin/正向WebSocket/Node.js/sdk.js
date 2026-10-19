@@ -662,8 +662,8 @@ const apiDefs = {
   update_node: { wait: true, build: (options = {}) => ({ ...options }) },
   delete_node: { wait: true, build: id => ({ id }) },
   test_node_latency: { wait: true, build: id => ({ id }) },
-  create_device_profile: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
-  delete_device_profile: { wait: true, build: id => ({ id }) },
+  // Explicit confirmation is required; fingerprint rotation also clears this account/protocol login cache.
+  refresh_account_fingerprint: { wait: true, timeout: 60 * 1000, build: (options = {}) => ({ ...options }) },
   get_account_settings: { wait: true, build: () => ({}) },
   update_account_settings: { wait: true, build: (options = {}) => ({ ...options }) },
   get_account_offline_notification: { wait: true, build: (self_id, protocol = 'android') => withProtocolTarget({ self_id }, normalizeProtocolTarget(protocol)) },
@@ -700,12 +700,12 @@ const apiDefs = {
     wait: true,
     build: () => ({}),
   },
-  // 获取完整设备指纹信息（无需 self_id）
+  // 只读设备指纹信息（无需 self_id）；指纹由框架按账号和协议自动管理，不能用于指定账号设备
   get_device_profile_list: {
     wait: true,
     build: () => ({}),
   },
-  // 添加账号到 node_id 指定的登录节点，self_id 为 5-12 位无符号 QQ 整数
+  // 添加账号并自动生成独立指纹；不接受 device_profile_id。self_id 为 5-12 位无符号 QQ 整数
   add_account: {
     wait: true,
     resultMessage: '账号添加成功',

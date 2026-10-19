@@ -222,7 +222,7 @@ const info = await androidApi.get_login_info(self_id)
 | [获取 Bot 列表](get_bot_list.md) | Android / Linux 双协议可用 | 获取当前框架实例中的全部协议账号；不接受参数 |
 | [获取 Bot 信息](get_bot_info.md) | Android / Linux 双协议可用 | 获取指定 Bot 的运行信息 |
 | [获取协议列表](get_protocol_list.md) | Android / Linux 双协议可用 | 获取可选协议 |
-| [获取设备指纹列表](get_device_profile_list.md) | Android / Linux 双协议可用 | 获取可选设备指纹 |
+| [获取设备指纹列表](get_device_profile_list.md) | Android / Linux 双协议可用 | 只读查询设备指纹与账号归属 |
 | [添加账号](add_account.md) | Android / Linux 双协议可用 | 创建账号并指定其登录节点 |
 | [编辑账号](update_account.md) | Android / Linux 双协议可用 | 编辑离线账号配置 |
 | [停止账号会话](stop_account_login.md) | Android / Linux 双协议可用 | 取消正在进行的登录，或下线已登录账号 |
@@ -263,12 +263,11 @@ const info = await androidApi.get_login_info(self_id)
 | [更新节点](update_node.md) | Android / Linux 双协议可用 | 更新已停用节点，代理密码支持保留或清除 |
 | [删除节点](delete_node.md) | Android / Linux 双协议可用 | 删除已停用且未被账号引用的节点 |
 | [测试节点延迟](test_node_latency.md) | Android / Linux 双协议可用 | 测试节点代理 TCP 连接延迟 |
-| [创建设备指纹](create_device_profile.md) | Android / Linux 双协议可用 | 创建可选自定义名称的随机设备指纹 |
-| [删除设备指纹](delete_device_profile.md) | Android / Linux 双协议可用 | 删除未被任何账号使用的设备指纹 |
 | [获取账号设置](get_account_settings.md) | Android / Linux 双协议可用 | 读取缓存登录、自动登录和离线清理设置 |
 | [更新账号设置](update_account_settings.md) | Android / Linux 双协议可用 | 更新框架级账号设置并校验依赖关系 |
 | [获取账号离线通知](get_account_offline_notification.md) | Android / Linux 双协议可用 | 读取指定 QQ 与协议的离线邮件通知设置 |
 | [更新账号离线通知](update_account_offline_notification.md) | Android / Linux 双协议可用 | 更新指定 QQ 与协议的离线邮件通知设置 |
+| [刷新账号指纹](refresh_account_fingerprint.md) | Android / Linux 双协议可用 | 经确认后刷新离线账号当前协议的独立指纹并清除登录缓存 |
 | [清理账号缓存](clear_account_cache.md) | Android / Linux 双协议可用 | 清理指定 QQ 和协议的本地登录缓存 |
 | [提交身份滑块](submit_account_identity_captcha.md) | Android 协议可用 | 提交身份验证滑块结果 |
 | [提交身份手机号](submit_account_identity_phone.md) | Android 协议可用 | 提交身份验证手机号并请求短信 |

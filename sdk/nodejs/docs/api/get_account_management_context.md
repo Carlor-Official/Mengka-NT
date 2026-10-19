@@ -25,3 +25,5 @@ const context = await api.get_account_management_context()
 ```
 
 `accounts` 使用框架账号列表的完整字段和样式数据；插件前端不应自行删减字段或重新推导协议、节点与运行状态。当前插件应要求 `api_version === 1`。
+
+`device_profiles` 为只读诊断数据，不是可选设备库。账号新增时自动生成指纹，编辑页面不得将该列表作为选择器。

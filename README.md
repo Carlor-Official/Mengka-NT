@@ -35,9 +35,9 @@
 
 官网：[萌卡 NT](https://mknt.net/) · [官网与部署文档](https://mknt.net/guide/)
 
-最新正式版本：**2.7.3**，查看[v2.7.3 更新说明](release-notes/release-notes-v2.7.3.md) · [历史更新说明](release-notes/)。
+最新正式版本：**2.7.4**，查看[v2.7.4 更新说明](release-notes/release-notes-v2.7.4.md) · [历史更新说明](release-notes/)。
 
-当前支持 Android 9.2.70 与 Linux；[v2.7.3 升级说明](docs/upgrade-v2.7.3.md)。
+当前支持 Android 9.2.70 与 Linux；[v2.7.4 升级说明](docs/upgrade-v2.7.4.md)。
 
 v2.5.13 修复安卓任务误过滤，恢复会员签到、电脑在线任务及在线进度显示，并包含此前登录与账号管理修复。v2.5.9 新增 Linux 账号密码登录，更新双协议等级任务与原生媒体处理，并完善登录凭证 API。该历史版本当时仅保留 Android 9.1.70 与 Linux 3.2.32；[升级说明](docs/upgrade-v2.5.9.md)。
 
@@ -62,11 +62,11 @@ v2.4.0 将管理员认证改为本地账号，并用用户手动上传的“插�
 | 插件系统 | 原生 IPC 插件无需端口或令牌，支持 Schema 配置页与热更新；正向、反向 WebSocket 继续供外部服务接入，统一复用 Action、事件权限、Node.js SDK 与可选插件 WebUI |
 | 可视化管理 | 概览、账号、指纹、节点、插件、令牌、日志与消息面板 |
 
-当前 SDK 提供 235 个 action、54 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按服务配置投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。当前源码已将 `send_packet` 开放给已认证的正向、反向和托管插件，使用服务令牌认证；接入要求见[插件 API 使用说明](docs/plugin-api-authorization.md)。QQ 宠物提供 30 项对象参数接口，API 开源贡献者：**星空花海**。调用参数和当前限制见[接口说明](docs/qq-pet-apis.md)。
+当前 SDK 提供 234 个 action、53 个服务管理 API 和 26 个精确原生事件。服务通过令牌认证后可直接调用管理 API，不再配置 `system_management` 或 `allowed_actions`；事件按服务配置投递。`admin_base_url` 仅用于框架管理员 SSO 和管理端入口。扫码找回只返回手机 QQ 确认后的账号，不执行登录或保存票据。当前源码已将 `send_packet` 开放给已认证的正向、反向和托管插件，使用服务令牌认证；接入要求见[插件 API 使用说明](docs/plugin-api-authorization.md)。QQ 宠物提供 30 项对象参数接口，API 开源贡献者：**星空花海**。调用参数和当前限制见[接口说明](docs/qq-pet-apis.md)。
 
 v2.0.6 新增主动好友申请、主动入群申请、主动退群、修改群名、精华设置和戳一戳，并修复原生申请、成员变化、消息引用、Linux 群图片和事件投递链路。事件字段、权限与实测边界见[官网原生事件](https://mknt.net/events/)，不将 API 成功等同于事件送达。
 
-插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list()` 读取框架实例全部账号。普通账号 action 通过 `self_id + client_type` 自动路由到账号自身登录节点；只有 `add_account({...})`、`update_account({...})` 等账号/节点管理操作显式使用 `node_id`。设备指纹创建和账号停止只使用 `create_device_profile`、`stop_account_login`；已移除的旧 action 不再注册。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
+插件可使用 `get_plugin_context` 检查 `management_api_version` 和 `available_actions`，用 `get_account_management_context` 一次读取框架账号管理所需的账号、协议、指纹及节点数据，以 `get_bot_list()` 读取框架实例全部账号。普通账号 action 通过 `self_id + client_type` 自动路由到账号自身登录节点；只有 `add_account({...})`、`update_account({...})` 等账号/节点管理操作显式使用 `node_id`。设备指纹由框架按 QQ 与具体协议自动管理；账号新增自动生成，需要更换时使用 `refresh_account_fingerprint`。不再提供独立创建或删除指纹的 action，账号停止继续使用 `stop_account_login`。完整接口清单、调用示例和升级注意事项见 [Node.js SDK 文档](sdk/nodejs/README.md#20-服务管理接口) 与 [官网 API 文档](https://mknt.net/api/)。
 
 ## 平台支持
 

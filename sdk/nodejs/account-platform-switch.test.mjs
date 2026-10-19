@@ -9,7 +9,7 @@ test('all four SDK copies retain current and target platform selectors without c
     assert.match(definition, /resultData: false/)
     const build = new Function(`return (${definition.match(/build: (.*),/)[1]})`)()
     for (const [from, to] of [['android', 'linuxqq'], ['linuxqq', 'android']]) {
-      const params = { self_id: 998881, password: 'fixture', client_type: from, target_client_type: to, protocol_id: to === 'android' ? 1 : 4, device_profile_id: 1 }
+      const params = { self_id: 998881, password: 'fixture', client_type: from, target_client_type: to, protocol_id: to === 'android' ? 1 : 4 }
       assert.deepEqual(build(params), params)
       assert.equal('node_id' in build(params), false)
     }

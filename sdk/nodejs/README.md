@@ -10,7 +10,7 @@
 
 Pro 支持需使用包含该功能的新框架构建；2.6.8 及更早版本将 Pro 按 Plus 处理。
 
-当前 SDK 版本：**v2.7.3**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.7.3 更新说明](../../release-notes/release-notes-v2.7.3.md)。
+当前 SDK 版本：**v2.7.4**。支持 Linux 账号密码登录、原生媒体处理与双协议等级任务。协议 ID 使用目录返回值，禁止按数组位置重新编号。升级变化见[v2.7.4 更新说明](../../release-notes/release-notes-v2.7.4.md)。
 
 ## v2.4.1：原生插件协议 v1
 
@@ -74,7 +74,7 @@ task80“创建小游戏擂台并取得成绩”继续使用原等级 API，改�
 - `sdk.js`：正向 WebSocket，由插件连接萌卡 NT。
 - `reverse-sdk.js`：反向 WebSocket，由萌卡 NT 连接插件。
 
-当前正向与反向 SDK 均提供 235 个 action，包含七个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
+当前正向与反向 SDK 均提供 234 个 action，包含七个共享等级任务管理 API。插件服务使用服务令牌完成连接认证后，可直接调用框架提供的服务管理 API；`system_management` 与 `allowed_actions` 已从当前契约删除。事件订阅继续使用现有 WS 握手协议，SDK 中存在某个方法不代表框架支持任意未知 action。
 
 ## v2.1.12：表情事件权限与名片头像
 
@@ -256,13 +256,12 @@ await api.add_account({
   self_id,
   password,
   protocol_id,
-  device_profile_id,
   node_id: nodes[0].id,
   client_type: 'linuxqq',
 })
 ```
 
-当前服务管理接口共 54 个 action：34 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 234 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
+当前服务管理接口共 53 个 action：33 个管理专用接口与 20 个复用 Bot 处理器的接口，均由 `get_plugin_context().available_actions` 声明。它是当前 234 个公开 action 的子集，不是全部目录。插件应检查所需能力，不能只检查 `management_api_version === 1`。
 
 33 个管理专用 action 分为：
 
@@ -270,7 +269,7 @@ await api.add_account({
 
 - 插件与节点：`get_plugin_context`、`get_node_list`、`create_node`、`update_node`、`delete_node`、`test_node_latency`
 
-- 指纹：`create_device_profile`、`delete_device_profile`
+- 账号指纹：`refresh_account_fingerprint`，仅刷新明确指定的离线账号及协议
 - 账号目录与设置：`get_account_management_context`、`get_account_settings`、`update_account_settings`
 - 离线通知与缓存：`get_account_offline_notification`、`update_account_offline_notification`、`clear_account_cache`、`stop_account_login`
 - 身份与安全验证：`submit_account_identity_captcha`、`submit_account_identity_phone`、`confirm_account_identity_sms`、`retry_account_identity_verify`、`open_account_security_access`、`retry_account_security_verify`
@@ -283,7 +282,7 @@ await api.add_account({
 
 20 个复用接口为：`get_bot_list`、`get_bot_info`、`get_protocol_list`、`get_device_profile_list`、`add_account`、`update_account`、`delete_account`、`login_account`、`check_cache`、`cache_login`、`submit_slider`、`get_security_verify_methods`、`get_sms`、`check_sms`、`create_login_qr`、`query_login_qr_status`、`get_level_tasks`、`execute_level_tasks`、`get_summary_card`、`get_user_agent`。WS 服务不绑定节点，普通账号接口根据 `self_id + client_type` 在账号实际节点执行。`get_bot_list()` 返回当前框架实例的全部账号，插件用户归属与商业权限仍需由插件自己的后端校验。
 
-`create_device_profile`、`stop_account_login` 是当前唯一名称；`generate_device_profile`、`offline_account` 不再注册。`add_account`、`update_account` 只接受对象参数。编辑账号协议时由 `client_type` 指定原协议、`target_client_type` 指定目标协议。
+`create_device_profile`、`delete_device_profile`、`generate_device_profile`、`offline_account` 不再注册。指纹由框架自动管理，不接受调用方指定 `device_profile_id`。`add_account`、`update_account` 只接受对象参数。编辑账号协议时由 `client_type` 指定原协议、`target_client_type` 指定目标协议。
 
 服务配置请求不得携带 `node_id`、`system_management` 或 `allowed_actions`。反向 WS 不再接收 `X-Mengka-Node-ID`，ready 及上下文也不返回服务级 `node_id`。`get_plugin_context` 返回 `service_id`、`service_name`、`admin_base_url`、`management_api_version` 和 `available_actions`。这是当前契约，不提供旧服务字段兼容；账号新增/编辑与节点管理接口自己的 `node_id` 不应删除。
 
@@ -303,12 +302,15 @@ send_packet 是普通公开 API，已认证的正向、反向及托管插件都�
 
 接入方式见[插件 API 使用说明](docs/plugin-api-authorization.md)，基础参数见[send_packet](docs/api/send_packet.md)。
 
-随机设备指纹与框架前端“指纹 → 添加指纹 → 一键生成其余内容”使用同一套规则。接口不需要参数，会创建并保存一条随机命名的独立指纹记录；返回的 `id` 可以直接作为 `add_account` 的 `device_profile_id`：
+新增 QQ 时，框架按账号和具体协议自动创建独立指纹。同一协议的普通编辑保留指纹；刷新指纹必须由用户明确确认，账号须离线，成功后需要重新登录。只读的 `get_device_profile_list` 不再用于分配设备。
 
 ```js
-const profile = await api.create_device_profile()
-await api.add_account({ self_id, password, protocol_id, device_profile_id: profile.id, node_id, client_type: 'android' })
+await api.add_account({ self_id, password, protocol_id, node_id, client_type: 'android' })
+// 仅在用户确认之后调用；protocol_id 必须与该账号当前保存的协议一致。
+await api.refresh_account_fingerprint({ self_id, client_type: 'android', protocol_id, confirm: true })
 ```
+
+插件升级时应移除指纹选择及独立生成/删除入口，并停止发送 `device_profile_id`。详情见[账号指纹管理迁移](./docs/managed-fingerprints.md)。
 
 Linux 账号登录完整使用框架管理端的原生账号链路。调用 `login_account` 并传 `client_type: 'linuxqq'` 时，框架会返回原生二维码信息；使用现有 `query_login_qr_status` 按管理端相同的 1.5 秒间隔查询，确认后由框架完成上线。二维码失效后可调用现有 `create_login_qr` 刷新，不新增平行 action。
 
