@@ -1,6 +1,6 @@
 # 更新说明
 
-最新正式版本：[v2.7.6](release-notes-v2.7.6.md) · [日志模板](TEMPLATE.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
+最新正式版本：[v2.7.5](release-notes-v2.7.5.md) · [日志模板](TEMPLATE.md) · [下一版本说明](release-notes-next.md) · [项目首页](../README.md)
 
 ## 历史版本
 
