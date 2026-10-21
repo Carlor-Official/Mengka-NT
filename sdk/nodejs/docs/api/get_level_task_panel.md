@@ -53,3 +53,19 @@ Linux 只使用当前 Linux 账号会话。任务数量及执行能力按当前�
 ## Android 9.2.70 元宝任务
 
 现有等级任务入口支持 `来元宝P图一次`（`center_task_id=83`），仅 Android 9.2.70 可执行；Linux 不提供此任务。按 `available`、`can_execute` 和持久暂停状态判断是否能提交。查询本身不触发元宝授权或生成图片；执行成功必须由 QQ 返回 `is_done=true` 确认，结果不明不得自动重放。执行前需要可用的元宝网关与材料设备。
+
+### 元宝生命周期状态（v2.7.8 起）
+
+元宝任务仍使用 `center_task_id=83`。任务对象新增可选字段：
+
+| 字段 | 说明 |
+| --- | --- |
+| `yuanbao_state` | `idle`、`verification`、`running`、`awaiting_qq`、`stopped`、`canceled`、`expired` 或 `completed` |
+| `yuanbao_started_at` | 当前阶段开始时间，Unix 毫秒；可显示顺计时，不代表完成百分比 |
+| `yuanbao_verification_available` | 是否有仍有效、可重新打开的当前验证入口 |
+| `yuanbao_failure` | 已停止任务的安全诊断：`stage`、`kind`、`http`、可选 `code` 和 `reason`；不包含票据、响应原文或验证链接 |
+| `yuanbao_stopped_at` | 已记录的停止时间，Unix 毫秒 |
+
+`verification` 表示等待官方验证；`running` 表示执行器仍在运行；`awaiting_qq` 表示图片任务已完成但 QQ 尚未确认。`stopped` 不表示后台仍在执行，不能继续显示运行进度或自动重放。只有 QQ 返回 `is_done=true` 才能显示已完成。
+
+管理前端通过已有管理员认证下的 `GET /api/v1/level-tasks/accounts/:self_id/tasks/yuanbao-verification?platform=android` 读取同一次验证入口，返回 `state`、`verification_id` 和可选 `verification`。关闭弹窗不取消验证，也不延长有效期。`POST` 同路径加 `/cancel`，提交当前 `verification_id`，仅取消尚未提交图片任务的当前验证；不会取消正在续接的请求，也不会清除运行结果不明的保留记录。这两个入口仅供框架管理页面使用，不新增插件 action。
