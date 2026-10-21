@@ -37,7 +37,7 @@
 
 最新正式版本：**2.7.7**，查看[v2.7.7 更新说明](release-notes/release-notes-v2.7.7.md) · [历史更新说明](release-notes/)。
 
-当前支持 Android 9.2.70、Android 9.3.70（beta）与 Linux；[v2.7.7 升级说明](docs/upgrade-v2.7.7.md)。
+当前支持 Android 9.2.70（手机／平板）与 Linux。v2.7.7 已移除 9.3.70 测试协议，旧账号需手动改选 9.2.70 后重新登录；[协议调整说明](docs/android-protocol-policy.md) · [v2.7.7 升级说明](docs/upgrade-v2.7.7.md)。
 
 v2.5.13 修复安卓任务误过滤，恢复会员签到、电脑在线任务及在线进度显示，并包含此前登录与账号管理修复。v2.5.9 新增 Linux 账号密码登录，更新双协议等级任务与原生媒体处理，并完善登录凭证 API。该历史版本当时仅保留 Android 9.1.70 与 Linux 3.2.32；[升级说明](docs/upgrade-v2.5.9.md)。
 
