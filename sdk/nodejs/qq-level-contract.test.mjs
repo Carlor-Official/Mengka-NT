@@ -21,3 +21,15 @@ test('all public SDK copies document server-owned level gates without adding cal
     assert.match(a, /16 级/)
   }
 })
+
+
+test('Yuanbao uses the existing Android task selection and QQ completion contract', async () => {
+  for (const file of ['./sdk.js','./reverse-sdk.js','../../plugin/正向WebSocket/Node.js/sdk.js','../../plugin/反向WebSocket/Node.js/sdk.js']) {
+    const source = await readFile(new URL(file, import.meta.url), 'utf8')
+    assert.match(source, /Android 9\.2\.70: 来元宝P图一次 requires task83 can_execute; success requires QQ confirmation/)
+  }
+  const doc = await readFile(new URL('../../docs/api/execute_level_tasks.md', import.meta.url), 'utf8')
+  assert.match(doc, /center_task_id=83/)
+  assert.match(doc, /is_done=true/)
+  assert.match(doc, /Linux 不提供此任务/)
+})

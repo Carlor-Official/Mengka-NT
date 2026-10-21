@@ -47,3 +47,7 @@ Linux 通过当前 Linux 会话读取任务，不要求 Android 在线。仅返�
 | `is_vip_task` | boolean | QQ 的会员任务标记 |
 
 完整任务管理面板见 [get_level_task_panel](get_level_task_panel.md)。
+
+## Android 9.2.70 元宝任务
+
+现有等级任务入口支持 `来元宝P图一次`（`center_task_id=83`），仅 Android 9.2.70 可执行；Linux 不提供此任务。按 `available`、`can_execute` 和持久暂停状态判断是否能提交。查询本身不触发元宝授权或生成图片；执行成功必须由 QQ 返回 `is_done=true` 确认，结果不明不得自动重放。执行前需要可用的元宝网关与材料设备。
