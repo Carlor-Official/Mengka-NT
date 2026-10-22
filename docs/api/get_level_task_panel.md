@@ -69,3 +69,9 @@ Linux 只使用当前 Linux 账号会话。任务数量及执行能力按当前�
 `verification` 表示等待官方验证；`running` 表示执行器仍在运行；`awaiting_qq` 表示图片任务已完成但 QQ 尚未确认。`stopped` 不表示后台仍在执行，不能继续显示运行进度或自动重放。只有 QQ 返回 `is_done=true` 才能显示已完成。
 
 管理前端通过已有管理员认证下的 `GET /api/v1/level-tasks/accounts/:self_id/tasks/yuanbao-verification?platform=android` 读取同一次验证入口，返回 `state`、`verification_id` 和可选 `verification`。关闭弹窗不取消验证，也不延长有效期。`POST` 同路径加 `/cancel`，提交当前 `verification_id`，仅取消尚未提交图片任务的当前验证；不会取消正在续接的请求，也不会清除运行结果不明的保留记录。这两个入口仅供框架管理页面使用，不新增插件 action。
+
+## 终止恢复（v2.7.9 起）
+
+已结束且没有活跃执行器的任务自动恢复 `yuanbao_state=idle`、`status_text=待完成`、`can_execute=true`（以任务可用且 QQ 未完成为前提），阶段时间清零、旧验证入口释放。升级遗留记录在启动或读取面板时处理。失败原因仍保留在账号日志，不再用永久暂停锁阻止用户重新操作。
+
+有效验证、执行中和活跃的 QQ 确认查询不提前释放。停止查询后只释放操作状态，不伪造 QQ 完成结果；用户再次执行时先读取 QQ，已完成则跳过，未完成才开始新的一次任务。自动清理不发起登录、验证或图片请求，后台计划不自动重放失败任务。
