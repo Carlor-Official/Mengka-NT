@@ -35,7 +35,7 @@
 
 官网：[萌卡 NT](https://mknt.net/) · [官网与部署文档](https://mknt.net/guide/)
 
-最新正式版本：**2.8.0**，查看[v2.8.0 更新说明](release-notes/release-notes-v2.8.0.md) · [历史更新说明](release-notes/)。
+最新正式版本：**2.8.1**，查看[v2.8.1 更新说明](release-notes/release-notes-v2.8.1.md) · [历史更新说明](release-notes/)。
 
 当前支持 Android 9.2.70（手机／平板）与 Linux。v2.7.7 已移除 9.3.70 测试协议，旧账号需手动改选 9.2.70 后重新登录；[协议调整说明](docs/android-protocol-policy.md) · [v2.7.7 升级说明](docs/upgrade-v2.7.7.md)。
 

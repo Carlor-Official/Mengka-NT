@@ -181,6 +181,7 @@ const apiDefs = {
   },
   // 兼容系统状态查询；这些 action 只读取框架本地运行状态，不发送 QQ 协议请求。
   get_login_info: { wait: true, build: (self_id) => ({ self_id }) },
+  // Returns stat.login_time and stat.online_time as Unix seconds; 0 means no record.
   get_status: { wait: true, build: (self_id) => ({ self_id }) },
   get_online_clients: { wait: true, build: (self_id, no_cache = false) => ({ self_id, no_cache }) },
   get_model_show: { wait: true, build: (self_id, model = '') => ({ self_id, model }) },
