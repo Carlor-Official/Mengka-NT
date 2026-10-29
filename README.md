@@ -4,7 +4,7 @@
   <p>
     <a href="https://github.com/Carlor-Official/Mengka-NT/releases/latest"><img src="https://img.shields.io/badge/下载-GitHub%20Releases-7C5CFC?style=flat-square" alt="GitHub Releases" /></a>
     <img src="https://img.shields.io/badge/平台-Windows%20%7C%20Linux-2684FF?style=flat-square" alt="Windows 与 Linux" />
-    <img src="https://img.shields.io/badge/架构-AMD64-7C5CFC?style=flat-square" alt="AMD64" />
+    <img src="https://img.shields.io/badge/架构-AMD64%20%7C%20ARM64-7C5CFC?style=flat-square" alt="AMD64 与 ARM64" />
     <img src="https://img.shields.io/badge/管理-WebUI-F59E0B?style=flat-square" alt="WebUI 管理" />
     <img src="https://img.shields.io/badge/插件-IPC%20%7C%20HTTP%20%7C%20WebSocket-00ADD8?style=flat-square" alt="插件接入" />
   </p>
@@ -31,7 +31,7 @@
 
 框架支持 Windows 与 Linux，可管理多个 QQ 账号，并分别选择 Android 手机、平板或 Linux 协议。每个账号实例保留自己的设备指纹、节点和登录状态。
 
-首次使用通过注册卡完成初始化，随后使用本地管理员账号登录。初始化完成后，安装入口自动锁定。
+首次使用通过注册卡完成初始化；已有部署可通过迁移保留 UID 和授权权益。完成后使用本地管理员账号登录，初始化入口自动锁定。
 
 本仓库用于发布完整安装包和更新说明。部署与接口文档请访问[官网](https://mengka.net/nt/)。
 
@@ -56,6 +56,7 @@
 | --- | --- | --- | --- |
 | Windows | ZIP | `mengka.exe` | AMD64 / x86_64 |
 | Linux | TAR.GZ | `mengka` | AMD64 / x86_64 |
+| Linux | TAR.GZ | `mengka` | ARM64 / aarch64 |
 
 ## 快速开始
 
@@ -97,6 +98,8 @@ chmod +x ./mengka
 3. 设置管理员账号和密码。
 4. 完成后进入框架首页，使用管理员账号登录。
 
+已有部署需要换机时，可在原部署发起迁移并在新部署中完成确认；无法访问原部署时，联系管理员核验后恢复。迁移完成后旧部署失效，账号数据和插件数据需另行备份、搬迁。
+
 ### 4. 添加 QQ
 
 在账号列表选择“添加账号”，填写 QQ 信息并选择平台、协议、节点和设备指纹。发起登录后，根据提示完成滑块、短信或其他验证。
@@ -118,6 +121,14 @@ chmod +x ./mengka
 插件服务绑定节点，账号接口使用 `self_id + protocol_id` 选择实例。IPC 插件需在清单中声明所需接口和事件权限。
 
 接入说明：[插件开发入门](https://mengka.net/nt/reference/plugin-development.html) · [通信协议](https://mengka.net/nt/reference/protocol.html) · [插件导入](https://mengka.net/nt/reference/managed-plugins.html)
+
+### Node.js SDK
+
+SDK 支持 HTTP、正向与反向 WebSocket、托管 IPC，使用对象参数调用 API，并保留框架原生事件字段。
+
+从 [GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest) 下载独立 SDK 附件及校验文件。安装、使用示例与接口迁移说明见 [Node.js SDK 文档](https://mengka.net/nt/development/nodejs-sdk.html)。
+
+需要 Node.js 22 或更高版本。本地 IPC 插件还需打包为对应操作系统的可执行安装包；SDK 源码压缩包不能直接导入框架。
 
 ## 数据与更新
 
@@ -152,5 +163,6 @@ chmod +x ./mengka
 ## 下载与反馈
 
 - 安装包：[GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest)
+- Node.js SDK：[下载入口](https://github.com/Carlor-Official/Mengka-NT/releases/latest) · [接入文档](https://mengka.net/nt/development/nodejs-sdk.html)
 - 使用与开发：[官网文档](https://mengka.net/nt/guide/) · [API 参考](https://mengka.net/nt/api/)
 - Bug 与建议：[提交 Issue](https://github.com/Carlor-Official/Mengka-NT/issues)
