@@ -1,0 +1,359 @@
+{
+  "source": "https://mknt.net/api/",
+  "fetchedAt": "2026-10-29T10:28:53.389078+00:00",
+  "sourceSHA256": "50a1e516e9a33b5fd0dd33b10855962f078eac0e14cfb3aa564813565aeb7da0",
+  "petAllowed": [
+    {
+      "action": "get_pet_profile",
+      "title": "获取宠物资料",
+      "category": "资料与属性",
+      "url": "https://mknt.net/api/get_pet_profile.html"
+    },
+    {
+      "action": "get_pet_medal_gallery",
+      "title": "获取宠物勋章图鉴",
+      "category": "资料与属性",
+      "url": "https://mknt.net/api/get_pet_medal_gallery.html"
+    },
+    {
+      "action": "get_pet_vitals",
+      "title": "获取宠物数值",
+      "category": "资料与属性",
+      "url": "https://mknt.net/api/get_pet_vitals.html"
+    },
+    {
+      "action": "get_pet_attributes",
+      "title": "获取宠物三维属性",
+      "category": "资料与属性",
+      "url": "https://mknt.net/api/get_pet_attributes.html"
+    },
+    {
+      "action": "get_pet_food_catalog",
+      "title": "获取食物目录",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/get_pet_food_catalog.html"
+    },
+    {
+      "action": "feed_pet",
+      "title": "给宠物喂食",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/feed_pet.html"
+    },
+    {
+      "action": "buy_pet_food",
+      "title": "购买宠物食物",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/buy_pet_food.html"
+    },
+    {
+      "action": "get_pet_bath_catalog",
+      "title": "获取洗护用品目录",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/get_pet_bath_catalog.html"
+    },
+    {
+      "action": "get_pet_bath_inventory",
+      "title": "获取洗护用品库存",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/get_pet_bath_inventory.html"
+    },
+    {
+      "action": "bathe_pet",
+      "title": "给宠物洗护",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/bathe_pet.html"
+    },
+    {
+      "action": "buy_pet_bath_item",
+      "title": "购买洗护用品",
+      "category": "喂食与洗护",
+      "url": "https://mknt.net/api/buy_pet_bath_item.html"
+    },
+    {
+      "action": "get_pet_activity_overview",
+      "title": "获取活动概览",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/get_pet_activity_overview.html"
+    },
+    {
+      "action": "get_pet_activity_options",
+      "title": "获取活动选项",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/get_pet_activity_options.html"
+    },
+    {
+      "action": "start_pet_activity",
+      "title": "开始宠物活动",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/start_pet_activity.html"
+    },
+    {
+      "action": "get_pet_activity_status",
+      "title": "获取活动状态",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/get_pet_activity_status.html"
+    },
+    {
+      "action": "settle_pet_activity",
+      "title": "结算宠物活动",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/settle_pet_activity.html"
+    },
+    {
+      "action": "encourage_pet_activity",
+      "title": "鼓励活动中的宠物",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/encourage_pet_activity.html"
+    },
+    {
+      "action": "get_pet_fatigue_status",
+      "title": "获取宠物疲劳状态",
+      "category": "活动与疲劳",
+      "url": "https://mknt.net/api/get_pet_fatigue_status.html"
+    },
+    {
+      "action": "get_pet_pk_friends",
+      "title": "获取 PK 好友列表",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/get_pet_pk_friends.html"
+    },
+    {
+      "action": "get_pet_pk_strangers",
+      "title": "获取推荐 PK 对手",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/get_pet_pk_strangers.html"
+    },
+    {
+      "action": "get_pet_interaction_messages",
+      "title": "获取宠物互动消息",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/get_pet_interaction_messages.html"
+    },
+    {
+      "action": "get_pet_pk_power",
+      "title": "获取宠物 PK 数值",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/get_pet_pk_power.html"
+    },
+    {
+      "action": "poke_friend_pet",
+      "title": "戳一戳好友宠物",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/poke_friend_pet.html"
+    },
+    {
+      "action": "get_friend_pet_profile",
+      "title": "获取好友宠物资料",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/get_friend_pet_profile.html"
+    },
+    {
+      "action": "feed_friend_pet",
+      "title": "给好友宠物喂食",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/feed_friend_pet.html"
+    },
+    {
+      "action": "bathe_friend_pet",
+      "title": "给好友宠物洗护",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/bathe_friend_pet.html"
+    },
+    {
+      "action": "visit_friend_pet",
+      "title": "访问好友宠物",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/visit_friend_pet.html"
+    },
+    {
+      "action": "start_pet_pk",
+      "title": "发起宠物 PK",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/start_pet_pk.html"
+    },
+    {
+      "action": "get_pet_pk_status",
+      "title": "获取宠物 PK 状态",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/get_pet_pk_status.html"
+    },
+    {
+      "action": "settle_pet_pk",
+      "title": "结算宠物 PK",
+      "category": "好友与 PK",
+      "url": "https://mknt.net/api/settle_pet_pk.html"
+    }
+  ],
+  "explicitDisabled": [
+    "send_group_temp_msg",
+    "send_friend_request",
+    "send_group_join_request",
+    "upload_group_file",
+    "upload_private_file"
+  ],
+  "operationToLegacyAction": {
+    "profile": "get_pet_profile",
+    "vitals": "get_pet_vitals",
+    "attributes": "get_pet_attributes",
+    "medals": "get_pet_medal_gallery",
+    "food.catalog": "get_pet_food_catalog",
+    "food.feed": "feed_pet",
+    "food.buy": "buy_pet_food",
+    "bath.catalog": "get_pet_bath_catalog",
+    "bath.inventory": "get_pet_bath_inventory",
+    "bath.use": "bathe_pet",
+    "bath.buy": "buy_pet_bath_item",
+    "activity.overview": "get_pet_activity_overview",
+    "activity.options": "get_pet_activity_options",
+    "activity.start": "start_pet_activity",
+    "activity.status": "get_pet_activity_status",
+    "activity.settle": "settle_pet_activity",
+    "activity.encourage": "encourage_pet_activity",
+    "fatigue": "get_pet_fatigue_status",
+    "pk.friends": "get_pet_pk_friends",
+    "pk.strangers": "get_pet_pk_strangers",
+    "interactions": "get_pet_interaction_messages",
+    "pk.power": "get_pet_pk_power",
+    "friend.poke": "poke_friend_pet",
+    "friend.profile": "get_friend_pet_profile",
+    "friend.feed": "feed_friend_pet",
+    "friend.bathe": "bathe_friend_pet",
+    "friend.visit": "visit_friend_pet",
+    "pk.start": "start_pet_pk",
+    "pk.status": "get_pet_pk_status",
+    "pk.settle": "settle_pet_pk"
+  },
+  "activeAction": "qqpet_operation",
+  "allowedOperations": [
+    "activity.encourage",
+    "activity.options",
+    "activity.overview",
+    "activity.settle",
+    "activity.start",
+    "activity.status",
+    "attributes",
+    "bath.buy",
+    "bath.catalog",
+    "bath.inventory",
+    "bath.use",
+    "catalog",
+    "fatigue",
+    "food.buy",
+    "food.catalog",
+    "food.feed",
+    "friend.bathe",
+    "friend.feed",
+    "friend.poke",
+    "friend.profile",
+    "friend.visit",
+    "interactions",
+    "medals",
+    "pk.friends",
+    "pk.power",
+    "pk.settle",
+    "pk.start",
+    "pk.status",
+    "pk.strangers",
+    "profile",
+    "vitals"
+  ],
+  "removedActions": [
+    "join_group",
+    "qmate_accept_invite",
+    "qmate_claim_task_reward",
+    "qmate_confirm_invite",
+    "qmate_dissolve",
+    "qmate_get_adoption_info",
+    "qmate_get_info",
+    "qmate_get_inventory",
+    "qmate_get_invite_ark",
+    "qmate_get_tasks",
+    "qmate_hatch",
+    "qmate_report_incubation_combo",
+    "qmate_report_task_action",
+    "qmate_use_item",
+    "qqpet_adopt_pet",
+    "qqpet_buy_food",
+    "qqpet_check_user_in_gray",
+    "qqpet_claim_daily_food",
+    "qqpet_delete_interaction_record",
+    "qqpet_do_after_story_info",
+    "qqpet_do_care",
+    "qqpet_encourage_pet",
+    "qqpet_encourage_story",
+    "qqpet_equip_career",
+    "qqpet_equip_medal",
+    "qqpet_feeding",
+    "qqpet_get_activity_options",
+    "qqpet_get_activity_overview",
+    "qqpet_get_bath_catalog",
+    "qqpet_get_bath_inventory",
+    "qqpet_get_c2c_pet_info",
+    "qqpet_get_candidate_pets",
+    "qqpet_get_care_config",
+    "qqpet_get_care_supply_info",
+    "qqpet_get_career_tree",
+    "qqpet_get_clothing",
+    "qqpet_get_clothing_red_dot",
+    "qqpet_get_coin_bag_detail",
+    "qqpet_get_display_value",
+    "qqpet_get_event_rule",
+    "qqpet_get_feed_red_dot",
+    "qqpet_get_feed_times_info",
+    "qqpet_get_food_shop",
+    "qqpet_get_home_resource",
+    "qqpet_get_incr_resource",
+    "qqpet_get_interaction_history",
+    "qqpet_get_interaction_messages",
+    "qqpet_get_medal_detail",
+    "qqpet_get_medal_gallery",
+    "qqpet_get_my_suits",
+    "qqpet_get_numeric_metrics",
+    "qqpet_get_other_pet_status_info",
+    "qqpet_get_other_user_pet",
+    "qqpet_get_page_rules",
+    "qqpet_get_pet_story_status",
+    "qqpet_get_pk_power",
+    "qqpet_get_profile",
+    "qqpet_get_reaction",
+    "qqpet_get_relation_list",
+    "qqpet_get_resource",
+    "qqpet_get_resource_detail",
+    "qqpet_get_sequence",
+    "qqpet_get_story_info",
+    "qqpet_get_story_process",
+    "qqpet_get_upgrade_config",
+    "qqpet_get_user_pet",
+    "qqpet_heart_beat",
+    "qqpet_like",
+    "qqpet_place_order",
+    "qqpet_poke_friend_pet",
+    "qqpet_push_feed_msg",
+    "qqpet_query_like_count",
+    "qqpet_remove_one_suit",
+    "qqpet_report_action",
+    "qqpet_report_clothing_red_dot",
+    "qqpet_report_event",
+    "qqpet_report_feed_red_dot",
+    "qqpet_report_guide",
+    "qqpet_save_avatar",
+    "qqpet_save_one_suit",
+    "qqpet_set_c2c_pet_info",
+    "qqpet_set_c2c_pet_switch",
+    "qqpet_set_care_config",
+    "qqpet_set_device_info",
+    "qqpet_snatch_coin_bag",
+    "qqpet_start_story",
+    "qqpet_unequip_medal",
+    "qqpet_update_profile",
+    "qqpet_use_bath_item",
+    "send_friend_request",
+    "send_group_join_request",
+    "send_group_temp_msg",
+    "upload_group_file",
+    "upload_private_file"
+  ],
+  "errorCode": "API_REMOVED",
+  "errorMessage": "该 API 已移除，暂不支持调用",
+  "httpStatus": 410
+}

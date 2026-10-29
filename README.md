@@ -126,7 +126,7 @@ chmod +x ./mengka
 
 SDK 支持 HTTP、正向与反向 WebSocket、托管 IPC，使用对象参数调用 API，并保留框架原生事件字段。
 
-从 [GitHub Releases](https://github.com/Carlor-Official/Mengka-NT/releases/latest) 下载独立 SDK 附件及校验文件。安装、使用示例与接口迁移说明见 [Node.js SDK 文档](https://mengka.net/nt/development/nodejs-sdk.html)。
+下载 [最新 SDK ZIP](https://github.com/Carlor-Official/Mengka-NT/raw/refs/heads/main/sdk/releases/mengka-nt-node-sdk.zip) 与 [SHA256 校验文件](https://github.com/Carlor-Official/Mengka-NT/raw/refs/heads/main/sdk/releases/mengka-nt-node-sdk.zip.sha256)，或查看 [SDK 源码](https://github.com/Carlor-Official/Mengka-NT/tree/main/sdk/nodejs)。安装、使用示例与接口迁移说明见 [Node.js SDK 文档](https://mengka.net/nt/development/nodejs-sdk.html)。
 
 需要 Node.js 22 或更高版本。本地 IPC 插件还需打包为对应操作系统的可执行安装包；SDK 源码压缩包不能直接导入框架。
 

@@ -1,0 +1,63 @@
+{
+  "name": "mengka-nt-node-sdk",
+  "version": "3.0.5",
+  "private": true,
+  "description": "萌卡 NT Node.js 插件 SDK",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    },
+    "./sdk.js": {
+      "types": "./sdk.d.ts",
+      "import": "./sdk.js"
+    },
+    "./reverse-sdk.js": {
+      "types": "./reverse-sdk.d.ts",
+      "import": "./reverse-sdk.js"
+    },
+    "./native-plugin.js": {
+      "types": "./native-plugin.d.ts",
+      "import": "./native-plugin.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "sdk.js",
+    "sdk.d.ts",
+    "reverse-sdk.js",
+    "reverse-sdk.d.ts",
+    "native-plugin.js",
+    "native-plugin.d.ts",
+    "http.js",
+    "common.js",
+    "contracts.js",
+    "contracts.d.ts",
+    "events.d.ts",
+    "contract-source.json",
+    "README.md",
+    "examples-v3",
+    "public-api-policy.json",
+    "scripts/public-files.mjs",
+    "tests-v3"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node --check index.js && node --check common.js && node --check sdk.js && node --check reverse-sdk.js && node --check native-plugin.js && node --check http.js",
+    "test": "node --test tests-v3/*.test.mjs",
+    "typecheck": "tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 tests-v3/types.mts"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3"
+  }
+}
