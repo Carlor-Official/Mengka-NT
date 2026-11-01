@@ -17,5 +17,5 @@ export interface GroupMemberEvent extends AccountEvent { post_type: 'group_notic
 export interface BotOnlineEvent extends AccountEvent { post_type: 'bot_online' }
 export interface BotOfflineEvent extends AccountEvent { post_type: 'bot_offline'; err_msg: string; offline_reason: unknown }
 /** Connection-level event; no QQ account identity is present. */
-export interface SystemEvent { post_type: 'system_event'; sub_type: 'lifecycle' | 'heartbeat'; node_id: number; time: number; interval: number; status: string; [field: string]: unknown }
+export interface SystemEvent { post_type: 'system_event'; sub_type: 'lifecycle' | 'heartbeat'; time: number; interval: number; status: string; [field: string]: unknown }
 export type FrameworkEvent = GroupMessageEvent | FriendMessageEvent | GroupTempMessageEvent | MessageSentEvent | GroupNoticeEvent | FriendNoticeEvent | FriendRequestEvent | GroupRequestEvent | GroupMemberEvent | BotOnlineEvent | BotOfflineEvent | SystemEvent;

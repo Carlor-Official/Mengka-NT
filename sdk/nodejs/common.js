@@ -26,8 +26,10 @@ export function validate(action, params, transport) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError('API params must serialize to an object')
   if (contract.allowedOperations && !contract.allowedOperations.includes(value.operation)) throw removed()
   if (Object.hasOwn(value, 'client_type')) throw new TypeError('client_type is no longer supported; use protocol_id')
+  if (['node_id', 'nodeId', 'node'].some(key => Object.hasOwn(value, key))) throw new TypeError('Node selectors are no longer supported')
+  if (['proxy', 'proxyEnabled', 'proxy_enabled', 'proxyType', 'proxy_type', 'proxy_url', 'proxyUrl', 'proxyHost', 'proxyPort', 'proxyUsername', 'proxyPassword', 'proxy_host', 'proxy_port', 'proxy_username', 'proxy_password'].some(key => Object.hasOwn(value, key))) throw new TypeError('Proxy routing is no longer supported')
   if (API_CONTRACTS[action].transport === 'ipc' && transport !== 'ipc') throw new TypeError(`${action} is only available to managed IPC plugins`)
-  for (const key of ['self_id', 'protocol_id', 'node_id']) if (Object.hasOwn(value, key) && (!Number.isSafeInteger(value[key]) || value[key] < 0)) throw new TypeError(`${key} must be a non-negative safe integer`)
+  for (const key of ['self_id', 'protocol_id']) if (Object.hasOwn(value, key) && (!Number.isSafeInteger(value[key]) || value[key] < 0)) throw new TypeError(`${key} must be a non-negative safe integer`)
   return value
 }
 export function actionMethods(target, call) {

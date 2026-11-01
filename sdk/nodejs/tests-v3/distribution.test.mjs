@@ -15,6 +15,7 @@ test('standalone public distribution explicitly includes lock/types but excludes
   const lock = JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url)))
   assert.equal(lock.version, pkg.version); assert.equal(lock.packages[''].version, pkg.version)
   assert.equal(pkg.private, true, 'publishing remains gated until joint acceptance')
+  assert.match(readFileSync(new URL('../README.md', import.meta.url), 'utf8'), /`login_account`.*Linux.*未保存密码.*登录二维码.*扫码授权权益/)
 })
 test('SDK generated contract and retirement metadata are consistent in the standalone distribution', () => {
   const source = JSON.parse(readFileSync(new URL('../contract-source.json', import.meta.url)))

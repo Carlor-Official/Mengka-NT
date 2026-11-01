@@ -24,7 +24,7 @@ export interface NativePlugin {
   call: APIBase['call'];
   on(name: 'event', handler: (event: FrameworkEvent) => void | Promise<void>): () => void;
   on(name: string, handler: (...args: any[]) => void | Promise<void>): () => void;
-  readonly dataPath: string; readonly nodeId?: number; readonly instanceId?: string;
+  readonly dataPath: string; readonly instanceId?: string;
   logger: Record<'debug'|'info'|'warn'|'error', (...values: unknown[]) => void>;
   start(): Promise<NativePlugin>; close(): void;
 }

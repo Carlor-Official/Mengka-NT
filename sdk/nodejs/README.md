@@ -31,9 +31,13 @@ api.close()
 
 所有 API 使用对象参数：`api.action_name(params, options)` 或 `api.call(action, params, options)`。账号接口按 `self_id` 和 `protocol_id` 定位；协议 ID 0 有效，须读取框架实际返回的 ID。旧位置参数、`client_type`、`forProtocol` 不再支持。
 
-SDK 保留普通 API 和仅托管 IPC 可用的账号委托 API 方法及参数类型，已移除的方法会在发送请求前返回 `API_REMOVED`。接口参数类型见 `contracts.d.ts`；返回值保持框架原样，具体字段请查 [API 文档](https://mengka.net/nt/api/)。节点作用域、权益、等级及文件权限由框架检查，SDK 不绕过检查。
+SDK 保留普通 API 和仅托管 IPC 可用的账号委托 API 方法及参数类型，已移除的方法会在发送请求前返回 `API_REMOVED`。接口参数类型见 `contracts.d.ts`；返回值保持框架原样，具体字段请查 [API 文档](https://mengka.net/nt/api/)。账号范围、权益、等级及文件权限由框架检查，SDK 不绕过检查。
 
 QQ 宠物通过 `qqpet_operation` 调用文档中的 30 项业务操作，`catalog` 用于查询操作目录。其余宠物底层接口以及已移除的好友申请、群申请、群临时消息与文件上传接口不可调用。具名方法和 `call()` 遵守相同规则；错误包含 `code: 'API_REMOVED'`、`status: 'removed'`、`action` 和 `uncertain: false`。
+
+自定义发包、等级加速、扫码授权登录及红包领取/领取材料接口：Free 不可调用；Plus 每次调用核对对应 QQ 最新等级（至少 32 级）；Pro 不设这项等级门槛。含红包消息段的事件也按此规则控制推送。QQ 宠物和独立农场保留各自原有 48／16／0 级门槛。SDK 不根据本地角色、账号列表里的缓存等级或自行延时来授予权限，接口与事件仍由框架校验。
+
+`login_account` 对 Linux 账号使用已保存的密码登录；未保存密码而转为获取登录二维码时，同样遵守上述扫码授权权益条件。常规密码登录及框架管理员账号页的正常扫码流程保持各自原有规则。
 
 ## 反向 WebSocket
 
@@ -71,13 +75,13 @@ const plugin = createNativePlugin({ pluginId: 'example.plugin', version: '1.0.0'
 plugin.on('event', event => plugin.logger.info(event.post_type))
 await plugin.start()
 const context = await plugin.api.get_plugin_context({})
-plugin.logger.info('节点', context.node_id)
+plugin.logger.info('可用接口', context.available_actions)
 // 数据保存在 plugin.dataPath；程序结束时调用 plugin.close()。
 ```
 
 `pluginId`、`version` 和 `actions` 必须与安装包 `mengka-plugin.json` 对应。插件安装清单使用 schema 3，根层 `framework_api` 为 `"3.0.0"`，`runtime.transport` 为 `"native-ipc-v1"`，`runtime.api_version` 为 `"1"`。它们是协议标识，不随框架补丁版本改动。hello 的 `api_version` 同样为 `"1"`。
 
-框架通过 `MENGKA_PLUGIN_CONNECTION_FILE` 传入实例、节点和数据目录。stdout 专用于 IPC JSON 行协议，日志请使用 `plugin.logger`（stderr）。当前协议只有握手、事件与请求结果，没有旧 SDK 的配置快照热更或 activate/stop 控制帧。进程停止以管道关闭为准。
+框架通过 `MENGKA_PLUGIN_CONNECTION_FILE` 传入插件实例和数据目录。SDK 将握手中的实例标识与该文件核对。stdout 专用于 IPC JSON 行协议，日志请使用 `plugin.logger`（stderr）。当前协议只有握手、事件与请求结果，没有旧 SDK 的配置快照热更或 activate/stop 控制帧。进程停止以管道关闭为准。
 
 源码 SDK 不包含 Node 可执行程序。框架运行插件时不会继承系统 Node 搜索路径，导入插件包需要按平台携带可执行入口与所需运行时；参见 [插件导入文档](https://mengka.net/nt/reference/managed-plugins.html)。
 

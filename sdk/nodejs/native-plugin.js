@@ -12,7 +12,7 @@ export function createNativePlugin(options = {}) {
   let connection = null
   if (connectionPath) {
     connection = JSON.parse(readFileSync(connectionPath, 'utf8'))
-    if (connection.schema !== 1 || connection.transport !== 'native-ipc-v1' || connection.framework_api !== '3.0.0' || !isAbsolute(connection.data_directory || '')) throw new Error('Unsupported managed connection file')
+    if (connection.schema !== 1 || connection.transport !== 'native-ipc-v1' || connection.framework_api !== '3.0.0' || typeof connection.instance_id !== 'string' || !/^[A-Za-z0-9._-]+$/.test(connection.instance_id) || !isAbsolute(connection.data_directory || '')) throw new Error('Unsupported managed connection file')
   }
   const input = options.input || process.stdin, output = options.output || process.stdout
   const dataPath = connection?.data_directory || process.env.MENGKA_PLUGIN_DATA_DIR || ''
@@ -34,14 +34,14 @@ export function createNativePlugin(options = {}) {
         if (at > 16 * 1024 * 1024) throw new Error('IPC frame too large')
         const message = JSON.parse(buffer.subarray(0, at).toString('utf8')); buffer = buffer.subarray(at + 1)
         if (!api.ready) {
-          if (message.type !== 'ready' || message.transport !== 'native-ipc-v1' || message.api_version !== '1' || message.framework_api !== '3.0.0' || message.plugin_id !== pluginId || !Number.isSafeInteger(message.node_id) || message.node_id < 0 || (connection && message.node_id !== connection.node_id)) throw new Error('IPC ready identity mismatch')
-          clearTimeout(timer); api.ready = true; ctx.nodeId = message.node_id; rejectStart = null; accept(ctx); api.notify('ready')
+          if (message.type !== 'ready' || message.transport !== 'native-ipc-v1' || message.api_version !== '1' || message.framework_api !== '3.0.0' || message.plugin_id !== pluginId || (connection && message.instance_id !== connection.instance_id)) throw new Error('IPC ready identity mismatch')
+          clearTimeout(timer); api.ready = true; ctx.instanceId = connection?.instance_id; rejectStart = null; accept(ctx); api.notify('ready')
         } else api.receive(message)
       }
       if (buffer.length > 16 * 1024 * 1024) throw new Error('IPC frame too large')
     } catch (error) { rejectStart?.(error); onClose() }
   }
-  const ctx = { api, call: (...args) => api.call(...args), on: (name, handler) => { api.on(name, handler); return () => api.off(name, handler) }, dataPath, nodeId: connection?.node_id, instanceId: connection?.instance_id,
+  const ctx = { api, call: (...args) => api.call(...args), on: (name, handler) => { api.on(name, handler); return () => api.off(name, handler) }, dataPath, instanceId: connection?.instance_id,
     logger: Object.fromEntries(['debug', 'info', 'warn', 'error'].map(level => [level, (...values) => process.stderr.write(`[${level}] ${values.map(String).join(' ')}\n`)])),
     start() {
       if (started || closed) return Promise.reject(new Error('IPC already started or closed'))

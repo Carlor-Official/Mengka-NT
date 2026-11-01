@@ -12,6 +12,19 @@ const ipc = createNativePlugin({ pluginId: 'example.test', version: '1.0.0', act
 void ipc.api.get_account_delegation({ receipt: 'test' })
 const receive = (event: FrameworkEvent) => {
   if (event.post_type === 'group_temp_message') { const group: number | undefined = event.group_id; const uid: string = event.msg.uid; void group; void uid }
-  if (event.post_type === 'system_event') { const node: number = event.node_id; void node }
+  if (event.post_type === 'system_event') { const time: number = event.time; void time }
 }
 api.on('event', receive)
+// @ts-expect-error service node APIs are no longer part of the framework
+void api.get_node_list({})
+// @ts-expect-error accounts are selected without service node parameters
+void api.get_bot_info({ self_id: 10001, protocol_id: 0, node_id: 1 })
+// @ts-expect-error IPC context no longer exposes node IDs
+void ipc.nodeId
+
+void api.send_packet({ self_id: 10001, protocol_id: 0, cmd: 'Example.Service.Command', data: '0801' })
+void api.call('send_packet', { self_id: 10001, protocol_id: 0, cmd: 'Example.Service.Command', data: '0801', rsp: false })
+// @ts-expect-error send_packet requires the actual SSO command
+void api.send_packet({ self_id: 10001, protocol_id: 0, data: '0801' })
+// @ts-expect-error generic call has the same required payload contract
+void api.call('send_packet', { self_id: 10001, protocol_id: 0, cmd: 'Example.Service.Command' })

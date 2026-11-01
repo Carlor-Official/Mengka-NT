@@ -3,21 +3,53 @@ import assert from 'node:assert/strict'
 import { once } from 'node:events'
 import { PassThrough } from 'node:stream'
 import { createServer } from 'node:http'
+import { mkdtemp, writeFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import WebSocket, { WebSocketServer } from 'ws'
 import { createAPI, createReverseAPI, createHTTPAPI, createNativePlugin, API_ACTIONS } from '../index.js'
 import { Session } from '../common.js'
+import { API_CONTRACTS } from '../contracts.js'
 
 const identity = { name: 'sdk-test', version: '1.0.0', author: 'test', token: 'test-token', permissions: { system_event: true, bot_online: true } }
+test('send_packet contract requires command and hex payload while preserving real response shapes', async () => {
+  const contract = API_CONTRACTS.send_packet
+  for (const name of ['self_id', 'protocol_id', 'cmd', 'data']) assert.equal(contract.params.find(param => param.name === name)?.required, true)
+  assert.equal(contract.params.find(param => param.name === 'rsp')?.required, false)
+  const api = new Session('ws'); api.ready = true
+  api.sender = request => api.receive({ type: 'action_result', id: request.id, ok: true, data: request.params.rsp === false ? { submitted: true } : '0801' })
+  const request = { self_id: 10001, protocol_id: 0, cmd: 'Example.Service.Command', data: '0801' }
+  assert.equal(await api.send_packet(request), '0801')
+  assert.deepEqual(await api.call('send_packet', { ...request, rsp: false }), { submitted: true })
+  // Runtime authority is still the framework, never a local SDK tier guess.
+  api.sender = request => api.receive({ type: 'action_result', id: request.id, ok: false, status: 'restricted', code: 'TIER_CAPABILITY_FORBIDDEN', error: '当前 Free 权益不支持此功能' })
+  await assert.rejects(api.send_packet(request), error => error.code === 'TIER_CAPABILITY_FORBIDDEN' && error.response.status === 'restricted')
+})
 test('all current actions have object helpers, zero IDs preserved and legacy selectors rejected', async () => {
-  assert.equal(API_ACTIONS.length, 277)
+  assert.equal(API_ACTIONS.length, 276)
   const api = new Session('ws'); api.ready = true
   api.sender = message => { assert.equal(message.params.protocol_id, 0); api.receive({ type: 'action_result', id: message.id, ok: true, data: message.params }) }
   for (const action of API_ACTIONS) assert.equal(typeof api[action], 'function')
   assert.deepEqual(await api.get_bot_info({ self_id: 10001, protocol_id: 0 }), { self_id: 10001, protocol_id: 0 })
   await assert.rejects(api.get_bot_info({ self_id: 10001, client_type: 'android' }), /client_type/)
+  for (const selector of ['node_id', 'nodeId', 'node']) await assert.rejects(api.get_bot_info({ self_id: 10001, protocol_id: 0, [selector]: 1 }), /Node selectors/)
+  for (const selector of ['proxy', 'proxyEnabled', 'proxy_enabled', 'proxyType', 'proxy_type', 'proxy_url', 'proxyUrl', 'proxyHost', 'proxyPort', 'proxyUsername', 'proxyPassword', 'proxy_host', 'proxy_port', 'proxy_username', 'proxy_password']) await assert.rejects(api.get_bot_info({ self_id: 10001, protocol_id: 0, [selector]: '' }), /Proxy routing/)
+  assert.equal(API_ACTIONS.includes('get_node_list'), false)
+  assert.equal(api.get_node_list, undefined)
+  await assert.rejects(api.call('get_node_list', {}), /Unknown action/)
   await assert.rejects(api.get_bot_info(10001), /object/)
   await assert.rejects(api.get_bot_info({ protocol_id: 9007199254740992 }), /safe integer/)
   await assert.rejects(api.set_account_delegation({}), /managed IPC/)
+})
+test('SDK contracts preserve reviewed scopes and actual nested payloads without literal dotted keys', async () => {
+  for (const action of API_ACTIONS.filter(action => API_CONTRACTS[action].transport !== 'ipc')) assert.ok(API_CONTRACTS[action].applicableProtocols?.trim(), action)
+  assert.match(API_CONTRACTS.send_packet.usageConditions, /32 级/)
+  assert.match(API_CONTRACTS.qqpet_operation.usageConditions, /48.*16/)
+  const api = new Session('ws'); api.ready = true
+  api.sender = request => api.receive({ type: 'action_result', id: request.id, ok: true, data: request.params })
+  const params = { self_id: 10001, protocol_id: 0, group_id: 98765, sender_id: 20002, red_packet: { listid: 'sample', authkey: 'sample-key', channel: 1 } }
+  assert.deepEqual(await api.grab_red_packet(params), params)
+  assert.equal(Object.keys(API_CONTRACTS).some(action => /telegram/i.test(action)), false)
 })
 test('timeouts, abort and disconnect never replay; restrictions and unknown event fields preserved', async () => {
   const api = new Session('ws'); api.ready = true; let writes = 0
@@ -84,18 +116,20 @@ test('IPC exact hello, fragmented ready, manifest guard and event identity', asy
   const ctx = createNativePlugin({ pluginId: 'sdk-test', version: '1.0.0', actions: ['get_plugin_context'], input, output })
   const started = ctx.start()
   const hello = JSON.parse(writes.trim()); assert.equal(hello.framework_api, '3.0.0'); assert.equal(hello.api_version, '1')
-  const ready = JSON.stringify({ type: 'ready', transport: 'native-ipc-v1', api_version: '1', framework_api: '3.0.0', plugin_id: 'sdk-test', node_id: 42 }) + '\n'
+  const ready = JSON.stringify({ type: 'ready', transport: 'native-ipc-v1', api_version: '1', framework_api: '3.0.0', plugin_id: 'sdk-test' }) + '\n'
   input.write(ready.slice(0, 9)); input.write(ready.slice(9)); await started
   await assert.rejects(ctx.api.get_bot_list({}), /not declared/)
   const pending = ctx.api.get_plugin_context({}); const action = JSON.parse(writes.trim().split('\n').at(-1))
-  input.write(JSON.stringify({ type: 'action_result', id: action.id, ok: true, data: { node_id: 42 } }) + '\n')
-  assert.deepEqual(await pending, { node_id: 42 }); ctx.close(); input.destroy(); output.destroy()
+  input.write(JSON.stringify({ type: 'action_result', id: 'wrong-request-id', ok: true, data: 'wrong' }) + '\n')
+  assert.equal(ctx.api.pending.has(action.id), true)
+  input.write(JSON.stringify({ type: 'action_result', id: action.id, ok: true, data: { scope: 'framework' } }) + '\n')
+  assert.deepEqual(await pending, { scope: 'framework' }); ctx.close(); input.destroy(); output.destroy()
 })
 test('IPC handshake identity failure rejects start and releases input listeners', async () => {
   const input = new PassThrough(), output = new PassThrough()
   const ctx = createNativePlugin({ pluginId: 'sdk-test', version: '1.0.0', actions: [], input, output })
   const started = ctx.start()
-  input.write('{"type":"ready","transport":"native-ipc-v1","api_version":"1","framework_api":"2.0","plugin_id":"sdk-test","node_id":42}\n')
+  input.write('{"type":"ready","transport":"native-ipc-v1","api_version":"1","framework_api":"2.0","plugin_id":"sdk-test"}\n')
   await assert.rejects(started, /identity mismatch/)
   assert.equal(input.listenerCount('data'), 0); assert.equal(ctx.api.ready, false)
   input.destroy(); output.destroy()
@@ -106,8 +140,31 @@ test('IPC cannot start after close or process another buffered ready after liste
   closed.close(); await assert.rejects(closed.start(), /closed/); assert.equal(input.listenerCount('data'), 0)
   const ctx = createNativePlugin({ pluginId: 'sdk-test', version: '1.0.0', actions: [], input, output })
   ctx.on('ready', () => ctx.close()); const started = ctx.start()
-  const ready = JSON.stringify({ type: 'ready', transport: 'native-ipc-v1', api_version: '1', framework_api: '3.0.0', plugin_id: 'sdk-test', node_id: 42 }) + '\n'
+  const ready = JSON.stringify({ type: 'ready', transport: 'native-ipc-v1', api_version: '1', framework_api: '3.0.0', plugin_id: 'sdk-test' }) + '\n'
   input.write(ready + ready); await started
-  assert.equal(ctx.nodeId, 42); assert.equal(ctx.api.ready, false); assert.equal(input.listenerCount('data'), 0)
+  assert.equal('nodeId' in ctx, false); assert.equal(ctx.api.ready, false); assert.equal(input.listenerCount('data'), 0)
   input.destroy(); output.destroy()
+})
+
+test('IPC identity remains bound to trusted connection file after node removal', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'mengka-single-node-sdk-'))
+  t.after(() => rm(directory, { recursive: true, force: true }))
+  const connectionFile = join(directory, 'connection.json')
+  await writeFile(connectionFile, JSON.stringify({ schema: 1, transport: 'native-ipc-v1', framework_api: '3.0.0', instance_id: 'trusted-instance', data_directory: directory }))
+  const valid = { type: 'ready', transport: 'native-ipc-v1', api_version: '1', framework_api: '3.0.0', plugin_id: 'sdk-test', instance_id: 'trusted-instance' }
+  for (const changed of [{ plugin_id: 'other-plugin' }, { instance_id: 'untrusted-instance' }, { instance_id: undefined }, { transport: 'other' }, { api_version: '2' }, { framework_api: '2.0.0' }]) {
+    const input = new PassThrough(), output = new PassThrough()
+    const ctx = createNativePlugin({ pluginId: 'sdk-test', version: '1.0.0', actions: [], connectionFile, input, output })
+    const started = ctx.start()
+    input.write(JSON.stringify({ ...valid, ...changed }) + '\n')
+    await assert.rejects(started, /identity mismatch/)
+    assert.equal(ctx.api.ready, false); assert.equal(input.listenerCount('data'), 0)
+    input.destroy(); output.destroy()
+  }
+  const input = new PassThrough(), output = new PassThrough()
+  const ctx = createNativePlugin({ pluginId: 'sdk-test', version: '1.0.0', actions: ['get_plugin_context'], connectionFile, input, output })
+  const started = ctx.start(); input.write(JSON.stringify(valid) + '\n'); await started
+  assert.equal(ctx.instanceId, 'trusted-instance'); assert.equal('nodeId' in ctx, false)
+  await assert.rejects(ctx.api.get_bot_list({}), /not declared/)
+  ctx.close(); input.destroy(); output.destroy()
 })
