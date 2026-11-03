@@ -1081,6 +1081,12 @@ export interface ActionParams {
     /** get_security_verify_qr 返回的当前令牌。 */
     "guarantee_token": string;
   };
+  ntlogin_retry_security_verify: {
+    /** 当前框架内的 QQ 号，5–10 位整数。 */
+    "self_id": number;
+    /** 账号实例的协议 ID；必须显式提供，0 是有效 ID。用 get_protocol_list 查询，不使用 client_type 替代。 */
+    "protocol_id": number;
+  };
   ntlogin_submit_slider: {
     /** 当前框架内的 QQ 号，5–10 位整数。 */
     "self_id": number;
@@ -2542,6 +2548,22 @@ export interface ActionParams {
     /** 是否允许指定成员权限 */
     "allow": boolean;
   };
+  set_group_msg_reaction: {
+    /** 当前框架内的 QQ 号，5–10 位整数。 */
+    "self_id": number;
+    /** 账号实例的协议 ID；必须显式提供，0 是有效 ID。用 get_protocol_list 查询，不使用 client_type 替代。 */
+    "protocol_id": number;
+    /** 群号，正整数。 */
+    "group_id": number;
+    /** QQ 原生群消息序号，正整数；不是框架缓存 message_id。 */
+    "msg_seq": number;
+    /** 非空表情回应 ID。 */
+    "emoji_id": string;
+    /** true 添加，false 取消；必须显式提供。 */
+    "is_add": boolean;
+    /** 省略或 null 时使用 1；显式数值必须为正整数，不能为 0。 */
+    "emoji_type"?: number | null;
+  };
   set_group_mute: {
     /** 当前框架内的账号 QQ 号 */
     "self_id": number;
@@ -2648,7 +2670,7 @@ export interface ActionParams {
     /** 消息事件或发送结果中的框架消息编号 */
     "message_id": number;
     /** 表情回应 ID */
-    "emoji_id"?: string;
+    "emoji_id": string;
     /** true 添加表情回应，false 取消 */
     "set": boolean;
     /** 表情回应类型 */
@@ -2950,5 +2972,10 @@ export interface ActionParams {
   };
 }
 export type ActionName = keyof ActionParams;
-export type ActionMethods = { [K in ActionName]: (params: ActionParams[K], options?: CallOptions) => Promise<unknown> };
+export interface SecurityAccessTokenResult { token: string; /** Linux 3.2.34: unsigned decimal string; legacy Android/Linux: number. Do not coerce to Number. */ expiresAt: number | string }
+export interface LoginVerificationFailure { code: number; message: string; next: "failed" }
+export type SecurityAccessTokenResponse = SecurityAccessTokenResult | LoginVerificationFailure;
+export type SecurityAccessTokenParams = ActionParams["open_account_security_access"] & { type: "getToken" };
+export interface SecurityAccessAction { (params: SecurityAccessTokenParams, options?: CallOptions): Promise<SecurityAccessTokenResponse>; (params: ActionParams["open_account_security_access"], options?: CallOptions): Promise<unknown> }
+export type ActionMethods = { [K in ActionName]: K extends "open_account_security_access" ? SecurityAccessAction : (params: ActionParams[K], options?: CallOptions) => Promise<unknown> };
 export interface CallOptions { timeoutMs?: number; signal?: AbortSignal }

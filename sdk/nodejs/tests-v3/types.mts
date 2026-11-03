@@ -2,6 +2,23 @@ import { createAPI, createHTTPAPI, createNativePlugin, type FrameworkEvent } fro
 const api = createAPI({ url: 'ws://localhost:3001', token: 'test', name: 'test', version: '1.0.0', author: 'test' })
 void api.get_bot_list({})
 void api.get_bot_info({ self_id: 10001, protocol_id: 0 })
+void api.ntlogin_retry_security_verify({ self_id: 10001, protocol_id: 0 })
+api.open_account_security_access({ self_id: 10001, protocol_id: 0, type: 'getToken' }).then(result => {
+  if ('token' in result) {
+    const expiresAt: number | string = result.expiresAt
+    // @ts-expect-error new Linux expiry cannot be assumed numeric
+    const numericExpiry: number = result.expiresAt
+    void expiresAt; void numericExpiry
+  } else { const failed: 'failed' = result.next; void failed }
+})
+api.call('open_account_security_access', { self_id: 10001, protocol_id: 0, type: 'getToken' }).then(result => {
+  if ('token' in result) { const token: string = result.token; void token }
+})
+void api.set_group_msg_reaction({ self_id: 10001, protocol_id: 0, group_id: 12345, msg_seq: 123, emoji_id: '76', is_add: false, emoji_type: null })
+// @ts-expect-error native sequence reaction requires explicit add/remove
+void api.set_group_msg_reaction({ self_id: 10001, protocol_id: 0, group_id: 12345, msg_seq: 123, emoji_id: '76' })
+// @ts-expect-error nullable numeric type does not accept string
+void api.set_group_msg_reaction({ self_id: 10001, protocol_id: 0, group_id: 12345, msg_seq: 123, emoji_id: '76', is_add: false, emoji_type: '1' })
 // @ts-expect-error legacy positional arguments are intentionally unsupported
 void api.get_bot_info(10001)
 // @ts-expect-error explicit protocol ID required

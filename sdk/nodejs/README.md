@@ -35,7 +35,7 @@ SDK 保留普通 API 和仅托管 IPC 可用的账号委托 API 方法及参数�
 
 QQ 宠物通过 `qqpet_operation` 调用文档中的 30 项业务操作，`catalog` 用于查询操作目录。其余宠物底层接口以及已移除的好友申请、群申请、群临时消息与文件上传接口不可调用。具名方法和 `call()` 遵守相同规则；错误包含 `code: 'API_REMOVED'`、`status: 'removed'`、`action` 和 `uncertain: false`。
 
-自定义发包、等级加速、扫码授权登录及红包领取/领取材料接口：Free 不可调用；Plus 每次调用核对对应 QQ 最新等级（至少 32 级）；Pro 不设这项等级门槛。含红包消息段的事件也按此规则控制推送。QQ 宠物和独立农场保留各自原有 48／16／0 级门槛。SDK 不根据本地角色、账号列表里的缓存等级或自行延时来授予权限，接口与事件仍由框架校验。
+自定义发包、等级加速、扫码授权登录及红包领取/领取材料接口：Free 不可调用；Plus 每次调用核对对应 QQ 最新等级（至少 32 级），并增加 10–100ms 延迟；Pro 不设这项等级门槛。含红包消息段的事件也按此规则控制推送。自框架 3.0.7 起，其他 API（包括 QQ 宠物和独立农场）不额外限制 QQ 等级，仍需满足账号在线、当前授权及接口业务条件。SDK 不根据本地角色、账号列表里的缓存等级或自行延时来授予权限，接口与事件仍由框架校验；仅更新 SDK 不会改变旧框架的权益规则。
 
 `login_account` 对 Linux 账号使用已保存的密码登录；未保存密码而转为获取登录二维码时，同样遵守上述扫码授权权益条件。常规密码登录及框架管理员账号页的正常扫码流程保持各自原有规则。
 
@@ -83,13 +83,33 @@ plugin.logger.info('可用接口', context.available_actions)
 
 框架通过 `MENGKA_PLUGIN_CONNECTION_FILE` 传入插件实例和数据目录。SDK 将握手中的实例标识与该文件核对。stdout 专用于 IPC JSON 行协议，日志请使用 `plugin.logger`（stderr）。当前协议只有握手、事件与请求结果，没有旧 SDK 的配置快照热更或 activate/stop 控制帧。进程停止以管道关闭为准。
 
-源码 SDK 不包含 Node 可执行程序。框架运行插件时不会继承系统 Node 搜索路径，导入插件包需要按平台携带可执行入口与所需运行时；参见 [插件导入文档](https://mengka.net/nt/reference/managed-plugins.html)。
+Linux 框架的 IPC 导入仍需要 Docker，先检查并准备环境，再按 Docker Engine 的目标架构打包 `linux/amd64` 或 `linux/arm64` 可执行入口与运行依赖。自 3.0.7 起，Windows 框架直接运行 Windows amd64 PE 可执行入口（通常是 `.exe`），不需要 Docker。Windows 原生插件使用框架运行账号的权限，不具备同等容器文件系统隔离，只导入可信插件。源码 SDK 不包含 Node 可执行程序，不能直接以 `.js` 文件作为入口，也不能依赖宿主机的 Node。业务数据统一写入 `plugin.dataPath`；Linux 容器使用持久化 `/data` 和只读 `/plugin`，Windows 使用框架分配的实际目录。外部 HTTP / WebSocket 接入不需要 Docker；参见 [插件导入文档](https://mengka.net/nt/reference/managed-plugins.html)。
 
 ## 事件
 
 `api.on('event', handler)` 接收全部获授权事件，也可按原生 `post_type` 订阅。详细类型见 `events.d.ts`，不转换为旧事件别名。
 
 事件权限为 `group_message`、`friend_message`、`group_event`、`friend_event`、`bot_online`、`bot_offline`、`system_event`。群临时消息使用 `friend_message` 权限。系统事件是连接级别，没有 QQ 账号身份。`msg.uid`、好友申请 `request_id` 是十进制字符串，请勿转成 Number。
+
+## 登录安全验证与消息回应
+
+在网页完成当前 NT 登录的安全验证后，使用同一账号和协议继续登录；读取返回的 `next`，只有 `done` 才表示登录完成。
+
+```js
+const login = await api.ntlogin_retry_security_verify({ self_id: 123456789, protocol_id: 0 })
+console.error(login.next)
+```
+
+有原生群消息序号时使用 `set_group_msg_reaction`；`is_add: false` 表示取消回应。`msg_seq` 不能用框架的 `message_id` 代替；只有框架消息编号时仍使用 `set_msg_emoji_like`。
+
+```js
+await api.set_group_msg_reaction({
+  self_id: 123456789, protocol_id: 0, group_id: 987654321,
+  msg_seq: 100, emoji_id: '76', is_add: false,
+})
+```
+
+参数与返回值见 [NT 安全验证继续登录](https://mengka.net/nt/api/ntlogin_retry_security_verify.html)和[群消息表情回应](https://mengka.net/nt/api/set_group_msg_reaction.html)。
 
 ## 错误与重试
 

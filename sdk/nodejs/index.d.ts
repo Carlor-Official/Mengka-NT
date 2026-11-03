@@ -1,9 +1,10 @@
-import type { ActionName, ActionParams, ActionMethods, CallOptions } from './contracts.js'
+import type { ActionName, ActionParams, ActionMethods, CallOptions, SecurityAccessTokenParams, SecurityAccessTokenResponse } from './contracts.js'
 import type { FrameworkEvent } from './events.js'
 export type * from './events.js'
-export type { ActionName, ActionParams, CallOptions } from './contracts.js'
+export type { ActionName, ActionParams, CallOptions, SecurityAccessTokenParams, SecurityAccessTokenResult, SecurityAccessTokenResponse, LoginVerificationFailure } from './contracts.js'
 export type EventPermission = 'group_message' | 'friend_message' | 'group_event' | 'friend_event' | 'bot_online' | 'bot_offline' | 'system_event'
 export interface APIBase {
+  call(action: 'open_account_security_access', params: SecurityAccessTokenParams, options?: CallOptions): Promise<SecurityAccessTokenResponse>;
   call<K extends ActionName>(action: K, params: ActionParams[K], options?: CallOptions): Promise<unknown>;
 }
 export interface Connection extends APIBase {

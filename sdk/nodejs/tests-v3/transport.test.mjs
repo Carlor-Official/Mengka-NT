@@ -26,7 +26,7 @@ test('send_packet contract requires command and hex payload while preserving rea
   await assert.rejects(api.send_packet(request), error => error.code === 'TIER_CAPABILITY_FORBIDDEN' && error.response.status === 'restricted')
 })
 test('all current actions have object helpers, zero IDs preserved and legacy selectors rejected', async () => {
-  assert.equal(API_ACTIONS.length, 276)
+  assert.equal(API_ACTIONS.length, 278)
   const api = new Session('ws'); api.ready = true
   api.sender = message => { assert.equal(message.params.protocol_id, 0); api.receive({ type: 'action_result', id: message.id, ok: true, data: message.params }) }
   for (const action of API_ACTIONS) assert.equal(typeof api[action], 'function')
@@ -41,10 +41,39 @@ test('all current actions have object helpers, zero IDs preserved and legacy sel
   await assert.rejects(api.get_bot_info({ protocol_id: 9007199254740992 }), /safe integer/)
   await assert.rejects(api.set_account_delegation({}), /managed IPC/)
 })
+test('NT continuation and group reaction preserve zero, false and null without implicit retries', async () => {
+  const api = new Session('ws'); api.ready = true
+  const calls = []
+  api.sender = request => {
+    calls.push(request)
+    api.receive({ type: 'action_result', id: request.id, ok: true, data: request.action === 'ntlogin_retry_security_verify' ? { code: 1, message: '继续验证', next: 'security' } : { success: true } })
+  }
+  const result = await api.ntlogin_retry_security_verify({ self_id: 10001, protocol_id: 0 })
+  assert.equal(result.next, 'security')
+  assert.equal(calls.length, 1)
+  assert.deepEqual(calls[0].params, { self_id: 10001, protocol_id: 0 })
+  const params = { self_id: 10001, protocol_id: 0, group_id: 12345, msg_seq: 123, emoji_id: '76', is_add: false, emoji_type: null }
+  assert.deepEqual(await api.set_group_msg_reaction(params), { success: true })
+  assert.deepEqual(calls[1].params, params)
+  assert.equal(calls.length, 2)
+  assert.equal(API_CONTRACTS.set_msg_emoji_like.params.find(param => param.name === 'emoji_id').required, true)
+})
+test('security access preserves unsigned expiry strings and legacy numeric deadlines without coercion', async () => {
+  const api = new Session('ws'); api.ready = true
+  let expected = { token: 'test-only-opaque-qq-ticket', expiresAt: '18446744073709551615' }
+  api.sender = request => api.receive({ type: 'action_result', id: request.id, ok: true, data: expected })
+  const params = { self_id: 10001, protocol_id: 0, type: 'getToken' }
+  assert.deepEqual(await api.open_account_security_access(params), expected)
+  expected = { token: 'test-only-opaque-qq-ticket', expiresAt: 123 }
+  assert.deepEqual(await api.call('open_account_security_access', params), expected)
+  expected = { code: 1, message: '验证失败', next: 'failed' }
+  assert.deepEqual(await api.open_account_security_access(params), expected)
+})
 test('SDK contracts preserve reviewed scopes and actual nested payloads without literal dotted keys', async () => {
   for (const action of API_ACTIONS.filter(action => API_CONTRACTS[action].transport !== 'ipc')) assert.ok(API_CONTRACTS[action].applicableProtocols?.trim(), action)
   assert.match(API_CONTRACTS.send_packet.usageConditions, /32 级/)
-  assert.match(API_CONTRACTS.qqpet_operation.usageConditions, /48.*16/)
+  assert.match(API_CONTRACTS.qqpet_operation.usageConditions, /不额外限制 QQ 等级/)
+  assert.doesNotMatch(API_CONTRACTS.qqpet_operation.usageConditions, /48.*16/)
   const api = new Session('ws'); api.ready = true
   api.sender = request => api.receive({ type: 'action_result', id: request.id, ok: true, data: request.params })
   const params = { self_id: 10001, protocol_id: 0, group_id: 98765, sender_id: 20002, red_packet: { listid: 'sample', authkey: 'sample-key', channel: 1 } }

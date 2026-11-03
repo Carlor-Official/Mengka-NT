@@ -2650,7 +2650,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android（手机 / 平板）；不支持 Linux QQ。",
-    "usageConditions": "Free：QQ 等级至少 48 级；Plus：至少 16 级；Pro：不限制 QQ 等级。仍需满足账号在线、当前授权及接口本身的业务条件。"
+    "usageConditions": "不额外限制 QQ 等级。仍需满足账号在线、当前授权及接口本身的业务条件。"
   },
   "get_qun_album_list": {
     "description": "分页获取群相册列表。接口直接调用 QQ Android 的 `QunAlbum.trpc` 服务，不依赖 PC QQ。",
@@ -4222,6 +4222,27 @@ export const API_CONTRACTS = freeze({
     ],
     "applicableProtocols": "Android / Linux QQ；仅用于当前登录流程要求的设备安全验证。",
     "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会继续查询或确认登录。处于待验证登录状态的实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+  },
+  "ntlogin_retry_security_verify": {
+    "description": "完成网页登录安全验证后，继续当前 NT 登录。",
+    "params": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "typeLabel": "number",
+        "required": true,
+        "description": "当前框架内的 QQ 号，5–10 位整数。"
+      },
+      {
+        "name": "protocol_id",
+        "type": "number",
+        "typeLabel": "number",
+        "required": true,
+        "description": "账号实例的协议 ID；必须显式提供，0 是有效 ID。用 get_protocol_list 查询，不使用 client_type 替代。"
+      }
+    ],
+    "applicableProtocols": "Android / Linux QQ；仅用于当前尚未结束的 NT 登录安全验证。",
+    "usageConditions": "先完成当前登录要求的网页安全验证，再调用本接口继续。同一账号、协议必须仍有待处理的 NT 登录；不适用于 WTLogin、离线账号或其他登录会话。"
   },
   "ntlogin_submit_slider": {
     "description": "NT 提交滑块验证。",
@@ -6950,7 +6971,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android（手机 / 平板）；不支持 Linux QQ。",
-    "usageConditions": "Free：QQ 等级至少 48 级；Plus：至少 16 级；Pro：不限制 QQ 等级。仍需满足账号在线、当前授权及接口本身的业务条件。",
+    "usageConditions": "不额外限制 QQ 等级。仍需满足账号在线、当前授权及接口本身的业务条件。",
     "allowedOperations": [
       "activity.encourage",
       "activity.options",
@@ -9148,6 +9169,62 @@ export const API_CONTRACTS = freeze({
     ],
     "applicableProtocols": "Android（手机 / 平板）/ Linux QQ。"
   },
+  "set_group_msg_reaction": {
+    "description": "通过群号和原生消息序号添加或取消表情回应。",
+    "params": [
+      {
+        "name": "self_id",
+        "type": "number",
+        "typeLabel": "number",
+        "required": true,
+        "description": "当前框架内的 QQ 号，5–10 位整数。"
+      },
+      {
+        "name": "protocol_id",
+        "type": "number",
+        "typeLabel": "number",
+        "required": true,
+        "description": "账号实例的协议 ID；必须显式提供，0 是有效 ID。用 get_protocol_list 查询，不使用 client_type 替代。"
+      },
+      {
+        "name": "group_id",
+        "type": "number",
+        "typeLabel": "number",
+        "required": true,
+        "description": "群号，正整数。"
+      },
+      {
+        "name": "msg_seq",
+        "type": "number",
+        "typeLabel": "number",
+        "required": true,
+        "description": "QQ 原生群消息序号，正整数；不是框架缓存 message_id。"
+      },
+      {
+        "name": "emoji_id",
+        "type": "string",
+        "typeLabel": "string",
+        "required": true,
+        "description": "非空表情回应 ID。"
+      },
+      {
+        "name": "is_add",
+        "type": "boolean",
+        "typeLabel": "boolean",
+        "required": true,
+        "description": "true 添加，false 取消；必须显式提供。"
+      },
+      {
+        "name": "emoji_type",
+        "type": "number",
+        "typeLabel": "number | null",
+        "required": false,
+        "description": "省略或 null 时使用 1；显式数值必须为正整数，不能为 0。"
+      }
+    ],
+    "applicableProtocols": "Android（手机 / 平板）/ Linux QQ。",
+    "usageConditions": "账号必须属于当前框架且在线。group_id 与 msg_seq 应来自目标群消息；不能将框架 message_id 直接作为 msg_seq。"
+  },
   "set_group_mute": {
     "description": "设置或取消群聊成员禁言。",
     "params": [
@@ -9510,7 +9587,7 @@ export const API_CONTRACTS = freeze({
         "name": "emoji_id",
         "type": "string",
         "typeLabel": "`string`",
-        "required": false,
+        "required": true,
         "description": "表情回应 ID"
       },
       {
