@@ -15,7 +15,7 @@ test('standalone public distribution explicitly includes lock/types but excludes
   const lock = JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url)))
   assert.equal(lock.version, pkg.version); assert.equal(lock.packages[''].version, pkg.version)
   assert.equal(pkg.private, true, 'publishing remains gated until joint acceptance')
-  assert.match(readFileSync(new URL('../README.md', import.meta.url), 'utf8'), /`login_account`.*Linux.*未保存密码.*登录二维码.*扫码授权权益/)
+  assert.match(readFileSync(new URL('../README.md', import.meta.url), 'utf8'), /`login_account`.*Linux.*未保存密码.*登录二维码.*自身扫码登录权益/)
 })
 test('SDK generated contract and retirement metadata are consistent in the standalone distribution', () => {
   const source = JSON.parse(readFileSync(new URL('../contract-source.json', import.meta.url)))
@@ -35,8 +35,16 @@ test('SDK generated contract and retirement metadata are consistent in the stand
   for (const action of ['send_packet', 'execute_level_tasks', 'scan_qr', 'grab_red_packet']) {
     assert.match(API_CONTRACTS[action].usageConditions, /Free 不可调用.*Plus.*32 级.*Pro/)
   }
+  for (const action of ["get_login_qr", "query_login_qr", "login_account", "get_security_verify_qr", "query_security_verify_qr", "ntlogin_get_security_verify_qr", "ntlogin_query_security_verify_qr"]) {
+    assert.match(API_CONTRACTS[action].usageConditions, /Free.*不可调用.*Plus \/ Pro.*不设 QQ 等级前置条件/)
+    assert.match(API_CONTRACTS[action].usageConditions, /VM 实时权益检查/)
+    assert.doesNotMatch(API_CONTRACTS[action].usageConditions, /10[–—~-]100\s*ms|增加.*延迟|随机延迟/)
+    assert.doesNotMatch(API_CONTRACTS[action].usageConditions, /至少需要 32|Plus 可在框架账号页/)
+  }
   const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8')
+  assert.doesNotMatch(readme, /10[–—~-]100\s*ms|增加.*延迟|随机延迟/)
   assert.match(readme, /自框架 3\.0\.7 起.*不额外限制 QQ 等级/)
   assert.match(readme, /Windows.*amd64 PE.*不需要 Docker/)
   assert.match(readme, /Linux.*Docker.*linux\/amd64.*linux\/arm64/)
 })
+

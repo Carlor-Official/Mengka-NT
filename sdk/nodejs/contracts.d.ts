@@ -2977,5 +2977,6 @@ export interface LoginVerificationFailure { code: number; message: string; next:
 export type SecurityAccessTokenResponse = SecurityAccessTokenResult | LoginVerificationFailure;
 export type SecurityAccessTokenParams = ActionParams["open_account_security_access"] & { type: "getToken" };
 export interface SecurityAccessAction { (params: SecurityAccessTokenParams, options?: CallOptions): Promise<SecurityAccessTokenResponse>; (params: ActionParams["open_account_security_access"], options?: CallOptions): Promise<unknown> }
-export type ActionMethods = { [K in ActionName]: K extends "open_account_security_access" ? SecurityAccessAction : (params: ActionParams[K], options?: CallOptions) => Promise<unknown> };
+export interface QQClassicFarmCodeResult { /** Temporary QQ farm login credential. Never log or publish it. */ code: string }
+export type ActionMethods = { [K in ActionName]: K extends "open_account_security_access" ? SecurityAccessAction : K extends "get_qq_classic_farm_code" ? (params: ActionParams[K], options?: CallOptions) => Promise<QQClassicFarmCodeResult> : (params: ActionParams[K], options?: CallOptions) => Promise<unknown> };
 export interface CallOptions { timeoutMs?: number; signal?: AbortSignal }

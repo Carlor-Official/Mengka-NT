@@ -2364,7 +2364,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Linux QQ。",
-    "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会继续操作。离线实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+    "usageConditions": "该接口用于当前账号自身登录。Free 不可调用；Plus / Pro 不设 QQ 等级前置条件，无需先登录账号再核验等级。仍须通过 VM 实时权益检查。账号归属、插件权限、平台授权与腾讯安全验证仍须满足，不能绕过安全确认。"
   },
   "get_mini_app_ark": {
     "description": "根据内置模板或完整小程序参数生成可发送的 Ark 数据。",
@@ -2632,7 +2632,7 @@ export const API_CONTRACTS = freeze({
     "applicableProtocols": "Android（手机 / 平板）/ Linux QQ。"
   },
   "get_qq_classic_farm_code": {
-    "description": "获取 QQ 经典农场登录码，供插件自行完成农场登录。",
+    "description": "按所选账号协议获取 QQ 经典农场登录码，供插件自行完成农场登录；不会切换协议或自动登录游戏。",
     "params": [
       {
         "name": "self_id",
@@ -2649,7 +2649,7 @@ export const API_CONTRACTS = freeze({
         "description": "账号协议配置 ID；从 get_protocol_list 获取，必须显式传入，0 也是有效 ID"
       }
     ],
-    "applicableProtocols": "Android（手机 / 平板）；不支持 Linux QQ。",
+    "applicableProtocols": "Android（手机 / 平板）/ Linux QQ；由 protocol_id 对应的账号协议自动选择请求。",
     "usageConditions": "不额外限制 QQ 等级。仍需满足账号在线、当前授权及接口本身的业务条件。"
   },
   "get_qun_album_list": {
@@ -2938,7 +2938,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android / Linux QQ；仅用于当前登录流程要求的设备安全验证。",
-    "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会创建二维码。处于待验证登录状态的实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+    "usageConditions": "该接口用于当前账号自身登录。Free 不可调用；Plus / Pro 不设 QQ 等级前置条件，无需先登录账号再核验等级。仍须通过 VM 实时权益检查。账号归属、插件权限、平台授权与腾讯安全验证仍须满足，不能绕过安全确认。"
   },
   "get_sent_profile_likes": {
     "description": "获取送出的名片赞。",
@@ -3906,7 +3906,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android / Linux QQ；Linux 未设置密码时可使用扫码登录。",
-    "usageConditions": "Linux 账号未保存密码时，本接口会转为获取登录二维码，此路径同样受扫码授权权益限制：Free 不可调用；Plus 每次核对对应 QQ 最新等级，至少需要 32 级；Pro 不设这项等级门槛。无法核验最新等级时不继续扫码流程。使用已保存密码的常规登录不因这项扫码限制而停用，框架管理员账号页的正常扫码流程保持原有规则。"
+    "usageConditions": "Linux 账号未保存密码时，本接口会转为获取自身登录二维码：Free 不可调用此扫码分支；Plus / Pro 不设 QQ 等级前置条件。仍须通过 VM 实时权益检查。使用已保存密码的常规登录及框架管理员账号页正常登录保持原有规则。账号归属、插件权限、平台授权与腾讯安全验证仍须满足。"
   },
   "login_captcha": {
     "description": "在当前滑块会话内读取腾讯验证码脚本或转发验证码请求。",
@@ -4139,7 +4139,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android / Linux QQ；仅用于当前登录流程要求的设备安全验证。",
-    "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会创建二维码。处于待验证登录状态的实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+    "usageConditions": "该接口用于当前账号自身登录。Free 不可调用；Plus / Pro 不设 QQ 等级前置条件，无需先登录账号再核验等级。仍须通过 VM 实时权益检查。账号归属、插件权限、平台授权与腾讯安全验证仍须满足，不能绕过安全确认。"
   },
   "ntlogin_get_sms": {
     "description": "NT 获取短信验证码。",
@@ -4221,7 +4221,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android / Linux QQ；仅用于当前登录流程要求的设备安全验证。",
-    "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会继续查询或确认登录。处于待验证登录状态的实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+    "usageConditions": "该接口用于当前账号自身登录。Free 不可调用；Plus / Pro 不设 QQ 等级前置条件，无需先登录账号再核验等级。仍须通过 VM 实时权益检查。账号归属、插件权限、平台授权与腾讯安全验证仍须满足，不能绕过安全确认。"
   },
   "ntlogin_retry_security_verify": {
     "description": "完成网页登录安全验证后，继续当前 NT 登录。",
@@ -7781,7 +7781,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Linux QQ。",
-    "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会继续查询或确认登录。离线或尚未完成登录的实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+    "usageConditions": "该接口用于当前账号自身登录。Free 不可调用；Plus / Pro 不设 QQ 等级前置条件，无需先登录账号再核验等级。仍须通过 VM 实时权益检查。账号归属、插件权限、平台授权与腾讯安全验证仍须满足，不能绕过安全确认。"
   },
   "query_security_verify_qr": {
     "description": "查询安全验证二维码，确认后继续登录。",
@@ -7809,7 +7809,7 @@ export const API_CONTRACTS = freeze({
       }
     ],
     "applicableProtocols": "Android / Linux QQ；仅用于当前登录流程要求的设备安全验证。",
-    "usageConditions": "Free 不可调用。Plus 每次调用核对所选 QQ 实例的最新等级，至少需要 32 级；Pro 不设这项 QQ 等级门槛。无法核验最新等级时不会继续查询或确认登录。处于待验证登录状态的实例无法用于核验等级，不能借用其他账号或协议实例的等级；Plus 可在框架账号页完成正常登录。"
+    "usageConditions": "该接口用于当前账号自身登录。Free 不可调用；Plus / Pro 不设 QQ 等级前置条件，无需先登录账号再核验等级。仍须通过 VM 实时权益检查。账号归属、插件权限、平台授权与腾讯安全验证仍须满足，不能绕过安全确认。"
   },
   "recall_friend_msg": {
     "description": "撤回好友消息。",

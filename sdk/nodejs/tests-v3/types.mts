@@ -45,3 +45,18 @@ void api.call('send_packet', { self_id: 10001, protocol_id: 0, cmd: 'Example.Ser
 void api.send_packet({ self_id: 10001, protocol_id: 0, data: '0801' })
 // @ts-expect-error generic call has the same required payload contract
 void api.call('send_packet', { self_id: 10001, protocol_id: 0, cmd: 'Example.Service.Command' })
+
+
+// Farm codes are credentials, not numeric business result codes.
+const checkFarmCode = (value: import('../index.js').QQClassicFarmCodeResult) => {
+  const code: string = value.code
+  // @ts-expect-error farm credential cannot be assumed to be a numeric status
+  const numericCode: number = value.code
+  void code; void numericCode
+}
+api.get_qq_classic_farm_code({ self_id: 10001, protocol_id: 0 }).then(checkFarmCode)
+api.call('get_qq_classic_farm_code', { self_id: 10001, protocol_id: 2 }).then(checkFarmCode)
+http.get_qq_classic_farm_code({ self_id: 10001, protocol_id: 2 }).then(checkFarmCode)
+ipc.call('get_qq_classic_farm_code', { self_id: 10001, protocol_id: 0 }).then(checkFarmCode)
+// @ts-expect-error explicit protocol selection is still required
+void api.get_qq_classic_farm_code({ self_id: 10001 })

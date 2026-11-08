@@ -35,9 +35,11 @@ SDK 保留普通 API 和仅托管 IPC 可用的账号委托 API 方法及参数�
 
 QQ 宠物通过 `qqpet_operation` 调用文档中的 30 项业务操作，`catalog` 用于查询操作目录。其余宠物底层接口以及已移除的好友申请、群申请、群临时消息与文件上传接口不可调用。具名方法和 `call()` 遵守相同规则；错误包含 `code: 'API_REMOVED'`、`status: 'removed'`、`action` 和 `uncertain: false`。
 
-自定义发包、等级加速、扫码授权登录及红包领取/领取材料接口：Free 不可调用；Plus 每次调用核对对应 QQ 最新等级（至少 32 级），并增加 10–100ms 延迟；Pro 不设这项等级门槛。含红包消息段的事件也按此规则控制推送。自框架 3.0.7 起，其他 API（包括 QQ 宠物和独立农场）不额外限制 QQ 等级，仍需满足账号在线、当前授权及接口业务条件。SDK 不根据本地角色、账号列表里的缓存等级或自行延时来授予权限，接口与事件仍由框架校验；仅更新 SDK 不会改变旧框架的权益规则。
+自定义发包、等级加速、第三方扫码授权及红包领取/领取材料接口：Free 不可调用；Plus 每次调用核对对应 QQ 最新等级（至少 32 级）；Pro 不设这项等级门槛。含红包消息段的事件也按此规则控制推送。自框架 3.0.7 起，其他 API（包括 QQ 宠物和独立农场）不额外限制 QQ 等级，仍需满足账号在线、当前授权及接口业务条件。SDK 不根据本地角色、账号列表里的缓存等级或自行延时来授予权限，接口与事件仍由框架校验；仅更新 SDK 不会改变旧框架的权益规则。
 
-`login_account` 对 Linux 账号使用已保存的密码登录；未保存密码而转为获取登录二维码时，同样遵守上述扫码授权权益条件。常规密码登录及框架管理员账号页的正常扫码流程保持各自原有规则。
+自身扫码登录与第三方扫码授权分别校验：支持此规则的框架中，`get_login_qr`、`query_login_qr`、登录安全验证二维码及 `login_account` 的 Linux 无密码扫码分支，Free 禁止调用，Plus / Pro 不设 QQ 等级前置条件；仍须通过 VM 实时权益检查。`scan_qr` / `auth_qr` 等第三方扫码授权继续要求 Plus 每次通过 VM 核验所选在线 QQ 的最新等级至少 32 级；Free 仍禁用，Pro 无此等级门槛。仅更新 SDK 不会改变旧框架权益，账号页正常登录及其他安全校验保持。
+
+`login_account` 对 Linux 账号使用已保存的密码登录；未保存密码而转为获取登录二维码时，遵守上述自身扫码登录权益。常规密码登录及框架管理员账号页的正常扫码流程保持各自原有规则。
 
 ## 反向 WebSocket
 
@@ -111,6 +113,22 @@ await api.set_group_msg_reaction({
 
 参数与返回值见 [NT 安全验证继续登录](https://mengka.net/nt/api/ntlogin_retry_security_verify.html)和[群消息表情回应](https://mengka.net/nt/api/set_group_msg_reaction.html)。
 
+## QQ 农场登录码
+
+支持双协议取码的框架版本可为 Android 和 Linux QQ 账号获取登录码。使用账号实际的 `protocol_id`；这是协议配置 ID，`0` 有效，不是固定的平台枚举。旧框架若返回不支持，请升级框架，SDK 不会切换账号或自动回退到另一协议。
+
+`get_qq_classic_farm_code` 和通用 `call` 均返回 `{ code: string }`。`code` 是临时登录凭据，不是业务状态码；不要写入日志、错误上报或公开分享。该接口不会自动登录游戏，也不表示等级任务已完成。
+
+```js
+async function loginFarm(api, selfId, protocolId, loginWithCode) {
+  const { code } = await api.get_qq_classic_farm_code({
+    self_id: selfId, protocol_id: protocolId,
+  })
+  await loginWithCode(code) // 插件自己的农场登录实现；不打印登录码。
+}
+```
+
+参数、适用协议和错误说明见 [QQ 农场登录码](https://mengka.net/nt/api/get_qq_classic_farm_code.html)。
 ## 错误与重试
 
 ```js
@@ -128,3 +146,4 @@ try {
 ## 示例
 
 `examples-v3` 包含正向 WebSocket、HTTP 与托管 IPC 示例。先按示例配置服务地址、令牌及插件清单，再运行对应入口。SDK 附件不包含框架服务端或 Node.js 运行时。
+

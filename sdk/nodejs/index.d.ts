@@ -1,9 +1,10 @@
-import type { ActionName, ActionParams, ActionMethods, CallOptions, SecurityAccessTokenParams, SecurityAccessTokenResponse } from './contracts.js'
+import type { ActionName, ActionParams, ActionMethods, CallOptions, QQClassicFarmCodeResult, SecurityAccessTokenParams, SecurityAccessTokenResponse } from './contracts.js'
 import type { FrameworkEvent } from './events.js'
 export type * from './events.js'
-export type { ActionName, ActionParams, CallOptions, SecurityAccessTokenParams, SecurityAccessTokenResult, SecurityAccessTokenResponse, LoginVerificationFailure } from './contracts.js'
+export type { ActionName, ActionParams, CallOptions, QQClassicFarmCodeResult, SecurityAccessTokenParams, SecurityAccessTokenResult, SecurityAccessTokenResponse, LoginVerificationFailure } from './contracts.js'
 export type EventPermission = 'group_message' | 'friend_message' | 'group_event' | 'friend_event' | 'bot_online' | 'bot_offline' | 'system_event'
 export interface APIBase {
+  call(action: 'get_qq_classic_farm_code', params: ActionParams['get_qq_classic_farm_code'], options?: CallOptions): Promise<QQClassicFarmCodeResult>;
   call(action: 'open_account_security_access', params: SecurityAccessTokenParams, options?: CallOptions): Promise<SecurityAccessTokenResponse>;
   call<K extends ActionName>(action: K, params: ActionParams[K], options?: CallOptions): Promise<unknown>;
 }
@@ -33,3 +34,4 @@ export function createNativePlugin(options: { pluginId: string; version: string;
 export class SDKError extends Error { code?: string | number; action?: ActionName; status?: string; response?: Record<string, unknown>; requiredLevel?: number; currentLevel?: number; errCode?: number; uncertain?: boolean; httpStatus?: number }
 export const API_ACTIONS: readonly ActionName[];
 export const EVENT_PERMISSIONS: readonly EventPermission[];
+
